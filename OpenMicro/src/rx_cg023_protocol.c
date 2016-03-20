@@ -34,14 +34,16 @@ THE SOFTWARE.
 #include "defines.h"
 
 #include "rx_bayang.h"
-
 #include "util.h"
 
-#ifdef RX_BAYANG_PROTOCOL
+
+
+#ifdef RX_CG023_PROTOCOL
 
 void rx_init()
 {
 	// baseband BB_CAL registers
+	/*
 	spi_cson();
 	spi_sendbyte(0x3f); 
 	spi_sendbyte(0x4c);
@@ -75,8 +77,42 @@ void rx_init()
 	spi_sendbyte(0x03);
 	spi_csoff();
 	delay(1000);
+*/
+	
+spi_cson();
+spi_sendbyte(0x3f);
+spi_sendbyte(0x4c);
+spi_sendbyte(0x84);
+spi_sendbyte(0x6F);
+spi_sendbyte(0x9c);
+spi_sendbyte(0x20);
+spi_csoff();
+delay(1000);
+// RF_CAL registers
+delay(1000);
+spi_cson();
+spi_sendbyte(0x3e);
+spi_sendbyte(0xc9);
+spi_sendbyte(220);
+spi_sendbyte(0x80);
+spi_sendbyte(0x61);
+spi_sendbyte(0xbb);
+spi_sendbyte(0xab);
+spi_sendbyte(0x9c);
+spi_csoff();
+delay(1000);
+// DEMOD_CAL registers
+spi_cson();
+spi_sendbyte(0x39);
+spi_sendbyte(0x0b);
+spi_sendbyte(0xdf);
+spi_sendbyte(0xc4);
+spi_sendbyte(0xa7);
+spi_sendbyte(0x03);
+spi_csoff();
+delay(1000);
 
-int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
+int rxaddress[5] =  {0x26, 0xA8, 0x67, 0x35, 0xCC};
 xn_writerxaddress( rxaddress);
 
 	xn_writereg( EN_AA , 0 );	// aa disabled
@@ -86,7 +122,7 @@ xn_writerxaddress( rxaddress);
 	xn_writereg( SETUP_RETR , 0 ); // no retransmissions ( redundant?)
 	xn_writereg( SETUP_AW , 3 ); // address size (5 bits)
 	xn_command( FLUSH_RX);
-  xn_writereg( RF_CH , 0 );  // bind on channel 0
+  xn_writereg( RF_CH , 0x2D );  // bind  channel
   xn_writereg( 0 , B00001111 ); // power up, crc enabled
 	
 }
@@ -95,18 +131,10 @@ int statusdebug;
 
 static char checkpacket()
 {
-	//int status = xn_command(NOP);
 	spi_cson();
 	int status = spi_sendzerorecvbyte();
 	statusdebug = status;
 	spi_csoff();
-	if ( status&(1<<MASK_RX_DR) )
-	{	 // rx clear bit
-		// this is not working well
-	 // xn_writereg( STATUS , (1<<MASK_RX_DR) );
-		//RX packet received
-		//return 1;
-	}
 	if( (status & B00001110) != B00001110 )
 	{
 		// rx fifo not empty		
@@ -117,6 +145,8 @@ static char checkpacket()
 }
 
 
+
+
 float rx[7];
 // the last 2 are always on and off respectively
 char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 1 , 0};
@@ -124,81 +154,99 @@ char lastaux[AUXNUMBER];
 char auxchange[AUXNUMBER];
 int rxdata[15];
 
-#define CHANOFFSET 512
+int datachan;
+int txid[2];
+int rxmode = 0;
 
-float packettodata( int *  data)
+#define CG023_FLIP  0x01 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
+#define CG023_EASY  0x02 // left shoulder (headless mode)
+#define CG023_VIDEO  0x04 // video camera 
+#define CG023_STILL  0x08 // still camera 
+#define CG023_LED_OFF  0x10
+#define CG023_RATE_60  0x20
+#define CG023_RATE_100 0x40
+
+int decode_cg023( void)
 {
-	return ( ( ( data[0]&0x0003) * 256 + data[1] ) - CHANOFFSET ) * 0.001953125 ;	
-}
-
-
-static int decodepacket( void)
-{
-	if ( rxdata[0] == 165 )
-	{
-		 int sum = 0;
-		 for(int i=0; i<14; i++) 
-		 {
-			sum += rxdata[i];
-		 }	
-		if ( (sum&0xFF) == rxdata[14] )
+	 if ( rxdata[0] == 0x55 )
+	 {
+		// maybe corrupt packet
+		if ( rxdata[3] != 0 || rxdata[4] != 0  ) return 0;
+		if ( rxdata[1] != txid[0] || rxdata[2] != txid[1] ) return 0;
+		 
+		 
+		rx[3] = 0.00390625f * rxdata[5]; 
+		 
+#ifndef RX_CG023_SWAP_YAWROLL		 
+// normal yaw - roll
+		if ( rxdata[6] >= 0x80 )
 		{
-			rx[0] = packettodata( &rxdata[4] );
-			rx[1] = packettodata( &rxdata[6] );
-			rx[2] = packettodata( &rxdata[10] );
-		// throttle		
-			rx[3] = ( (rxdata[8]&0x0003) * 256 + rxdata[9] ) * 0.000976562;
+			rx[2] = -rxdata[6] * 0.0166666f + 2.1166582f; // yaw
+		}
+		else if ( rxdata[6] <= 0x3C ) rx[2] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
+		else rx[2] = 0.0;
+		rx[0] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
+#else
+		// swapped yaw - roll (mode 3)
+			if ( rxdata[6] >= 0x80 )
+		{
+			rx[0] = -rxdata[6] * 0.0166666f + 2.1166582f; // yaw
+		}
+		else if ( rxdata[6] <= 0x3C ) rx[0] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
+		else rx[0] = 0.0;
+		rx[2] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
+#endif
+		
+		rx[1] = - rxdata[7] * 0.0166666f + 2.1166582f; 
 		
 #ifndef DISABLE_EXPO
-	rx[0] = rcexpo ( rx[0] , EXPO_XY );
-	rx[1] = rcexpo ( rx[1] , EXPO_XY ); 
-	rx[2] = rcexpo ( rx[2] , EXPO_YAW ); 	
+		rx[0] = rcexpo ( rx[0] , EXPO_XY );
+		rx[1] = rcexpo ( rx[1] , EXPO_XY ); 
+		rx[2] = rcexpo ( rx[2] , EXPO_YAW ); 	
 #endif
+		
+		// switch flags
+		
 
-			
-		// trims are 50% of controls at max		
-	// trims are not used because they interfere with dynamic trims feature of devo firmware
-			
-//			rx[0] = rx[0] + 0.03225 * 0.5 * (float)(((rxdata[4])>>2) - 31);
-//			rx[1] = rx[1] + 0.03225 * 0.5 * (float)(((rxdata[6])>>2) - 31);
-//			rx[2] = rx[2] + 0.03225 * 0.5 * (float)(((rxdata[10])>>2) - 31);
-	
-		//	rx[4] = (rxdata[2] &  0x08)?1:0; // flip channel
-			aux[0] = (rxdata[2] &  0x08)?1:0;
-	
-		//	rx[5] = (rxdata[1] == 0xfa)?1:0; // expert mode
-			aux[1] = (rxdata[1] == 0xfa)?1:0;
-	
-		//	rx[6] = (rxdata[2] &  0x02)?1:0; // headless channel
-		  aux[2] = (rxdata[2] &  0x02)?1:0;
+		aux[0] = (rxdata[13] &  CG023_EASY)?1:0;
+		aux[1] = (rxdata[13] &  CG023_VIDEO)?1:0;
+		aux[2] = (rxdata[13] &  CG023_STILL)?1:0;
+		aux[3] = (rxdata[13] &  CG023_LED_OFF)?1:0;
 
-			aux[3] = (rxdata[2] &  0x01)?1:0;// rth channel
-
-			for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
-			{
-				auxchange[i] = 0;
-				if ( lastaux[i] != aux[i] ) auxchange[i] = 1;
-				lastaux[i] = aux[i];
-			}
-			
-			return 1;	// valid packet	
+		float ratemulti = 1.0;
+		if ( rxdata[13] & CG023_RATE_100 )
+		{
+				goto skip;
 		}
-	 return 0; // sum fail
-	}
-return 0; // first byte different
-}
+		else if ( rxdata[13] & CG023_RATE_60 )
+		{
+				ratemulti = 0.6;
+		}
+		else
+		{
+				ratemulti = 0.2;
+		}
 
-
-  char rfchannel[4];
-	int rxaddress[5];
-	int rxmode = 0;
-	int chan = 0;
-
-void nextchannel()
-{
-	chan++;
-	if (chan > 3 ) chan = 0;
-	xn_writereg(0x25, rfchannel[chan] );
+		for ( int i = 0 ; i <= 2 ; i++)
+		{
+		  rx[i] = rx[i] * ratemulti;
+		}
+		skip:
+		for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
+		{
+			auxchange[i] = 0;
+			if ( lastaux[i] != aux[i] ) auxchange[i] = 1;
+			lastaux[i] = aux[i];
+		}
+		
+		return 1;
+	 }
+	 else
+	 {
+		 // non data packet
+		 return 0; 
+	 }
+//
 }
 
 
@@ -209,14 +257,17 @@ unsigned long secondtimer;
 int failsafe = 0;
 
 
-//#define RXDEBUG
+#define RXDEBUG
 
 #ifdef RXDEBUG	
-unsigned long packettime;
-int channelcount[4];
-int failcount;
-int packetrx;
-int packetpersecond;
+struct rxdebug
+	{
+	unsigned long packettime;
+	int failcount;
+	int packetrx;
+	int packetpersecond;
+	} 
+	rxdebug;
 #warning "RX debug enabled"
 #endif
 
@@ -224,28 +275,23 @@ int packetpersecond;
 void checkrx( void)
 {
 	int packetreceived =	checkpacket();
-	int pass = 0;
 		if ( packetreceived ) 
 		{ 
-			if ( rxmode == 0)
+			if ( rxmode == RXMODE_BIND)
 			{	// rx startup , bind mode
 				xn_readpayload( rxdata , 15);
 		
-				if ( rxdata[0] == 164 ) 
-				{// bind packet
-					rfchannel[0] = rxdata[6];
-					rfchannel[1] = rxdata[7];
-					rfchannel[2] = rxdata[8];
-					rfchannel[3] = rxdata[9];		
+				if ( rxdata[0] == 0xAA ) 
+				{// bind packet received
 					
-					rxaddress[0] = rxdata[1];
-					rxaddress[1] = rxdata[2];
-					rxaddress[2] = rxdata[3];
-					rxaddress[3] = rxdata[4];
-					rxaddress[4] = rxdata[5];
-					rxmode = 123;				
-					xn_writerxaddress( rxaddress );
-				  xn_writereg(0x25, rfchannel[chan] ); // Set channel frequency	
+					datachan = (uint8_t)(rxdata[1] - 0x7D);
+					
+					txid[0] = rxdata[1];
+					txid[1] = rxdata[2];
+					
+					rxmode = RXMODE_NORMAL;				
+
+				  xn_writereg(0x25, datachan ); // Set channel frequency	
 				
 					#ifdef SERIAL	
 					printf( " BIND \n");
@@ -255,31 +301,29 @@ void checkrx( void)
 			else
 			{	// normal mode	
 				#ifdef RXDEBUG	
-				channelcount[chan]++;	
-				packettime = gettime() - lastrxtime;
+				rxdebug.packettime = gettime() - lastrxtime;
 				#endif
+		    
 				
-				// for longer loop times than 3ms it was skipping 2 channels
-				//chan++;
-				//if (chan > 3 ) chan = 0;
-				nextchannel();
+				lastrxtime = gettime();	
 				
-				lastrxtime = gettime();				
 				xn_readpayload( rxdata , 15);
-				pass = decodepacket();
-				 
+				
+				int pass = decode_cg023();
+			 
 				if (pass)
 				{ 
 					#ifdef RXDEBUG	
-					packetrx++;
+					rxdebug.packetrx++;
 					#endif
-					failsafetime = lastrxtime; 
+					failsafetime = gettime();	; 
 					failsafe = 0;
+					
 				}	
 				else
 				{
 				#ifdef RXDEBUG	
-				failcount++;
+				rxdebug.failcount++;
 				#endif	
 				}
 			
@@ -289,12 +333,6 @@ void checkrx( void)
 
 		unsigned long time = gettime();
 		
-    // sequence period 12000
-		if( time - lastrxtime > 9000 && rxmode != 0)
-		{//  channel with no reception	 
-		 lastrxtime = time;
-		 nextchannel();	
-		}
 		if( time - failsafetime > FAILSAFETIME )
 		{//  failsafe
 		  failsafe = 1;
@@ -304,19 +342,21 @@ void checkrx( void)
 			rx[3] = 0;
 		}
 #ifdef RXDEBUG	
-			if ( gettime() - secondtimer  > 1000000)
+		// packets per second counter
+			if ( time - secondtimer  > 1000000)
 			{
-				packetpersecond = packetrx;
-				packetrx = 0;
+				rxdebug.packetpersecond = rxdebug.packetrx;
+				rxdebug.packetrx = 0;
 				secondtimer = gettime();
 			}
 #endif
 
 }
+	
 
-// end bayang protocol
-#endif 
 
+// end cg023 proto
+#endif
 
 
 

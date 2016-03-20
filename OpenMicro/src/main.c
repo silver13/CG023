@@ -86,7 +86,7 @@ delay(100000);
 	pwm_set( MOTOR_BL , 0);
 	pwm_set( MOTOR_FL , 0);	 
 	pwm_set( MOTOR_FR , 0); 
-	pwm_set( MOTOR_FL , 0); 
+	pwm_set( MOTOR_BR , 0); 
 
   time_init();
 	
@@ -222,7 +222,7 @@ static float timefilt;
 		else lowbatt = 0;
 		
 // led flash logic		
-		if ( rxmode == 0)
+		if ( rxmode == RXMODE_BIND)
 		{// bind mode
 		ledflash ( 100000+ 500000*(lowbatt) , 12);
 		}else

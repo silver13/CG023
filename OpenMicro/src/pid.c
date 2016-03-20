@@ -39,7 +39,7 @@ THE SOFTWARE.
 
 #include "defines.h"
 
-
+/*
 // Kp											ROLL       PITCH     YAW
 float pidkp[PIDNUMBER] = { 10.0e-2 , 10.0e-2  , 5e-1 }; 
 
@@ -48,7 +48,10 @@ float pidki[PIDNUMBER] = { 4e-1  , 4e-1 , 50e-1 };
 
 // Kd											ROLL       PITCH     YAW
 float pidkd[PIDNUMBER] = { 10.8e-1 , 10.8e-1  , 0.0e-1 };	
-
+*/
+float pidkp[PIDNUMBER] = { 7.0e-2 , 7.0e-2 , 5e-1 };
+float pidki[PIDNUMBER] = { 2e-1 , 2e-1 , 5e-1 };
+float pidkd[PIDNUMBER] = { 5.0e-1 , 5.0e-1 , 5.0e-1 }; 
 
 // output limit			
 const float outlimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };

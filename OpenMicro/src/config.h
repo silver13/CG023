@@ -6,7 +6,7 @@
 // rate in deg/sec
 // for low rates
 #define MAX_RATE 180.0
-#define MAX_RATEYAW 360.0
+#define MAX_RATEYAW 180.0
 
 // disable inbuilt expo functions
 #define DISABLE_EXPO
@@ -46,7 +46,7 @@
 // increase if battery low comes on at max throttle
 // decrease if battery low warning goes away at high throttle
 // in volts
-#define VDROP_FACTOR 0.60
+#define VDROP_FACTOR 0.65
 
 // voltage hysteresys
 // in volts
@@ -79,22 +79,31 @@
 
 
 // channel for headless mode switch
-// 0 - flip
-// 1 - expert
-// 2 - headfree
-// 3 - headingreturn
+
+// H8 protocol channels
+// 0 - flip, 1 - expert, 2 - headfree, 3 - headingreturn
+
+// cg023 protocol chanels
+// 0 - headless, 
+// 1 , 2 , 3 - video , still ,led
+
 // 4 - on always
 // 5 - off always
 #define HEADLESSMODE 5
 
 // channel for rates switch
-// 0 - flip
-// 1 - expert
-// 2 - headfree
-// 3 - headingreturn
+
+// channel for headless mode switch
+// H8 protocol channels
+// 0 - flip, 1 - expert, 2 - headfree, 3 - headingreturn
+
+// cg023 protocol chanels
+// 0 - headless, 
+// 1 , 2 , 3 - video , still ,led
+
 // 4 - on always
 // 5 - off always
-#define RATES 1
+#define RATES 5
 
 
 
@@ -126,6 +135,17 @@
 // debug / other things
 // this should not be usually changed
 
+// Radio protocol selection
+
+#define RX_CG023_PROTOCOL
+//#define RX_BAYANG_PROTOCOL
+
+// mode 1 to mode 3 conversion
+// cg023 protocol
+//#define RX_CG023_SWAP_YAWROLL
+
+
+// do not change hardware pins below
 
 #define LED1PIN GPIO_Pin_4
 #define LED1PORT GPIOA
@@ -164,11 +184,14 @@
 #define SPI_SS_PIN GPIO_Pin_5
 #define SPI_SS_PORT GPIOB
 
+
+
+
 // disable motors for testing
 // #define NOMOTORS
 
-
-// enable serial out on back-left LED
+// not available
+// enable serial out
 // 57600 default
 // #define SERIAL
 
