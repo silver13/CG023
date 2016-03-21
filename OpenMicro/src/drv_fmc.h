@@ -1,9 +1,9 @@
 
+int fmc_write( int data1 , int data2);
+int readdata( unsigned int data );
 
 
 
 
 
-int fmc_erasepage( void);
-int fmc_read( unsigned int address);
-int fmc_write( unsigned int address , int data);
+

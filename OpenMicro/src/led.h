@@ -8,6 +8,10 @@ void ledoff( uint8_t val );
 void ledset( int val );
 void ledflash( uint32_t period , int duty );
 
+void auxledon( uint8_t val );
+void auxledoff( uint8_t val );
+void auxledflash( uint32_t period , int duty );
+
 
 
 

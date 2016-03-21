@@ -55,20 +55,25 @@ THE SOFTWARE.
 // hal
 void clk_init(void);
 
+void imu_init(void);
+
 float looptime;
 float vbattfilt = 0.0;
+unsigned int lastlooptime;
+int lowbatt = 0;	
+int lowbatt2 = 0;
+
+float battdebug;
 
 #ifdef DEBUG
 static float totaltime = 0;
 #endif
 
-float analogfilt[4];
 
 void failloop( int val);
 
 int main(void)
 {
-
 	clk_init();
 	
 	delay(1000);
@@ -89,8 +94,6 @@ delay(100000);
 	pwm_set( MOTOR_BR , 0); 
 
   time_init();
-	
-	
 
 	sixaxis_init();
 	
@@ -136,9 +139,21 @@ while ( count < 64 )
 if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 #endif
 
+
+
 	gyro_cal();
 
-	
+	imu_init();
+
+// read accelerometer calibration values from option bytes ( 2* 8bit)
+extern float accelcal[3];
+extern int readdata( int datanumber);
+
+ accelcal[0] = readdata( OB->DATA0 ) - 127;
+ accelcal[1] = readdata( OB->DATA1 ) - 127;
+
+
+
 extern unsigned int liberror;
 if ( liberror ) 
 {
@@ -149,7 +164,7 @@ if ( liberror )
 }
 
 
- static unsigned lastlooptime; 
+
  lastlooptime = gettime();
  extern int rxmode;
  extern int failsafe;
@@ -193,17 +208,17 @@ static float timefilt;
 		
 		checkrx();
 		
+		#ifdef ACRO_ONLY
 		gyro_read();
-		
+		#else
+		sixaxis_read();
+		extern void imu_calc(void);
+		imu_calc();
+		#endif
 		control();
-
- lpf ( &analogfilt[0] , adc_read(0),  0.98f );
-		 lpf ( &analogfilt[1] , adc_read(1),  0.98f );
-		 lpf ( &analogfilt[2] , adc_read(2),  0.98f );
-		 lpf ( &analogfilt[3] , adc_read(3),  0.98f );
 		
 // battery low logic
-		static int lowbatt = 0;
+		
 		float hyst;
 		float battadc = adc_read(3);
 		// average of all 4 motor thrusts
@@ -217,10 +232,25 @@ static float timefilt;
 
 		if ( lowbatt ) hyst = HYST;
 		else hyst = 0.0f;
+
+		float batt_compensated = vbattfilt + (float) VDROP_FACTOR * thrfilt;
+
+//		battdebug = vbattfilt + (float) VDROP_FACTOR * thrfilt ;
 		
-		if ( vbattfilt + (float) VDROP_FACTOR * thrfilt <(float) VBATTLOW + hyst ) lowbatt = 1;
+		if ( batt_compensated <(float) VBATTLOW + hyst ) lowbatt = 1;
 		else lowbatt = 0;
 		
+#if ( AUX_LED_NUMBER > 0)
+// lowbatt 2 ( 0.3V lower )
+
+		float hyst2;
+		if ( lowbatt2 ) hyst2 = HYST;
+		else hyst2 = 0.0f;
+		
+		if ( batt_compensated < ( (float)VBATTLOW + hyst2 - 0.3f ) ) lowbatt2 = 1;
+		else lowbatt2 = 0;
+		
+#endif		
 // led flash logic		
 		if ( rxmode == RXMODE_BIND)
 		{// bind mode
@@ -243,6 +273,19 @@ static float timefilt;
 			} 		
 		}
 
+#if ( AUX_LED_NUMBER > 0)		
+//AUX led flash logic		
+		if ( rxmode == RXMODE_BIND)
+		{// bind mode
+		auxledflash ( 100000+ 500000*(lowbatt) , 12);
+		}
+		else
+		{// non bind				
+			if ( lowbatt2 ) 
+				 auxledflash ( 250000 , 8);	
+			else auxledoff( 255);						
+		}
+#endif		
 // the delay is required or it becomes endless loop ( truncation in time routine)
 while ( (gettime() - time) < 1000 ) delay(10); 		
 

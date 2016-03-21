@@ -39,6 +39,9 @@ THE SOFTWARE.
 
 #ifdef RX_BAYANG_PROTOCOL
 
+#define BAYANG_LOWRATE_MULTIPLIER 0.5
+
+
 void rx_init()
 {
 	// baseband BB_CAL registers
@@ -154,8 +157,13 @@ static int decodepacket( void)
 	rx[1] = rcexpo ( rx[1] , EXPO_XY ); 
 	rx[2] = rcexpo ( rx[2] , EXPO_YAW ); 	
 #endif
-
-			
+		if  (rxdata[1] != 0xfa) 
+		{// low rates
+			for ( int i = 0 ; i <3; i++)
+			{
+				rx[0] = rx[0] * (float) BAYANG_LOWRATE_MULTIPLIER;
+			}
+		}
 		// trims are 50% of controls at max		
 	// trims are not used because they interfere with dynamic trims feature of devo firmware
 			

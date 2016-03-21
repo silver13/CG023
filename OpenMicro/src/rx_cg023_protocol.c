@@ -257,7 +257,7 @@ unsigned long secondtimer;
 int failsafe = 0;
 
 
-#define RXDEBUG
+//#define RXDEBUG
 
 #ifdef RXDEBUG	
 struct rxdebug

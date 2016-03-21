@@ -1,26 +1,64 @@
 
 
 #include "project.h"
+#include "drv_fmc.h"
 
 
-#define offset 0x08007C00 // last K of 32k
-
-int fmc_erasepage( void)
+int fmc_write( int data1 , int data2)
 {
- return 0;
+	
+	FLASH_Unlock();
+  FLASH_OB_Unlock();
+	
+	int flashstatus; 
+	int flasherror = 0;
+	
+  flashstatus = FLASH_OB_Erase();
+	
+	if ( flashstatus == FLASH_ERROR_PROGRAM || flashstatus == FLASH_ERROR_WRP || flashstatus ==  FLASH_TIMEOUT)
+	{
+	//	handle error
+	flasherror = 1;	
+	}
+	
+	flashstatus = FLASH_OB_ProgramData( 0x1FFFF804, data1 );
+	
+	if ( flashstatus == FLASH_ERROR_PROGRAM || flashstatus == FLASH_ERROR_WRP || flashstatus ==  FLASH_TIMEOUT)
+	{
+	//	handle error
+		flasherror = 1;
+	}
+	
+	flashstatus = FLASH_OB_ProgramData( 0x1FFFF806, data2 );
+	
+	if ( flashstatus == FLASH_ERROR_PROGRAM || flashstatus == FLASH_ERROR_WRP || flashstatus ==  FLASH_TIMEOUT)
+	{
+	//	handle error
+		flasherror = 1;
+	}
+
+	
+	FLASH_Lock();
+	FLASH_OB_Lock();
+	return flasherror;
 }
 
-int fmc_write( unsigned int address , int data)
-{
 
-	return 0;
-}
-
-int fmc_read( unsigned int address )
+// x = readdata( OB->DATA0 );
+// x = readdata( OB->DATA1 );
+	
+int readdata( unsigned int data )
 {
-	return 0;
-//address = address*4+offset;
-//unsigned int* addressptr = (unsigned int*) address;
-//return (*addressptr );
+	
+	unsigned int userdata = data ;
+	int complement = ((userdata &0x0000FF00)>>8 );
+	complement |=0xFFFFFF00;
+
+	userdata&=0x000000FF;
+	
+	if ( userdata!=~complement) 
+		return 127;
+	
+	else return userdata;
 }
 

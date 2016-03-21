@@ -62,6 +62,15 @@ void sixaxis_init( void)
 	
 	softi2c_write( 0x68 , 107 , 0);
 	
+	int newboard = !(0x68 == softi2c_read( 0x68, 117));
+	
+	softi2c_write( 0x68, 28, B00011000);	// 16G scale
+
+// acc lpf for the new gyro type
+//       0-6 ( same as gyro)
+	if (newboard)
+		softi2c_write( 0x68, 29, ACC_LOW_PASS_FILTER);
+	
 // gyro scale 2000 deg (FS =3)
 
 	//i2c_writereg( 27 , 24);	
@@ -93,10 +102,74 @@ int sixaxis_check( void)
 
 
 
+
+
 float accel[3];
 float gyro[3];
 
+float accelcal[3];
 float gyrocal[3];
+
+
+float lpffilter(float in, int num);
+
+void sixaxis_read(void)
+{
+	int data[16];
+
+//	int error = 0;
+	float gyronew[3];
+
+//error = (i2c_readdata(59, data, 14));
+	
+	softi2c_readdata( 0x68 , 59 , data , 14 );	
+	
+// 2nd attempt at an i2c read   
+//	if (error)
+	  {
+//		  error = (i2c_readdata(59, data, 14));
+		  // set a warning flag 
+		  // not implemented
+		  // warningflag = 1;
+	  }
+
+
+//if (error) return;
+
+	accel[0] = -(int16_t) ((data[0] << 8) + data[1]);
+	accel[1] = -(int16_t) ((data[2] << 8) + data[3]);
+	accel[2] = (int16_t) ((data[4] << 8) + data[5]);
+
+
+
+	gyronew[1] = (int16_t) ((data[8] << 8) + data[9]);
+	gyronew[0] = (int16_t) ((data[10] << 8) + data[11]);
+	gyronew[2] = (int16_t) ((data[12] << 8) + data[13]);
+
+
+gyronew[0] = gyronew[0] - gyrocal[0];
+gyronew[1] = gyronew[1] - gyrocal[1];
+gyronew[2] = gyronew[2] - gyrocal[2];
+		
+//gyronew[0] = - gyronew[0];
+gyronew[1] = - gyronew[1];
+gyronew[2] = - gyronew[2];
+
+	for (int i = 0; i < 3; i++)
+	  {
+
+		  gyronew[i] = gyronew[i] * 0.061035156f * 0.017453292f;
+#ifndef SOFT_LPF_NONE
+		  gyro[i] = lpffilter(gyronew[i], i);
+
+#else
+		  gyro[i] = gyronew[i];
+#endif
+	  }
+
+
+}
+
 
 
 void gyro_read( void)
@@ -121,27 +194,28 @@ gyronew[2] = gyronew[2] - gyrocal[2];
 //gyronew[0] = - gyronew[0];
 gyronew[1] = - gyronew[1];
 gyronew[2] = - gyronew[2];
-
-
-for ( int i = 0 ; i < 3; i++)
-{
-	gyronew[i] = gyronew[i] *  0.061035156f * 0.017453292f ;
-
-	gyro[i] = gyronew[i];
 	
-}
-
+	
+for (int i = 0; i < 3; i++)
+	  {
+		  gyronew[i] = gyronew[i] * 0.061035156f * 0.017453292f;
+#ifndef SOFT_LPF_NONE
+		  gyro[i] = lpffilter(gyronew[i], i);
+#else
+		  gyro[i] = gyronew[i];
+#endif
+	  }
 
 }
  
-float limit[3];
+
 
 #define CAL_TIME 2e6
 
 void gyro_cal(void)
 {
 int data[6];
-	
+float limit[3];	
 unsigned long time = gettime();
 unsigned long timestart = time;
 unsigned long timemax = time;
@@ -168,8 +242,8 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 	softi2c_readdata( 0x68 , 67 , data , 6 );	
 
 		
-		gyro[0] = (int16_t) ((data[2]<<8) + data[3]);
-		gyro[1] = (int16_t) ((data[0]<<8) + data[1]);
+		gyro[0] = (int16_t) ((data[0]<<8) + data[1]);
+		gyro[1] = (int16_t) ((data[2]<<8) + data[3]);
 		gyro[2] = (int16_t) ((data[4]<<8) + data[5]);	
 	
 		
@@ -228,6 +302,30 @@ printf("gyro calibration  %f %f %f \n "   , gyrocal[0] , gyrocal[1] , gyrocal[2]
 	
 }
 
+
+void acc_cal(void)
+{
+	accelcal[2] = 2048;
+	for (int y = 0; y < 500; y++)
+	  {
+		  sixaxis_read();
+		  for (int x = 0; x < 3; x++)
+		    {
+			    lpf(&accelcal[x], accel[x], 0.92);
+		    }
+		  gettime();	// if it takes too long time will overflow so we call it here
+
+	  }
+	accelcal[2] -= 2048;
+
+
+	for (int x = 0; x < 3; x++)
+	  {
+			accelcal[x] = lroundf ( accelcal[x] ); 
+		  limitf(&accelcal[x], 127);
+	  }
+
+}
 
 
 

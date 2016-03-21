@@ -39,19 +39,21 @@ THE SOFTWARE.
 
 #include "defines.h"
 
-/*
+#define GAIN 0.8
 // Kp											ROLL       PITCH     YAW
-float pidkp[PIDNUMBER] = { 10.0e-2 , 10.0e-2  , 5e-1 }; 
+float pidkp[PIDNUMBER] = { GAIN*20.0e-2 , GAIN*20.0e-2  , 10e-1 }; 
 
 // Ki											ROLL       PITCH     YAW
-float pidki[PIDNUMBER] = { 4e-1  , 4e-1 , 50e-1 };	
+float pidki[PIDNUMBER] = { GAIN*10e-1  , GAIN*10e-1 , 5e-1 };	
 
 // Kd											ROLL       PITCH     YAW
-float pidkd[PIDNUMBER] = { 10.8e-1 , 10.8e-1  , 0.0e-1 };	
-*/
+float pidkd[PIDNUMBER] = { GAIN*11e-1 , GAIN*11e-1  , 5.0e-1 };	
+
+/*
 float pidkp[PIDNUMBER] = { 7.0e-2 , 7.0e-2 , 5e-1 };
 float pidki[PIDNUMBER] = { 2e-1 , 2e-1 , 5e-1 };
 float pidkd[PIDNUMBER] = { 5.0e-1 , 5.0e-1 , 5.0e-1 }; 
+*/
 
 // output limit			
 const float outlimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };

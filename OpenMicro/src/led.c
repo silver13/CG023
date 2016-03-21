@@ -31,25 +31,63 @@ THE SOFTWARE.
 
 void ledon( uint8_t val )
 {
-if ( val&8)	GPIO_SetBits( LED1PORT, LED1PIN);
-if ( val&4)	GPIO_SetBits( LED2PORT, LED2PIN);
-if ( val&2)	GPIO_SetBits( LED3PORT, LED3PIN);
-if ( val&1)	GPIO_SetBits( LED4PORT, LED4PIN);
+#if ( LED_NUMBER > 0 )
+if ( val&1)	GPIO_SetBits( LED1PORT, LED1PIN);
+#endif
+#if ( LED_NUMBER > 1 )
+if ( val&2)	GPIO_SetBits( LED2PORT, LED2PIN);
+#endif
+#if ( LED_NUMBER > 2 )
+if ( val&4)	GPIO_SetBits( LED3PORT, LED3PIN);
+#endif
+#if ( LED_NUMBER > 3 )
+if ( val&8)	GPIO_SetBits( LED4PORT, LED4PIN);
+#endif
 			
 }
 
 void ledoff( uint8_t val )
 {
+#if ( LED_NUMBER > 0 )	
+if ( val&1) GPIO_ResetBits( LED1PORT, LED1PIN);
+#endif
+#if ( LED_NUMBER > 1 )
+if ( val&2) GPIO_ResetBits( LED2PORT, LED2PIN);
+#endif
+#if ( LED_NUMBER > 2 )
+if ( val&4) GPIO_ResetBits( LED3PORT, LED3PIN);
+#endif
+#if ( LED_NUMBER > 3 )
+if ( val&8) GPIO_ResetBits( LED4PORT, LED4PIN);	
+#endif
+}
+
+void auxledon( uint8_t val )
+{
 	
-if ( val&8) GPIO_ResetBits( LED1PORT, LED1PIN);
-if ( val&4) GPIO_ResetBits( LED2PORT, LED2PIN);
-if ( val&2) GPIO_ResetBits( LED3PORT, LED3PIN);
-if ( val&1) GPIO_ResetBits( LED4PORT, LED4PIN);	
+#if ( AUX_LED_NUMBER > 0 )
+if ( val&1)	GPIO_SetBits( AUX_LED1PORT, AUX_LED1PIN);
+#endif
+#if ( AUX_LED_NUMBER > 1 )
+if ( val&2)	GPIO_SetBits( AUX_LED2PORT, AUX_LED2PIN);
+#endif
+	
+}
+
+void auxledoff( uint8_t val )
+{
+#if ( AUX_LED_NUMBER > 0 )
+if ( val&1) GPIO_ResetBits( AUX_LED1PORT, AUX_LED1PIN);
+#endif
+#if ( AUX_LED_NUMBER > 1 )
+if ( val&2) GPIO_ResetBits( AUX_LED2PORT, AUX_LED2PIN);	
+#endif
 }
 
 void ledflash( uint32_t period , int duty )
 {
-	if ( gettime() % period > (period*duty)/16 )
+#if ( LED_NUMBER > 0 )	
+	if ( gettime() % period > (period*duty)>>4 )
 	{
 		ledon(LEDALL);
 	}
@@ -57,8 +95,21 @@ void ledflash( uint32_t period , int duty )
 	{
 		ledoff(LEDALL);
 	}
-	
-	
+#endif	
+}
+
+void auxledflash( uint32_t period , int duty )
+{
+#if ( AUX_LED_NUMBER > 0)
+	if ( gettime() % period > (period*duty)>>4 )
+	{
+		auxledon(LEDALL);
+	}
+	else
+	{
+		auxledoff(LEDALL);
+	}
+#endif	
 }
 
 

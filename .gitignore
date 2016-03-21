@@ -1,4 +1,5 @@
 output/
+Objects/
 
 *.dep
 *.bak

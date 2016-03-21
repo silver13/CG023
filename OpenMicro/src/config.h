@@ -4,9 +4,15 @@
 // pids in pid.c
 
 // rate in deg/sec
-// for low rates
-#define MAX_RATE 180.0
-#define MAX_RATEYAW 180.0
+// for acro mode
+#define MAX_RATE 360.0
+#define MAX_RATEYAW 360.0
+
+// max angle for level mode
+#define MAX_ANGLE_HI 35.0f
+
+// max rate used by level pid for controlling the quad
+#define LEVEL_MAX_RATE_HI 360.0f
 
 // disable inbuilt expo functions
 #define DISABLE_EXPO
@@ -46,7 +52,7 @@
 // increase if battery low comes on at max throttle
 // decrease if battery low warning goes away at high throttle
 // in volts
-#define VDROP_FACTOR 0.65
+#define VDROP_FACTOR 0.70
 
 // voltage hysteresys
 // in volts
@@ -62,7 +68,6 @@
 #define GYRO_LOW_PASS_FILTER 3
 
 
-// to do
 
 // software gyro lpf ( iir )
 // set only one below
@@ -74,8 +79,12 @@
 //#define SOFT_LPF_4TH_088HZ
 //#define SOFT_LPF_4TH_160HZ
 //#define SOFT_LPF_4TH_250HZ
-//#define SOFT_LPF_NONE
+#define SOFT_LPF_NONE
 
+
+// this works only on newer boards (non mpu-6050)
+// on older boards the hw gyro setting controls the acc as well
+#define ACC_LOW_PASS_FILTER 5
 
 
 // channel for headless mode switch
@@ -87,24 +96,11 @@
 // 0 - headless, 
 // 1 , 2 , 3 - video , still ,led
 
-// 4 - on always
-// 5 - off always
+// 4 - on always ( all protocols)
+// 5 - off always ( all protocols)
 #define HEADLESSMODE 5
 
-// channel for rates switch
-
-// channel for headless mode switch
-// H8 protocol channels
-// 0 - flip, 1 - expert, 2 - headfree, 3 - headingreturn
-
-// cg023 protocol chanels
-// 0 - headless, 
-// 1 , 2 , 3 - video , still ,led
-
-// 4 - on always
-// 5 - off always
-#define RATES 5
-
+#define LEVELMODE 2
 
 
 // enable motors if pitch / roll controls off center (at zero throttle)
@@ -135,10 +131,12 @@
 // debug / other things
 // this should not be usually changed
 
+//#define ACRO_ONLY
+
 // Radio protocol selection
 
-#define RX_CG023_PROTOCOL
-//#define RX_BAYANG_PROTOCOL
+//#define RX_CG023_PROTOCOL
+#define RX_BAYANG_PROTOCOL
 
 // mode 1 to mode 3 conversion
 // cg023 protocol
@@ -146,6 +144,8 @@
 
 
 // do not change hardware pins below
+
+#define LED_NUMBER 4
 
 #define LED1PIN GPIO_Pin_4
 #define LED1PORT GPIOA
@@ -158,6 +158,16 @@
 
 #define LED4PIN GPIO_Pin_0
 #define LED4PORT GPIOB
+
+// aux leds
+
+#define AUX_LED_NUMBER 1
+
+#define AUX_LED1PIN GPIO_Pin_2
+#define AUX_LED1PORT GPIOB
+
+#define AUX_LED2PIN GPIO_Pin_x
+#define AUX_LED2PORT GPIOx
 
 
 

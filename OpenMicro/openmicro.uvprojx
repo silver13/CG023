@@ -489,6 +489,26 @@
               <FileType>5</FileType>
               <FilePath>.\src\config.h</FilePath>
             </File>
+            <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>filter.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\filter.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>motorcurve.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\motorcurve.c</FilePath>
+            </File>
+            <File>
+              <FileName>angle_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\angle_pid.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

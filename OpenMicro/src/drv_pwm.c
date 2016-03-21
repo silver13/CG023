@@ -7,12 +7,17 @@ void init_timer( TIM_TypeDef* TIMx , int period);
 
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-#define PWMTOP 2999
+// 16K
+//#define PWMTOP 2999
+
+// 32K not working
+//#define PWMTOP 1499
+
+// 8K
+#define PWMTOP 5999
 
 void pwm_init(void)
 {
-
-
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
   
@@ -39,9 +44,9 @@ void pwm_init(void)
 	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7 , ENABLE);
 
 
-	init_timer( TIM2 , 2999);
+	init_timer( TIM2 , PWMTOP);
 	
-	init_timer( TIM1 , 2999);
+	init_timer( TIM1 , PWMTOP);
 
 
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
