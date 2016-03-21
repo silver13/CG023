@@ -135,8 +135,8 @@
 
 // Radio protocol selection
 
-//#define RX_CG023_PROTOCOL
-#define RX_BAYANG_PROTOCOL
+#define RX_CG023_PROTOCOL
+//#define RX_BAYANG_PROTOCOL
 
 // mode 1 to mode 3 conversion
 // cg023 protocol
