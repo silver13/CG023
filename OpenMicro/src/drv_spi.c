@@ -11,25 +11,35 @@ void spi_init(void)
 	
 		GPIO_InitTypeDef  GPIO_InitStructure;
 	
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_5|GPIO_Pin_4;
+  GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN|GPIO_Pin_5|GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+	GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN;
+	GPIO_Init(SPI_MOSI_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = SPI_CLK_PIN;
+	GPIO_Init(SPI_CLK_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = SPI_SS_PIN;
+	GPIO_Init(SPI_SS_PORT, &GPIO_InitStructure);
+	
+	//miso should be input by default
 	
 	spi_csoff();
 }
 
 
-#define gpioset( port , pin) port->BSRR = (0x0001 << pin)
-#define gpioreset( port , pin) port->BRR = (0x0001 << pin)
+#define gpioset( port , pin) port->BSRR = pin
+#define gpioreset( port , pin) port->BRR = pin
 
-#define MOSIHIGH gpioset( GPIOB, 3)
-#define MOSILOW gpioreset( GPIOB, 3);
-#define SCKHIGH gpioset( GPIOB, 4);
-#define SCKLOW gpioreset( GPIOB, 4);
+#define MOSIHIGH gpioset( SPI_MOSI_PORT, SPI_MOSI_PIN)
+#define MOSILOW gpioreset( SPI_MOSI_PORT, SPI_MOSI_PIN);
+#define SCKHIGH gpioset( SPI_CLK_PORT, SPI_CLK_PIN);
+#define SCKLOW gpioreset( SPI_CLK_PORT, SPI_CLK_PIN);
 
 #define READMISO (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15) )
 
@@ -40,15 +50,11 @@ void spi_init(void)
 
 void spi_cson( )
 {
-	//GPIO_WriteBit(GPIOB, GPIO_PIN_5, Bit_RESET);
-	//gpioreset( GPIOA , 15 );
 	SPI_SS_PORT->BRR = SPI_SS_PIN;
 }
 
 void spi_csoff( )
 {
-	//gpioset( GPIOB, 5);
-	//gpioset( GPIOA , 15 );
 	SPI_SS_PORT->BSRR = SPI_SS_PIN;
 }
 

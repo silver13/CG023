@@ -21,7 +21,7 @@ int xn_readreg( int reg)
 	reg = reg&0x0000001F;
 	spi_cson();
 	spi_sendrecvbyte( reg);
-	int val =spi_sendrecvbyte( 255);
+	int val =spi_sendzerorecvbyte();
 	spi_csoff();
 	return val;
 }
@@ -52,7 +52,7 @@ void xn_readpayload( int *data , int size )
 	spi_sendrecvbyte( B01100001 ); // read rx payload
 	while(index<size)
 	{
-	data[index]=	spi_sendrecvbyte( 255 );
+	data[index]=	spi_sendzerorecvbyte();
 	index++;
 	}
 	spi_csoff();

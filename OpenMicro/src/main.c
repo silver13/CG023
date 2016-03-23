@@ -63,7 +63,9 @@ unsigned int lastlooptime;
 int lowbatt = 0;	
 int lowbatt2 = 0;
 
-float battdebug;
+//float battdebug;
+float vref = 1.0;
+float startvref;
 
 #ifdef DEBUG
 static float totaltime = 0;
@@ -80,6 +82,7 @@ int main(void)
 	
   gpio_init();
 
+	
 	//i2c_init();	
 	
   softi2c_init();
@@ -114,17 +117,27 @@ delay(100000);
 	adc_init();
 	
 	rx_init();
+
+
+if ( RCC->CSR & 0x80000000 )
+{
+	// low power reset flag
+	failloop(3);
+}
+
 	
 int count = 0;
 	
 while ( count < 64 )
 {
 	vbattfilt += adc_read(3);
+	startvref += adc_read(1);
 	delay(1000);
 	count++;
 }
 
  vbattfilt = vbattfilt/64;	
+ startvref = startvref/64;
 
 #ifdef SERIAL	
 		printf( "Vbatt %2.2f \n", vbattfilt );
@@ -142,8 +155,10 @@ if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 
 
 	gyro_cal();
-
+		
+#ifndef ACRO_ONLY
 	imu_init();
+
 
 // read accelerometer calibration values from option bytes ( 2* 8bit)
 extern float accelcal[3];
@@ -152,6 +167,7 @@ extern int readdata( int datanumber);
  accelcal[0] = readdata( OB->DATA0 ) - 127;
  accelcal[1] = readdata( OB->DATA1 ) - 127;
 
+#endif
 
 
 extern unsigned int liberror;
@@ -190,7 +206,7 @@ static float timefilt;
 		looptime = looptime * 1e-6f;
 		if ( looptime > 0.02f ) // max loop 20ms
 		{
-			failloop( 3);	
+			failloop( 6);	
 			//endless loop			
 		}
 	
@@ -224,6 +240,11 @@ static float timefilt;
 		// average of all 4 motor thrusts
 		// should be proportional with battery current			
 		extern float thrsum; // from control.c
+		
+		//vref = startvref / adc_read(1) ;
+		
+		lpf ( &vref, startvref / adc_read(1) , 0.9968f );
+		
 		// filter motorpwm so it has the same delay as the filtered voltage
 		// ( or they can use a single filter)		
 		lpf ( &thrfilt , thrsum , 0.9968f);	// 0.5 sec at 1.6ms loop time	
@@ -233,7 +254,7 @@ static float timefilt;
 		if ( lowbatt ) hyst = HYST;
 		else hyst = 0.0f;
 
-		float batt_compensated = vbattfilt + (float) VDROP_FACTOR * thrfilt;
+		float batt_compensated = vbattfilt*vref + (float) VDROP_FACTOR * thrfilt;
 
 //		battdebug = vbattfilt + (float) VDROP_FACTOR * thrfilt ;
 		
@@ -247,32 +268,30 @@ static float timefilt;
 		if ( lowbatt2 ) hyst2 = HYST;
 		else hyst2 = 0.0f;
 		
-		if ( batt_compensated < ( (float)VBATTLOW + hyst2 - 0.3f ) ) lowbatt2 = 1;
+		if ( batt_compensated < ( (float)VBATTLOW + hyst2 - 0.2f ) ) lowbatt2 = 1;
 		else lowbatt2 = 0;
 		
 #endif		
-// led flash logic		
+#if ( LED_NUMBER > 0)
+// led flash logic	
+if ( lowbatt )
+	ledflash ( 500000 , 8);
+else
+{
 		if ( rxmode == RXMODE_BIND)
 		{// bind mode
-		ledflash ( 100000+ 500000*(lowbatt) , 12);
+		ledflash ( 100000, 12);
 		}else
 		{// non bind
-		if ( failsafe) 
-		{
-		if ( lowbatt )
-				ledflash ( 500000 , 8);
-		else
-				ledflash ( 500000, 15);	
-			
-		}
-			else
-			{					
-			if ( lowbatt) 
-				 ledflash ( 500000 , 8);	
+			if ( failsafe) 
+				{
+					ledflash ( 500000, 15);			
+				}
 			else ledon( 255);	
-			} 		
-		}
-
+		} 		
+		
+	}
+#endif
 #if ( AUX_LED_NUMBER > 0)		
 //AUX led flash logic		
 		if ( rxmode == RXMODE_BIND)
@@ -296,11 +315,12 @@ while ( (gettime() - time) < 1000 ) delay(10);
 }
 
 // 2 - low battery at powerup - if enabled by config
-// 3 - loop time issue
+
 // 4 - Gyro not found
 // 5 - clock , intterrupts , systick
 // 7 - i2c error 
 // 8 - i2c error main loop
+// 6 - loop time issue
 
 void failloop( int val)
 {

@@ -25,11 +25,6 @@
 #define EXPO_YAW 0.0
 
 
-// multiplier for high rates
-// devo/module uses high rates only
-#define HIRATEMULTI 2.0
-#define HIRATEMULTIYAW 2.0
-
 
 // failsafe time in uS
 #define FAILSAFETIME 1000000  // one second
@@ -52,11 +47,13 @@
 // increase if battery low comes on at max throttle
 // decrease if battery low warning goes away at high throttle
 // in volts
-#define VDROP_FACTOR 0.70
+#define VDROP_FACTOR 0.8
 
 // voltage hysteresys
 // in volts
 #define HYST 0.10
+
+
 
 
 // Gyro LPF filter frequency
@@ -66,7 +63,6 @@
 // gyro filter 3 = 42hz
 // 4 , 5, 6
 #define GYRO_LOW_PASS_FILTER 3
-
 
 
 // software gyro lpf ( iir )
@@ -103,12 +99,6 @@
 #define LEVELMODE 2
 
 
-// enable motors if pitch / roll controls off center (at zero throttle)
-// possible values: 0 / 1
-#define ENABLESTIX 0
-
-
-
 
 // enable motor filter
 // hanning 3 sample fir filter
@@ -126,15 +116,10 @@
 //#define PWM_32KHZ
 
 
-
-//##################################
-// debug / other things
-// this should not be usually changed
-
 //#define ACRO_ONLY
 
 // Radio protocol selection
-
+// select only one
 #define RX_CG023_PROTOCOL
 //#define RX_BAYANG_PROTOCOL
 
@@ -142,8 +127,15 @@
 // cg023 protocol
 //#define RX_CG023_SWAP_YAWROLL
 
-
+// HARDWARE PINS SETTING
+//
 // do not change hardware pins below
+// make sure you don't set SWDIO or SWDCLK pins (programming pins)
+// if you do, you lose board programmability without reset pin
+//
+// example: pin "PB2"
+// pin: GPIO_Pin_2
+// port: GPIOB
 
 #define LED_NUMBER 4
 
@@ -169,7 +161,8 @@
 #define AUX_LED2PIN GPIO_Pin_x
 #define AUX_LED2PORT GPIOx
 
-
+// softi2c pins definitons:
+// sda - out/in , sck - out
 
 #define SOFTI2C_SDAPIN GPIO_Pin_7
 #define SOFTI2C_SDAPORT GPIOB
@@ -177,24 +170,32 @@
 #define SOFTI2C_SCLPIN GPIO_Pin_6
 #define SOFTI2C_SCLPORT GPIOB
 
+// Analog battery input pin and adc channel
 
 #define BATTERYPIN GPIO_Pin_7
 #define BATTERYPORT GPIOA
 #define BATTERY_ADC_CHANNEL ADC_Channel_6
 
-// spi defines not finished
-#define SPI_MOSI_PIN
-#define SPI_MOSI_PORT
+
+// SPI PINS DEFINITONS ( for radio ic )
+// MOSI , CLK , SS - outputs , MISO input
+
+#define SPI_MOSI_PIN GPIO_Pin_3
+#define SPI_MOSI_PORT GPIOB
 
 #define SPI_MISO_PIN GPIO_Pin_15
 #define SPI_MISO_PORT GPIOA
 
-#define SPI_CLK_PIN
+#define SPI_CLK_PIN GPIO_Pin_4
+#define SPI_CLK_PORT GPIOB
 
 #define SPI_SS_PIN GPIO_Pin_5
 #define SPI_SS_PORT GPIOB
 
 
+//##################################
+// debug / other things
+// this should not be usually changed
 
 
 // disable motors for testing
@@ -209,12 +210,15 @@
 //#define INVERT_YAW_PID
 
 // debug things
- #define DEBUG
+// #define DEBUG
 
 // disable the check for known gyro that causes the 4 times flash
 // #define DISABLE_GYRO_CHECK
 
 
+// enable motors if pitch / roll controls off center (at zero throttle)
+// possible values: 0 / 1
+#define ENABLESTIX 0
 
 
 #pragma diag_warning 1035 , 177 , 4017

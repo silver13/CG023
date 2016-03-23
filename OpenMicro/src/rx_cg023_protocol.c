@@ -36,49 +36,25 @@ THE SOFTWARE.
 #include "rx_bayang.h"
 #include "util.h"
 
-
+#define CG023_LOWRATE_MULTIPLIER 0.2
+#define CG023_MIDRATE_MULTIPLIER  0.6
 
 #ifdef RX_CG023_PROTOCOL
 
 void rx_init()
 {
-	// baseband BB_CAL registers
-	/*
-	spi_cson();
-	spi_sendbyte(0x3f); 
-	spi_sendbyte(0x4c);
-	spi_sendbyte(0x84);
-	spi_sendbyte(0x6F);
-	spi_sendbyte(0x9c);
-	spi_sendbyte(0x20);
-	spi_csoff();
-	
-	delay(1000);
-	// RF_CAL registers
-	spi_cson();
-  spi_sendbyte(0x3e); 
-	spi_sendbyte(0xc9);
-	spi_sendbyte(0x9a);
-	spi_sendbyte(0x80);
-	spi_sendbyte(0x61);
-	spi_sendbyte(0xbb);
-	spi_sendbyte(0xab);
-	spi_sendbyte(0x9c);
-	spi_csoff();
-	
-	delay(1000);
-	// DEMOD_CAL registers
-	spi_cson();
-  spi_sendbyte(0x39); 
-	spi_sendbyte(0x0b);
-	spi_sendbyte(0xdf);
-	spi_sendbyte(0xc4);
-	spi_sendbyte(0xa7);
-	spi_sendbyte(0x03);
-	spi_csoff();
-	delay(1000);
-*/
-	
+
+uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
+
+spi_cson();
+for ( int i = 0 ; i < sizeof(bbcal) ; i++)
+{
+	spi_sendbyte( bbcal[i]);
+}
+spi_csoff();
+delay(1000);
+
+/*
 spi_cson();
 spi_sendbyte(0x3f);
 spi_sendbyte(0x4c);
@@ -88,6 +64,20 @@ spi_sendbyte(0x9c);
 spi_sendbyte(0x20);
 spi_csoff();
 delay(1000);
+*/
+
+uint8_t rfcal[8] = { 0x3e , 0xc9 , 220 , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+
+
+spi_cson();
+for ( int i = 0 ; i < sizeof(rfcal) ; i++)
+{
+	spi_sendbyte( rfcal[i]);
+}
+spi_csoff();
+delay(1000);
+
+/*
 // RF_CAL registers
 delay(1000);
 spi_cson();
@@ -101,7 +91,20 @@ spi_sendbyte(0xab);
 spi_sendbyte(0x9c);
 spi_csoff();
 delay(1000);
+*/
+
+uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
+
+spi_cson();
+for ( int i = 0 ; i < sizeof(demodcal) ; i++)
+{
+	spi_sendbyte( demodcal[i]);
+}
+spi_csoff();
+delay(1000);
+
 // DEMOD_CAL registers
+/*
 spi_cson();
 spi_sendbyte(0x39);
 spi_sendbyte(0x0b);
@@ -111,7 +114,7 @@ spi_sendbyte(0xa7);
 spi_sendbyte(0x03);
 spi_csoff();
 delay(1000);
-
+*/
 int rxaddress[5] =  {0x26, 0xA8, 0x67, 0x35, 0xCC};
 xn_writerxaddress( rxaddress);
 
@@ -127,13 +130,10 @@ xn_writerxaddress( rxaddress);
 	
 }
 
-int statusdebug;
-
 static char checkpacket()
 {
 	spi_cson();
 	int status = spi_sendzerorecvbyte();
-	statusdebug = status;
 	spi_csoff();
 	if( (status & B00001110) != B00001110 )
 	{
@@ -146,25 +146,23 @@ static char checkpacket()
 
 
 
-
-float rx[7];
+float rx[4];
 // the last 2 are always on and off respectively
 char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 1 , 0};
 char lastaux[AUXNUMBER];
 char auxchange[AUXNUMBER];
 int rxdata[15];
 
-int datachan;
 int txid[2];
 int rxmode = 0;
 
-#define CG023_FLIP  0x01 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
-#define CG023_EASY  0x02 // left shoulder (headless mode)
-#define CG023_VIDEO  0x04 // video camera 
-#define CG023_STILL  0x08 // still camera 
-#define CG023_LED_OFF  0x10
-#define CG023_RATE_60  0x20
-#define CG023_RATE_100 0x40
+#define CG023_FLIP_MASK  0x01 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
+#define CG023_EASY_MASK  0x02 // left shoulder (headless mode)
+#define CG023_VIDEO_MASK  0x04 // video camera 
+#define CG023_STILL_MASK  0x08 // still camera 
+#define CG023_LED_OFF_MASK  0x10
+#define CG023_RATE_60_MASK  0x20
+#define CG023_RATE_100_MASK 0x40
 
 int decode_cg023( void)
 {
@@ -174,7 +172,7 @@ int decode_cg023( void)
 		if ( rxdata[3] != 0 || rxdata[4] != 0  ) return 0;
 		if ( rxdata[1] != txid[0] || rxdata[2] != txid[1] ) return 0;
 		 
-		 
+// throttle		 
 		rx[3] = 0.00390625f * rxdata[5]; 
 		 
 #ifndef RX_CG023_SWAP_YAWROLL		 
@@ -208,23 +206,23 @@ int decode_cg023( void)
 		// switch flags
 		
 
-		aux[0] = (rxdata[13] &  CG023_EASY)?1:0;
-		aux[1] = (rxdata[13] &  CG023_VIDEO)?1:0;
-		aux[2] = (rxdata[13] &  CG023_STILL)?1:0;
-		aux[3] = (rxdata[13] &  CG023_LED_OFF)?1:0;
+		aux[0] = (rxdata[13] &  CG023_EASY_MASK)?1:0;
+		aux[1] = (rxdata[13] &  CG023_VIDEO_MASK)?1:0;
+		aux[2] = (rxdata[13] &  CG023_STILL_MASK)?1:0;
+		aux[3] = (rxdata[13] &  CG023_LED_OFF_MASK)?1:0;
 
 		float ratemulti = 1.0;
-		if ( rxdata[13] & CG023_RATE_100 )
+		if ( rxdata[13] & CG023_RATE_100_MASK )
 		{
 				goto skip;
 		}
-		else if ( rxdata[13] & CG023_RATE_60 )
+		else if ( rxdata[13] & CG023_RATE_60_MASK )
 		{
-				ratemulti = 0.6;
+				ratemulti = CG023_MIDRATE_MULTIPLIER;
 		}
 		else
 		{
-				ratemulti = 0.2;
+				ratemulti = CG023_LOWRATE_MULTIPLIER;
 		}
 
 		for ( int i = 0 ; i <= 2 ; i++)
@@ -250,9 +248,8 @@ int decode_cg023( void)
 }
 
 
-unsigned long lastrxtime;
-unsigned long failsafetime;
-unsigned long secondtimer;
+//
+static unsigned long failsafetime;
 
 int failsafe = 0;
 
@@ -264,34 +261,32 @@ struct rxdebug
 	{
 	unsigned long packettime;
 	int failcount;
-	int packetrx;
 	int packetpersecond;
 	} 
 	rxdebug;
+int packetrx;
+unsigned long lastrxtime;
+unsigned long secondtimer;
 #warning "RX debug enabled"
 #endif
 
 
 void checkrx( void)
 {
-	int packetreceived =	checkpacket();
-		if ( packetreceived ) 
+		if ( checkpacket() ) 
 		{ 
+			xn_readpayload( rxdata , 15);
 			if ( rxmode == RXMODE_BIND)
-			{	// rx startup , bind mode
-				xn_readpayload( rxdata , 15);
-		
+			{	// rx startup , bind mode		
 				if ( rxdata[0] == 0xAA ) 
 				{// bind packet received
-					
-					datachan = (uint8_t)(rxdata[1] - 0x7D);
-					
+		
 					txid[0] = rxdata[1];
 					txid[1] = rxdata[2];
 					
 					rxmode = RXMODE_NORMAL;				
 
-				  xn_writereg(0x25, datachan ); // Set channel frequency	
+				  xn_writereg(0x25, (uint8_t)(rxdata[1] - 0x7D) ); // Set channel frequency	
 				
 					#ifdef SERIAL	
 					printf( " BIND \n");
@@ -302,21 +297,14 @@ void checkrx( void)
 			{	// normal mode	
 				#ifdef RXDEBUG	
 				rxdebug.packettime = gettime() - lastrxtime;
+				lastrxtime = gettime();
 				#endif
-		    
-				
-				lastrxtime = gettime();	
-				
-				xn_readpayload( rxdata , 15);
 				
 				int pass = decode_cg023();
 			 
-				if (pass)
-				{ 
-					#ifdef RXDEBUG	
-					rxdebug.packetrx++;
-					#endif
-					failsafetime = gettime();	; 
+				if ( pass )
+				{ 	
+					failsafetime = gettime(); 
 					failsafe = 0;
 					
 				}	
@@ -345,8 +333,8 @@ void checkrx( void)
 		// packets per second counter
 			if ( time - secondtimer  > 1000000)
 			{
-				rxdebug.packetpersecond = rxdebug.packetrx;
-				rxdebug.packetrx = 0;
+				rxdebug.packetpersecond = packetrx;
+				packetrx = 0;
 				secondtimer = gettime();
 			}
 #endif

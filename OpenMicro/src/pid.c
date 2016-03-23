@@ -49,6 +49,9 @@ float pidki[PIDNUMBER] = { GAIN*10e-1  , GAIN*10e-1 , 5e-1 };
 // Kd											ROLL       PITCH     YAW
 float pidkd[PIDNUMBER] = { GAIN*11e-1 , GAIN*11e-1  , 5.0e-1 };	
 
+// "setpoint weighting" 0.0 - 1.0 where 0.0 = normal pid
+float b[3] = { 0.3 , 0.3 , 0.0};
+
 /*
 float pidkp[PIDNUMBER] = { 7.0e-2 , 7.0e-2 , 5e-1 };
 float pidki[PIDNUMBER] = { 2e-1 , 2e-1 , 5e-1 };
@@ -62,11 +65,9 @@ const float outlimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };
 const float integrallimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };
 
 
-// this Kp2 is used for a I-PD controller instead of the above  PI-D
-// set the top Kp to zero or use a mix of the 2
-// there is no need to use this
-float pidkp2[PIDNUMBER] = { 0.0e-2 , 0.0e-2 ,  0e-2 };	
 
+
+// non changable things below
 float ierror[PIDNUMBER] = { 0 , 0 , 0};	
 
 float pidoutput[PIDNUMBER];
@@ -146,10 +147,10 @@ float pid(int x )
 				limitf( &ierror[x] , integrallimit[x] );
 				
 				// P term
-          pidoutput[x] = error[x] * pidkp[x] ;
-									
-				// P2 (direct feedback) term	
-				  pidoutput[x] = pidoutput[x] -   gyro[x] *pidkp2[x];
+          pidoutput[x] = error[x] * ( 1 - b[x])* pidkp[x] ;
+				
+				// b
+          pidoutput[x] +=  - ( b[x])* pidkp[x] * gyro[x]  ;
 				
 				// I term	
 					pidoutput[x] += ierror[x];

@@ -224,6 +224,26 @@
           <WinNumber>1</WinNumber>
           <ItemText>battdebug</ItemText>
         </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adcarray,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>(int *) 0x1FFF F7BA </ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>vref</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>startvref</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
