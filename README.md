@@ -13,6 +13,8 @@ Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a le
 
 ###History:
 
+####23.03.16
+* some optimizations, etc
 
 ####20.03.16:
 * dual mode added
