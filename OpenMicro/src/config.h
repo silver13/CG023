@@ -207,6 +207,8 @@
 #define SPI_SS_PIN GPIO_Pin_5
 #define SPI_SS_PORT GPIOB
 
+// pwm pins setting
+//#define DISABLE_PWM_PINS
 
 //##################################
 // debug / other things

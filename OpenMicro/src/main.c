@@ -235,7 +235,7 @@ static float timefilt;
 		#endif
 
 		control();
-TS();
+
 // battery low logic
 		
 		float hyst;
@@ -308,7 +308,7 @@ else
 			else auxledoff( 255);						
 		}
 #endif
-TE();		
+	
 // the delay is required or it becomes endless loop ( truncation in time routine)
 while ( (gettime() - time) < 1000 ) delay(10); 		
 

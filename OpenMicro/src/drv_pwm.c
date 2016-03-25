@@ -65,6 +65,10 @@ TIM_OCInitTypeDef  TIM_OCInitStructure;
 #endif
 #endif
 
+
+
+
+#ifndef DISABLE_PWM_PINS
 void pwm_init(void)
 {
 	
@@ -200,7 +204,19 @@ void pwm_set( uint8_t number , float pwm)
 	}
 	
 }
+#else
+// pwm pins disabled
+void pwm_init(void)
+{
+	
+}
 
+void pwm_set( uint8_t number , float pwm)
+{
+	
+}
+
+#endif
 
 
 
