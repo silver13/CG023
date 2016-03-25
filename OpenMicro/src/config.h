@@ -105,7 +105,7 @@
 #define MOTOR_FILTER
 
 
-// to do
+// to do ( currently 8K)
 
 // pwm frequency for motor control
 // a higher frequency makes the motors more linear
@@ -115,6 +115,9 @@
 //#define PWM_24KHZ
 //#define PWM_32KHZ
 
+// throttle angle compensation in level mode
+// comment out to disable
+//#define AUTO_THROTTLE
 
 //#define ACRO_ONLY
 
@@ -127,6 +130,10 @@
 // cg023 protocol
 //#define RX_CG023_SWAP_YAWROLL
 
+// Flash saving features
+#define DISABLE_HEADLESS
+
+
 // HARDWARE PINS SETTING
 //
 // do not change hardware pins below
@@ -136,6 +143,8 @@
 // example: pin "PB2"
 // pin: GPIO_Pin_2
 // port: GPIOB
+
+// to disable led pins set number to zero
 
 #define LED_NUMBER 4
 
@@ -164,6 +173,9 @@
 // softi2c pins definitons:
 // sda - out/in , sck - out
 
+// disable softi2c pins 
+// #define DISABLE_SOFTI2C_PINS
+
 #define SOFTI2C_SDAPIN GPIO_Pin_7
 #define SOFTI2C_SDAPORT GPIOB
 
@@ -179,6 +191,9 @@
 
 // SPI PINS DEFINITONS ( for radio ic )
 // MOSI , CLK , SS - outputs , MISO input
+
+//disable pins so they don't interfere with other pins 
+//#define DISABLE_SPI_PINS
 
 #define SPI_MOSI_PIN GPIO_Pin_3
 #define SPI_MOSI_PORT GPIOB
@@ -224,7 +239,7 @@
 #pragma diag_warning 1035 , 177 , 4017
 #pragma diag_error 260
 
-
+//--fpmode=fast
 
 
 

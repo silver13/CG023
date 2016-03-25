@@ -5,18 +5,18 @@
 #include "binary.h"
 #include "config.h"
 
+#ifndef DISABLE_SPI_PINS	
+
 void spi_init(void)
 {    
 	// spi port inits
-	
+
 		GPIO_InitTypeDef  GPIO_InitStructure;
 	
-  GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN|GPIO_Pin_5|GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN;
 	GPIO_Init(SPI_MOSI_PORT, &GPIO_InitStructure);
@@ -30,6 +30,7 @@ void spi_init(void)
 	//miso should be input by default
 	
 	spi_csoff();
+
 }
 
 
@@ -152,9 +153,24 @@ int spi_sendrecvbyte2( int data)
 
 #pragma pop
 
+#else
+// spi disabled (for pin setting)
+
+void spi_init(void)
+  {}
+void spi_cson(void)
+	{}
+void spi_csoff(void)
+	{}
+void spi_sendbyte( int x)
+	{ }
+int spi_sendrecvbyte( int x)
+	{ return 255;}
+int spi_sendzerorecvbyte( void )
+	{ return 255;}
 
 
-
+#endif
 
 
 

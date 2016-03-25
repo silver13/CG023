@@ -329,7 +329,7 @@
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--fpmode=fast</MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F031</Define>
               <Undefine></Undefine>
               <IncludePath>.\src ; ..\; ..\Libraries\CMSIS\Device\ST\STM32F0xx\Include; ..\Libraries\CMSIS\Include; ..\Libraries\STM32F0xx_StdPeriph_Driver\inc;  ..\Utilities\</IncludePath>

@@ -95,7 +95,7 @@ void control( void)
 		}
 		else timecommand = 0;				
 	}
-
+#ifndef DISABLE_HEADLESS 
 // yaw angle for headless mode	
 	yawangle = yawangle + gyro[YAW]*looptime;
 	if ( auxchange[HEADLESSMODE] )
@@ -109,7 +109,7 @@ void control( void)
 		rx[ROLL] = rx[ROLL] * cosf( yawangle) - rx[PITCH] * sinf(yawangle );
 		rx[PITCH] = rx[PITCH] * cosf( yawangle) + temp * sinf(yawangle ) ;
 	}
-	
+#endif	
 pid_precalc();	
 
 #ifndef ACRO_ONLY
@@ -155,10 +155,12 @@ pid_precalc();
 	pid(YAW);
 #endif
 
-	
+float	throttle;
+
 // map throttle so under 10% it is zero	
-float	throttle = mapf(rx[3], 0 , 1 , -0.1 , 1 );
-if ( throttle < 0   ) throttle = 0;
+if ( rx[3] < 0.1f ) throttle = 0;
+else throttle = (rx[3] - 0.1f)*1.11111111f;
+
 
 // turn motors off if throttle is off and pitch / roll sticks are centered
 	if ( failsafe || (throttle < 0.001f && (!ENABLESTIX||  (fabs(rx[ROLL]) < 0.5f && fabs(rx[PITCH]) < 0.5f ) ) ) ) 
@@ -167,21 +169,40 @@ if ( throttle < 0   ) throttle = 0;
 		for ( int i = 0 ; i <= 3 ; i++)
 		{
 			pwm_set( i , 0 );	
+			#ifdef MOTOR_FILTER	
+			// reset the motor filter
+			motorfilter( 0 , i);
+			#endif
 		}	
 		onground = 1;
 		thrsum = 0;
-		#ifdef MOTOR_FILTER		
-		// reset the motor filter
-		for ( int i = 0 ; i <= 3 ; i++)
-					{		
-					motorfilter( 0 , i);
-					}	
-		#endif
+		
 	}
 	else
 	{
 		onground = 0;
 		float mix[4];	
+		
+		
+		  // throttle angle compensation
+#ifdef AUTO_THROTTLE
+		  if (aux[LEVELMODE])
+		    {
+			    float autothrottle = fastcos(attitude[0] * DEGTORAD) * fastcos(attitude[1] * DEGTORAD);
+			    float old_throttle = throttle;
+			    if (autothrottle <= 0.5f)
+				    autothrottle = 0.5f;
+			    throttle = throttle / autothrottle;
+			    // limit to 90%
+			    if (old_throttle < 0.9f)
+				    if (throttle > 0.9f)
+					    throttle = 0.9f;
+
+			    if (throttle > 1.0f)
+				    throttle = 1.0f;
+
+		    }
+#endif
 		
 #ifdef INVERT_YAW_PID
 pidoutput[2] = -pidoutput[2];			
@@ -197,31 +218,23 @@ pidoutput[2] = -pidoutput[2];
 pidoutput[2] = -pidoutput[2];			
 #endif
 					
-		
-#ifdef MOTOR_FILTER		
-for ( int i = 0 ; i <= 3 ; i++)
-			{
-			mix[i] = motorfilter(  mix[i] , i);
-			}	
-#endif
-			
+
+thrsum = 0;			
 		for ( int i = 0 ; i <= 3 ; i++)
-		{
+		{			
+		#ifdef MOTOR_FILTER		
+		mix[i] = motorfilter(  mix[i] , i);
+		#endif
 		#ifndef NOMOTORS
 		pwm_set( i ,motormap( mix[i] ) );
 		#else
 		tempx[i] = motormap( mix[i] );
 		#endif
+		if ( mix[i] < 0 ) mix[i] = 0;
+		if ( mix[i] > 1 ) mix[i] = 1;
+		thrsum+= mix[i];
 		}	
 	
-		
-		thrsum = 0;
-		for ( int i = 0 ; i <= 3 ; i++)
-		{
-			if ( mix[i] < 0 ) mix[i] = 0;
-			if ( mix[i] > 1 ) mix[i] = 1;
-			thrsum+= mix[i];
-		}	
 		thrsum = thrsum / 4;
 		
 	}// end motors on

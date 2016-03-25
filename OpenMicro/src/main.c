@@ -221,18 +221,21 @@ static float timefilt;
 			failloop(8);
 			// endless loop
 		}
-		
+
 		checkrx();
-		
+
 		#ifdef ACRO_ONLY
 		gyro_read();
-		#else
+		#else		
 		sixaxis_read();
 		extern void imu_calc(void);
-		imu_calc();
-		#endif
-		control();
 		
+		imu_calc();
+		
+		#endif
+
+		control();
+TS();
 // battery low logic
 		
 		float hyst;
@@ -304,7 +307,8 @@ else
 				 auxledflash ( 250000 , 8);	
 			else auxledoff( 255);						
 		}
-#endif		
+#endif
+TE();		
 // the delay is required or it becomes endless loop ( truncation in time routine)
 while ( (gettime() - time) < 1000 ) delay(10); 		
 
