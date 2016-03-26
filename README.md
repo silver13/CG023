@@ -1,5 +1,5 @@
 # CG023
-**Firmware for CG023**
+##**Firmware for CG023**
 
 This is an alternate firmware for the Eachine CG023 quadcopter. It is a port of the Eachine H8 firmware, also by me ( silverxxx).
 
@@ -19,6 +19,10 @@ Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a le
  * the quadcopter rate ( in deg/sec) is no longer multiplied by 2, so it's the actual rate with devo.
  * linux version compiles above 16K, so it's not included.
  * acro only version can be compiled by enabling respective setting in config.h
+
+###Installation and Support
+Currently this port is covered by the H8 thread on rcgroups. Flashing is similar, except STM support is added using the pack installer.
+http://www.rcgroups.com/forums/showthread.php?t=2512604
 
 ###History:
 
