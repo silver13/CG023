@@ -5,6 +5,9 @@ This is an alternate firmware for the Eachine CG023 quadcopter. It is a port of 
 
 The quadcopter is based around the STM32F031 chip, Cortex M0 processor with 16K flash memory.
 
+###Compiling:
+Compile using MDK-ARM toolchain aka Keil uVision. A special version is available for stm32F0xx devices ( full free version ), but it's not necessary since the 32K limit of the free version is above the cpu's 16K. STM32 support may need to be installed using the "pack installer" 
+
 ###Radio protocol:
 Current options are stock cg023 transmitter or H8 mini transmitter / devo. I recommend using the H8 protocol with Devo tx, as the cg protocol only allows approx 7 bits accuracy. Protocol is by default stock CG023 protocol.
 
