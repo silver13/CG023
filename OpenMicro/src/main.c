@@ -60,12 +60,12 @@ void imu_init(void);
 float looptime;
 float vbattfilt = 0.0;
 unsigned int lastlooptime;
-int lowbatt = 0;	
-int lowbatt2 = 0;
+int lowbatt = 1;	
+int lowbatt2 = 1;
 
 //float battdebug;
-float vref = 1.0;
-float startvref;
+//float vref = 1.0;
+//float startvref;
 
 #ifdef DEBUG
 static float totaltime = 0;
@@ -131,13 +131,13 @@ int count = 0;
 while ( count < 64 )
 {
 	vbattfilt += adc_read(3);
-	startvref += adc_read(1);
+//	startvref += adc_read(1);
 	delay(1000);
 	count++;
 }
 
  vbattfilt = vbattfilt/64;	
- startvref = startvref/64;
+// startvref = startvref/64;
 
 #ifdef SERIAL	
 		printf( "Vbatt %2.2f \n", vbattfilt );
@@ -157,16 +157,15 @@ if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 	gyro_cal();
 		
 #ifndef ACRO_ONLY
+
 	imu_init();
-
-
+	
 // read accelerometer calibration values from option bytes ( 2* 8bit)
 extern float accelcal[3];
 extern int readdata( int datanumber);
 
  accelcal[0] = readdata( OB->DATA0 ) - 127;
  accelcal[1] = readdata( OB->DATA1 ) - 127;
-
 #endif
 
 
@@ -227,7 +226,9 @@ static float timefilt;
 		#ifdef ACRO_ONLY
 		gyro_read();
 		#else		
+		TS();
 		sixaxis_read();
+		TE();
 		extern void imu_calc(void);
 		
 		imu_calc();
@@ -246,7 +247,7 @@ static float timefilt;
 		
 		//vref = startvref / adc_read(1) ;
 		
-		lpf ( &vref, startvref / adc_read(1) , 0.9968f );
+	//	lpf ( &vref, startvref / adc_read(1) , 0.9968f );
 		
 		// filter motorpwm so it has the same delay as the filtered voltage
 		// ( or they can use a single filter)		
@@ -257,7 +258,7 @@ static float timefilt;
 		if ( lowbatt ) hyst = HYST;
 		else hyst = 0.0f;
 
-		float batt_compensated = vbattfilt*vref + (float) VDROP_FACTOR * thrfilt;
+		float batt_compensated = vbattfilt + (float) VDROP_FACTOR * thrfilt;
 
 //		battdebug = vbattfilt + (float) VDROP_FACTOR * thrfilt ;
 		

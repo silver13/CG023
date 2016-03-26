@@ -30,7 +30,10 @@
 #define CH_RTH 3
 
 
-
+#define CH1 0
+#define CH2 1
+#define CH3 2
+#define CH4 3
 
 
 

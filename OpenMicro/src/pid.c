@@ -39,6 +39,9 @@ THE SOFTWARE.
 
 #include "defines.h"
 
+#define YAW_DIFF_GAIN_POS 0.8
+#define YAW_DIFF_GAIN_NEG 1.0
+
 #define GAIN 0.8
 // Kp											ROLL       PITCH     YAW
 float pidkp[PIDNUMBER] = { GAIN*20.0e-2 , GAIN*20.0e-2  , 10e-1 }; 
@@ -178,7 +181,15 @@ float pid(int x )
 					lastratexx[x][1] = lastratexx[x][0];
 					lastratexx[x][0] = gyro[x];
 			  #endif
-				
+
+if( x == 2 ) 
+{
+	if ( pidoutput[x] > 0 )
+		pidoutput[x] *= (float) YAW_DIFF_GAIN_POS ;
+	else
+		pidoutput[x] *= (float) YAW_DIFF_GAIN_NEG ;
+}
+
 				  limitf(  &pidoutput[x] , outlimit[x]);
 
 				

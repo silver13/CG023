@@ -117,8 +117,9 @@
 
 // throttle angle compensation in level mode
 // comment out to disable
-//#define AUTO_THROTTLE
+#define AUTO_THROTTLE
 
+// build acro only firmware
 //#define ACRO_ONLY
 
 // Radio protocol selection
@@ -138,9 +139,9 @@
 //
 // do not change hardware pins below
 // make sure you don't set SWDIO or SWDCLK pins (programming pins)
-// if you do, you lose board programmability without reset pin
+// if you do, you lose board programmability without a reset pin
 //
-// example: pin "PB2"
+// example: pin "PB2" ( port b , pin 2 )
 // pin: GPIO_Pin_2
 // port: GPIOB
 
@@ -174,7 +175,7 @@
 // sda - out/in , sck - out
 
 // disable softi2c pins 
-// #define DISABLE_SOFTI2C_PINS
+//#define DISABLE_SOFTI2C_PINS
 
 #define SOFTI2C_SDAPIN GPIO_Pin_7
 #define SOFTI2C_SDAPORT GPIOB
@@ -207,8 +208,80 @@
 #define SPI_SS_PIN GPIO_Pin_5
 #define SPI_SS_PORT GPIOB
 
-// pwm pins setting
+
+// PWM PINS DEFINITIONS 
+// currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported
+
+
+// pwm pins disable
+// disable all pwm pins / function
 //#define DISABLE_PWM_PINS
+
+// pin initialization
+// enable the pins to be used here ( multiple pins ok)
+#define PWM_PA0
+#define PWM_PA1
+//#define PWM_PA2
+//#define PWM_PA3
+//#define PWM_PA5
+#define PWM_PA8
+#define PWM_PA9
+//#define PWM_PA10
+//#define PWM_PA11
+
+
+// Assingment of pin to motor
+// Assign one pin to one motor
+
+// back-left motor
+// motor 0 pin
+
+#define MOTOR0_PIN_PA0
+//#define MOTOR0_PIN_PA1
+//#define MOTOR0_PIN_PA2
+//#define MOTOR0_PIN_PA3
+//#define MOTOR0_PIN_PA5
+//#define MOTOR0_PIN_PA8
+//#define MOTOR0_PIN_PA9
+//#define MOTOR0_PIN_PA10
+//#define MOTOR0_PIN_PA11
+
+// front-left motor
+// motor 1 pin
+
+//#define MOTOR1_PIN_PA0
+#define MOTOR1_PIN_PA1
+//#define MOTOR1_PIN_PA2
+//#define MOTOR1_PIN_PA3
+//#define MOTOR1_PIN_PA8
+//#define MOTOR1_PIN_PA9
+//#define MOTOR1_PIN_PA10
+//#define MOTOR1_PIN_PA11
+
+// front-right motor
+// motor 2 pin
+
+//#define MOTOR2_PIN_PA0
+//#define MOTOR2_PIN_PA1
+//#define MOTOR2_PIN_PA2
+//#define MOTOR2_PIN_PA3
+#define MOTOR2_PIN_PA8
+//#define MOTOR2_PIN_PA9
+//#define MOTOR2_PIN_PA10
+//#define MOTOR2_PIN_PA11
+
+// back-right motor
+// motor 3 pin
+
+//#define MOTOR3_PIN_PA0
+//#define MOTOR3_PIN_PA1
+//#define MOTOR3_PIN_PA2
+//#define MOTOR3_PIN_PA3
+//#define MOTOR3_PIN_PA8
+#define MOTOR3_PIN_PA9
+//#define MOTOR3_PIN_PA10
+//#define MOTOR3_PIN_PA11
+
 
 //##################################
 // debug / other things

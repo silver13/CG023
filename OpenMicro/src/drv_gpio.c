@@ -4,19 +4,19 @@
 
 void gpio_init(void)
 {
-// clocks on to all ports		
-
-
-  GPIO_InitTypeDef  GPIO_InitStructure;
-
+// clocks on to all ports			
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB , ENABLE);
-  
+
+#if ( LED_NUMBER > 0|| AUX_LED_NUMBER > 0 )
+  GPIO_InitTypeDef  GPIO_InitStructure;
 
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
+#endif
+	
 #if ( LED_NUMBER > 0 )
   GPIO_InitStructure.GPIO_Pin = LED1PIN;	
   GPIO_Init(LED1PORT, &GPIO_InitStructure); 

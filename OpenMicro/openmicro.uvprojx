@@ -445,19 +445,9 @@
               <FilePath>.\src\control.c</FilePath>
             </File>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\led.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
-            </File>
-            <File>
-              <FileName>pid.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\pid.c</FilePath>
             </File>
             <File>
               <FileName>rx_cg023_protocol.c</FileName>
@@ -470,6 +460,11 @@
               <FilePath>.\src\rx_bayang_protocol.c</FilePath>
             </File>
             <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\led.c</FilePath>
+            </File>
+            <File>
               <FileName>sixaxis.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\sixaxis.c</FilePath>
@@ -478,16 +473,6 @@
               <FileName>util.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\util.c</FilePath>
-            </File>
-            <File>
-              <FileName>defines.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\defines.h</FilePath>
-            </File>
-            <File>
-              <FileName>config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\config.h</FilePath>
             </File>
             <File>
               <FileName>imu.c</FileName>
@@ -500,14 +485,24 @@
               <FilePath>.\src\filter.cpp</FilePath>
             </File>
             <File>
-              <FileName>motorcurve.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\motorcurve.c</FilePath>
-            </File>
-            <File>
               <FileName>angle_pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\angle_pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>defines.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\defines.h</FilePath>
             </File>
           </Files>
         </Group>

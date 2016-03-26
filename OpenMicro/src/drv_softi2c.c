@@ -113,6 +113,7 @@ void setinput()
 	sdaout = 0;
   sdainit.GPIO_Mode = GPIO_Mode_IN;
   GPIO_Init(SOFTI2C_SDAPORT, &sdainit);	
+	
 	_delay2;
  }
 
@@ -129,8 +130,9 @@ int _readsda()
 #ifdef i2cdebug
   if (!sda)  printf("_readsda: sda low");
 #endif
-if ( sdaout) setinput();	
-return ( GPIO_ReadInputDataBit(SOFTI2C_SDAPORT, SOFTI2C_SDAPIN) ); 
+//if ( sdaout) setinput();	
+//return ( GPIO_ReadInputDataBit(SOFTI2C_SDAPORT, SOFTI2C_SDAPIN) ); 
+return	SOFTI2C_SDAPORT->IDR & SOFTI2C_SDAPIN;
 }
 
 
@@ -228,13 +230,12 @@ int i;
  sclhigh();
 // skip ack since it is not used here
  uint8_t ack;// = _readsda();
-
+	#ifdef i2cdebug
   if (ack)
 	{
-	#ifdef i2cdebug
-//	if (debug) Serial.println("NOT RECEIVED"); 
-	#endif
+	if (debug) Serial.println("NOT RECEIVED"); 
 	}
+	#endif
  scllow();
 return ack; 
 }
@@ -242,13 +243,12 @@ return ack;
 uint8_t _readbyte(uint8_t ack)  //ACK 1 single byte ACK 0 multiple bytes
 {
  uint8_t data=0;
+#ifdef i2cdebug
  if (scl == 1)
-	{
-	error1 = 1;
-	#ifdef i2cdebug
+	{	
 	printf("read: scl high");
-	#endif
 	}
+#endif
  if ( sda == 0) 
  {
    sdahigh();
