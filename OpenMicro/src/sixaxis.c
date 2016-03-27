@@ -140,12 +140,57 @@ void sixaxis_read(void)
 	accel[1] = -(int16_t) ((data[2] << 8) + data[3]);
 	accel[2] = (int16_t) ((data[4] << 8) + data[5]);
 
-
+#ifdef SENSOR_ROTATE_90_CW
+		{
+		float temp = accel[1];
+		accel[1] = accel[0];
+		accel[0] = -temp;	
+		}
+#endif
+		
+#ifdef SENSOR_ROTATE_90_CCW
+		{
+		float temp = accel[1];
+		accel[1] = -accel[0];
+		accel[0] = temp;	
+		}
+#endif
+				
+#ifdef SENSOR_ROTATE_180
+		{
+		accel[1] = -accel[1];
+		accel[0] = -accel[0];	
+		}
+#endif		
 
 	gyronew[1] = (int16_t) ((data[8] << 8) + data[9]);
 	gyronew[0] = (int16_t) ((data[10] << 8) + data[11]);
 	gyronew[2] = (int16_t) ((data[12] << 8) + data[13]);
 
+		
+#ifdef SENSOR_ROTATE_90_CW
+		{
+		float temp = gyronew[1];
+		gyronew[1] = -gyronew[0];
+		gyronew[0] = temp;	
+		}
+#endif
+		
+#ifdef SENSOR_ROTATE_90_CCW
+		{
+		float temp = gyronew[1];
+		gyronew[1] = gyronew[0];
+		gyronew[0] = -temp;	
+		}
+#endif
+		
+					
+#ifdef SENSOR_ROTATE_180
+		{
+		gyronew[1] = -gyronew[1];
+		gyronew[0] = -gyronew[0];	
+		}
+#endif		
 
 gyronew[0] = gyronew[0] - gyrocal[0];
 gyronew[1] = gyronew[1] - gyrocal[1];
@@ -186,7 +231,32 @@ gyronew[1] = (int16_t) ((data[0]<<8) + data[1]);
 gyronew[0] = (int16_t) ((data[2]<<8) + data[3]);
 gyronew[2] = (int16_t) ((data[4]<<8) + data[5]);
 
+			
+#ifdef SENSOR_ROTATE_90_CW
+		{
+		float temp = gyronew[1];
+		gyronew[1] = -gyronew[0];
+		gyronew[0] = temp;	
+		}
+#endif
 
+				
+#ifdef SENSOR_ROTATE_90_CCW
+		{
+		float temp = gyronew[1];
+		gyronew[1] = gyronew[0];
+		gyronew[0] = -temp;	
+		}
+#endif
+	
+					
+#ifdef SENSOR_ROTATE_180
+		{
+		gyronew[1] = -gyronew[1];
+		gyronew[0] = -gyronew[0];	
+		}
+#endif		
+		
 gyronew[0] = gyronew[0] - gyrocal[0];
 gyronew[1] = gyronew[1] - gyrocal[1];
 gyronew[2] = gyronew[2] - gyrocal[2];
@@ -245,7 +315,32 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 		gyro[0] = (int16_t) ((data[0]<<8) + data[1]);
 		gyro[1] = (int16_t) ((data[2]<<8) + data[3]);
 		gyro[2] = (int16_t) ((data[4]<<8) + data[5]);	
-	
+		
+				
+#ifdef SENSOR_ROTATE_90_CW
+		{
+		float temp = gyro[1];
+		gyro[1] = -gyro[0];
+		gyro[0] = temp;	
+		}
+#endif
+
+		
+#ifdef SENSOR_ROTATE_90_CCW
+		{
+		float temp = gyro[1];
+		gyro[1] = gyro[0];
+		gyro[0] = -temp;	
+		}
+#endif		
+		
+						
+#ifdef SENSOR_ROTATE_180
+		{
+		gyro[1] = -gyro[1];
+		gyro[0] = -gyro[0];	
+		}
+#endif		
 		
 if ( (time - timestart)%200000 > 100000) 
 {

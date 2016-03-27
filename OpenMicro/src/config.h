@@ -283,6 +283,11 @@
 //#define MOTOR3_PIN_PA11
 
 
+// gyro orientation
+//#define SENSOR_ROTATE_90_CW
+//#define SENSOR_ROTATE_90_CCW
+//#define SENSOR_ROTATE_180
+
 //##################################
 // debug / other things
 // this should not be usually changed
