@@ -63,12 +63,13 @@ unsigned int lastlooptime;
 int lowbatt = 1;	
 int lowbatt2 = 1;
 
-//float battdebug;
+
 //float vref = 1.0;
 //float startvref;
 
 #ifdef DEBUG
 static float totaltime = 0;
+float battdebug;
 #endif
 
 
@@ -226,9 +227,7 @@ static float timefilt;
 		#ifdef ACRO_ONLY
 		gyro_read();
 		#else		
-		TS();
 		sixaxis_read();
-		TE();
 		extern void imu_calc(void);
 		
 		imu_calc();
@@ -259,14 +258,14 @@ static float timefilt;
 		else hyst = 0.0f;
 
 		float batt_compensated = vbattfilt + (float) VDROP_FACTOR * thrfilt;
-
-//		battdebug = vbattfilt + (float) VDROP_FACTOR * thrfilt ;
-		
+#ifdef DEBUG
+		battdebug = batt_compensated ;
+#endif		
 		if ( batt_compensated <(float) VBATTLOW + hyst ) lowbatt = 1;
 		else lowbatt = 0;
 		
 #if ( AUX_LED_NUMBER > 0)
-// lowbatt 2 ( 0.3V lower )
+// lowbatt 2 ( 0.2V lower )
 
 		float hyst2;
 		if ( lowbatt2 ) hyst2 = HYST;

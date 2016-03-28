@@ -120,8 +120,8 @@ pid_precalc();
 		  angleerror[0] = rx[0] * MAX_ANGLE_HI - attitude[0];
 		  angleerror[1] = rx[1] * MAX_ANGLE_HI - attitude[1];
 
-		  error[0] = apid(0) * LEVEL_MAX_RATE_HI * DEGTORAD - gyro[0];
-		  error[1] = apid(1) * LEVEL_MAX_RATE_HI * DEGTORAD - gyro[1];
+		  error[0] = apid(0)  - gyro[0];
+		  error[1] = apid(1)  - gyro[1];
 
 	  }
 	else
