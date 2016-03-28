@@ -30,6 +30,9 @@ http://www.rcgroups.com/forums/showthread.php?t=2512604
 
 ###History:
 
+####29.03.16
+* moved pin setting to hardware.h
+* level pid limit change ( LEVEL_MAX_RATE now acts as hardware limit)
 
 ####26.03.16
 * added pwm defines
