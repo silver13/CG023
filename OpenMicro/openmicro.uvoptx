@@ -316,6 +316,11 @@
           <WinNumber>2</WinNumber>
           <ItemText>battdebug</ItemText>
         </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>gyrodebug,0x0A</ItemText>
+        </Ww>
       </WatchWindow2>
       <Tracepoint>
         <THDelay>0</THDelay>

@@ -162,11 +162,16 @@ void sixaxis_read(void)
 		accel[0] = -accel[0];	
 		}
 #endif		
-
+//order
 	gyronew[1] = (int16_t) ((data[8] << 8) + data[9]);
 	gyronew[0] = (int16_t) ((data[10] << 8) + data[11]);
 	gyronew[2] = (int16_t) ((data[12] << 8) + data[13]);
 
+
+gyronew[0] = gyronew[0] - gyrocal[0];
+gyronew[1] = gyronew[1] - gyrocal[1];
+gyronew[2] = gyronew[2] - gyrocal[2];
+	
 		
 #ifdef SENSOR_ROTATE_90_CW
 		{
@@ -192,9 +197,7 @@ void sixaxis_read(void)
 		}
 #endif		
 
-gyronew[0] = gyronew[0] - gyrocal[0];
-gyronew[1] = gyronew[1] - gyrocal[1];
-gyronew[2] = gyronew[2] - gyrocal[2];
+
 		
 //gyronew[0] = - gyronew[0];
 gyronew[1] = - gyronew[1];
@@ -226,10 +229,16 @@ int data[6];
 	softi2c_readdata( 0x68 , 67 , data , 6 );
 	
 float gyronew[3];
-	
+	// order
 gyronew[1] = (int16_t) ((data[0]<<8) + data[1]);
 gyronew[0] = (int16_t) ((data[2]<<8) + data[3]);
 gyronew[2] = (int16_t) ((data[4]<<8) + data[5]);
+
+		
+gyronew[0] = gyronew[0] - gyrocal[0];
+gyronew[1] = gyronew[1] - gyrocal[1];
+gyronew[2] = gyronew[2] - gyrocal[2];
+	
 
 			
 #ifdef SENSOR_ROTATE_90_CW
@@ -256,11 +265,10 @@ gyronew[2] = (int16_t) ((data[4]<<8) + data[5]);
 		gyronew[0] = -gyronew[0];	
 		}
 #endif		
-		
-gyronew[0] = gyronew[0] - gyrocal[0];
-gyronew[1] = gyronew[1] - gyrocal[1];
-gyronew[2] = gyronew[2] - gyrocal[2];
+	
 
+
+		
 //gyronew[0] = - gyronew[0];
 gyronew[1] = - gyronew[1];
 gyronew[2] = - gyronew[2];
@@ -311,36 +319,12 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 //	i2c_readdata( 67 , data, 6 );
 	softi2c_readdata( 0x68 , 67 , data , 6 );	
 
+			
+	gyro[1] = (int16_t) ((data[0]<<8) + data[1]);
+	gyro[0] = (int16_t) ((data[2]<<8) + data[3]);
+	gyro[2] = (int16_t) ((data[4]<<8) + data[5]);
 		
-		gyro[0] = (int16_t) ((data[0]<<8) + data[1]);
-		gyro[1] = (int16_t) ((data[2]<<8) + data[3]);
-		gyro[2] = (int16_t) ((data[4]<<8) + data[5]);	
-		
-				
-#ifdef SENSOR_ROTATE_90_CW
-		{
-		float temp = gyro[1];
-		gyro[1] = -gyro[0];
-		gyro[0] = temp;	
-		}
-#endif
 
-		
-#ifdef SENSOR_ROTATE_90_CCW
-		{
-		float temp = gyro[1];
-		gyro[1] = gyro[0];
-		gyro[0] = -temp;	
-		}
-#endif		
-		
-						
-#ifdef SENSOR_ROTATE_180
-		{
-		gyro[1] = -gyro[1];
-		gyro[0] = -gyro[0];	
-		}
-#endif		
 		
 if ( (time - timestart)%200000 > 100000) 
 {

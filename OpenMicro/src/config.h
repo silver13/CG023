@@ -121,6 +121,7 @@
 #define AUTO_THROTTLE
 
 // build acro only firmware
+// removes the distraction of level mode for learning
 //#define ACRO_ONLY
 
 // Radio protocol selection
