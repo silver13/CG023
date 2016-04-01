@@ -30,6 +30,11 @@ http://www.rcgroups.com/forums/showthread.php?t=2512604
 
 ###History:
 
+####01.04.16
+* flash saving optimizations
+* headless mode fixed in both modes
+* pwm frequency can be set now
+
 ####29.03.16
 * moved pin setting to hardware.h
 * level pid limit change ( LEVEL_MAX_RATE now acts as hardware limit)
