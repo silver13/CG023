@@ -25,14 +25,15 @@ Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a le
 The STM32 port ( this firmware ) is designed to be configurable in order to be adaptable to other boards.Hardware configuration  settings are found in file hardware.h . Right now, only xn297 radio and invensense gyro (sometimes marked M5xx or M6xx) are supported. Pwm pins can be set to PA0, PA1, PA2, PA3 , PA5 , PA8 , PA9 , PA10 , PA11. Radio SPI and gyro I2C can be set to any PAx or PBx pins.
 
 ###Installation and Support
-Currently this port is covered by the H8 thread on rcgroups. Flashing is similar, except STM support is added using the pack installer.
-http://www.rcgroups.com/forums/showthread.php?t=2512604
+Currently this port is covered by the it's own thread on rcgroups.
+http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
+
 
 ###History:
 
 ####01.04.16
 * flash saving optimizations
-* headless mode fixed in both modes
+* headless fixed in both modes
 * pwm frequency can be set now
 
 ####29.03.16
