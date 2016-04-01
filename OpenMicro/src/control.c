@@ -70,7 +70,17 @@ unsigned long timecommand = 0;
 
 void control( void)
 {	
-
+#ifndef DISABLE_HEADLESS	
+	// make local copy
+	float rxcopy[4];	
+	for ( int i = 0 ; i <4 ; i++)
+	{
+		rxcopy[i] = rx[i];
+	}
+#else
+	// defined as alias of rx[];
+	extern float rxcopy[];
+#endif	
 	// check for accelerometer calibration command
 	if ( onground )
 	{
@@ -105,9 +115,15 @@ void control( void)
 	
 	if ( aux[HEADLESSMODE] ) 
 	{
-		float temp = rx[ROLL];
-		rx[ROLL] = rx[ROLL] * cosf( yawangle) - rx[PITCH] * sinf(yawangle );
-		rx[PITCH] = rx[PITCH] * cosf( yawangle) + temp * sinf(yawangle ) ;
+		while (yawangle < -3.14159265f)
+    yawangle += 6.28318531f;
+
+    while (yawangle >  3.14159265f)
+    yawangle -= 6.28318531f;
+		
+		float temp = rxcopy[ROLL];
+		rxcopy[ROLL] = rxcopy[ROLL] * fastcos( yawangle) - rxcopy[PITCH] * fastsin(yawangle );
+		rxcopy[PITCH] = rxcopy[PITCH] * fastcos( yawangle) + temp * fastsin(yawangle ) ;
 	}
 #endif	
 pid_precalc();	
@@ -117,8 +133,8 @@ pid_precalc();
 	if (aux[LEVELMODE])
 	  {			// level mode
 
-		  angleerror[0] = rx[0] * MAX_ANGLE_HI - attitude[0];
-		  angleerror[1] = rx[1] * MAX_ANGLE_HI - attitude[1];
+		  angleerror[0] = rxcopy[0] * MAX_ANGLE_HI - attitude[0];
+		  angleerror[1] = rxcopy[1] * MAX_ANGLE_HI - attitude[1];
 
 		  error[0] = apid(0)  - gyro[0];
 		  error[1] = apid(1)  - gyro[1];
@@ -127,8 +143,8 @@ pid_precalc();
 	else
 	  {	// rate mode
 
-		  error[0] = rx[0] * (float) MAX_RATE * DEGTORAD  - gyro[0];
-		  error[1] = rx[1] * (float) MAX_RATE * DEGTORAD  - gyro[1];
+		  error[0] = rxcopy[0] * (float) MAX_RATE * DEGTORAD  - gyro[0];
+		  error[1] = rxcopy[1] * (float) MAX_RATE * DEGTORAD  - gyro[1];
 
 		  // reduce angle Iterm towards zero
 		  extern float aierror[3];
@@ -137,16 +153,16 @@ pid_precalc();
 	  }
 
 
-	error[2] = rx[2] * (float) MAX_RATEYAW * DEGTORAD  - gyro[2];
+	error[2] = rxcopy[2] * (float) MAX_RATEYAW * DEGTORAD  - gyro[2];
 
 	pid(0);
 	pid(1);
 	pid(2);
 #else
 // rate only build
-	error[ROLL] = rx[ROLL] * (float) MAX_RATE * DEGTORAD  - gyro[ROLL];
-	error[PITCH] = rx[PITCH] * (float) MAX_RATE * DEGTORAD  - gyro[PITCH];
-	error[YAW] = rx[YAW] * (float) MAX_RATEYAW * DEGTORAD  - gyro[YAW];
+	error[ROLL] = rxcopy[ROLL] * (float) MAX_RATE * DEGTORAD  - gyro[ROLL];
+	error[PITCH] = rxcopy[PITCH] * (float) MAX_RATE * DEGTORAD  - gyro[PITCH];
+	error[YAW] = rxcopy[YAW] * (float) MAX_RATEYAW * DEGTORAD  - gyro[YAW];
 	
 pid_precalc();
 
@@ -158,7 +174,7 @@ pid_precalc();
 float	throttle;
 
 // map throttle so under 10% it is zero	
-if ( rx[3] < 0.1f ) throttle = 0;
+if ( rxcopy[3] < 0.1f ) throttle = 0;
 else throttle = (rx[3] - 0.1f)*1.11111111f;
 
 

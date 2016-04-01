@@ -106,15 +106,10 @@
 #define MOTOR_FILTER
 
 
-// to do ( currently 8K)
-
 // pwm frequency for motor control
 // a higher frequency makes the motors more linear
-//#define PWM_490HZ
-//#define PWM_8KHZ
-//#define PWM_16KHZ
-//#define PWM_24KHZ
-//#define PWM_32KHZ
+// in Hz
+#define PWMFREQ 8000
 
 // throttle angle compensation in level mode
 // comment out to disable
@@ -134,7 +129,7 @@
 //#define RX_CG023_SWAP_YAWROLL
 
 // Flash saving features
-#define DISABLE_HEADLESS
+//#define DISABLE_HEADLESS
 
 
 
@@ -154,8 +149,11 @@
 // invert yaw pid for hubsan motors
 //#define INVERT_YAW_PID
 
-// debug things
- #define DEBUG
+// debug things ( debug struct and other)
+// #define DEBUG
+
+// rxdebug structure
+//#define RXDEBUG
 
 // disable the check for known gyro that causes the 4 times flash
 // #define DISABLE_GYRO_CHECK

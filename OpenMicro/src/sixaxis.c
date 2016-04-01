@@ -41,11 +41,13 @@ THE SOFTWARE.
 
 #include <math.h>
 
+// for soft gyro filter
 extern float lpffilter( float in,int num );
 
-#ifdef DEBUG
-int gyroid;
-#endif
+
+#include "debug.h"
+extern debug_type debug;
+
 
 void sixaxis_init( void)
 {
@@ -92,7 +94,7 @@ int sixaxis_check( void)
 	// old board returns 68h (mpu - 6050)
 	// a new (rare) gyro marked m540 returns 7Dh
 	#ifdef DEBUG
-	gyroid = id;
+	debug.gyroid = id;
 	#endif
 	#ifdef DISABLE_GYRO_CHECK
 	return 1;

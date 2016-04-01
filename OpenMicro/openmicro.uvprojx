@@ -509,6 +509,11 @@
               <FileType>5</FileType>
               <FilePath>.\src\config.h</FilePath>
             </File>
+            <File>
+              <FileName>debug.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\debug.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

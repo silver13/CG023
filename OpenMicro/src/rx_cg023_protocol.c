@@ -41,18 +41,40 @@ THE SOFTWARE.
 
 #ifdef RX_CG023_PROTOCOL
 
+
+extern float rx[7];
+// the last 2 are always on and off respectively
+extern char aux[AUXNUMBER];
+extern char lastaux[AUXNUMBER];
+extern char auxchange[AUXNUMBER];
+
+void writeregs ( uint8_t data[] , uint8_t size )
+{
+	
+spi_cson();
+for ( uint8_t i = 0 ; i < size ; i++)
+{
+	spi_sendbyte( data[i]);
+}
+spi_csoff();
+delay(1000);
+}
+
+
 void rx_init()
 {
 
 uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
 
-spi_cson();
-for ( int i = 0 ; i < sizeof(bbcal) ; i++)
-{
-	spi_sendbyte( bbcal[i]);
-}
-spi_csoff();
-delay(1000);
+writeregs( bbcal , sizeof(bbcal) );
+
+//spi_cson();
+//for ( int i = 0 ; i < sizeof(bbcal) ; i++)
+//{
+//	spi_sendbyte( bbcal[i]);
+//}
+//spi_csoff();
+//delay(1000);
 
 /*
 spi_cson();
@@ -69,13 +91,15 @@ delay(1000);
 uint8_t rfcal[8] = { 0x3e , 0xc9 , 220 , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
 
 
-spi_cson();
-for ( int i = 0 ; i < sizeof(rfcal) ; i++)
-{
-	spi_sendbyte( rfcal[i]);
-}
-spi_csoff();
-delay(1000);
+writeregs( rfcal , sizeof(rfcal) );
+
+//spi_cson();
+//for ( int i = 0 ; i < sizeof(rfcal) ; i++)
+//{
+//	spi_sendbyte( rfcal[i]);
+//}
+//spi_csoff();
+//delay(1000);
 
 /*
 // RF_CAL registers
@@ -95,13 +119,16 @@ delay(1000);
 
 uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
 
-spi_cson();
-for ( int i = 0 ; i < sizeof(demodcal) ; i++)
-{
-	spi_sendbyte( demodcal[i]);
-}
-spi_csoff();
-delay(1000);
+
+writeregs( demodcal , sizeof(demodcal) );
+
+//spi_cson();
+//for ( int i = 0 ; i < sizeof(demodcal) ; i++)
+//{
+//	spi_sendbyte( demodcal[i]);
+//}
+//spi_csoff();
+//delay(1000);
 
 // DEMOD_CAL registers
 /*
@@ -145,12 +172,6 @@ static char checkpacket()
 }
 
 
-
-float rx[4];
-// the last 2 are always on and off respectively
-char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 1 , 0};
-char lastaux[AUXNUMBER];
-char auxchange[AUXNUMBER];
 int rxdata[15];
 
 int txid[2];

@@ -42,42 +42,39 @@ THE SOFTWARE.
 #define BAYANG_LOWRATE_MULTIPLIER 0.5
 
 
+extern float rx[7];
+extern char aux[AUXNUMBER];
+extern char lastaux[AUXNUMBER];
+extern char auxchange[AUXNUMBER];
+
+
+void writeregs ( uint8_t data[] , uint8_t size )
+{
+spi_cson();
+for ( uint8_t i = 0 ; i < size ; i++)
+{
+	spi_sendbyte( data[i]);
+}
+spi_csoff();
+delay(1000);
+}
+
+
 void rx_init()
 {
-	// baseband BB_CAL registers
-	spi_cson();
-	spi_sendbyte(0x3f); 
-	spi_sendbyte(0x4c);
-	spi_sendbyte(0x84);
-	spi_sendbyte(0x6F);
-	spi_sendbyte(0x9c);
-	spi_sendbyte(0x20);
-	spi_csoff();
-	
-	delay(1000);
-	// RF_CAL registers
-	spi_cson();
-  spi_sendbyte(0x3e); 
-	spi_sendbyte(0xc9);
-	spi_sendbyte(0x9a);
-	spi_sendbyte(0x80);
-	spi_sendbyte(0x61);
-	spi_sendbyte(0xbb);
-	spi_sendbyte(0xab);
-	spi_sendbyte(0x9c);
-	spi_csoff();
-	
-	delay(1000);
-	// DEMOD_CAL registers
-	spi_cson();
-  spi_sendbyte(0x39); 
-	spi_sendbyte(0x0b);
-	spi_sendbyte(0xdf);
-	spi_sendbyte(0xc4);
-	spi_sendbyte(0xa7);
-	spi_sendbyte(0x03);
-	spi_csoff();
-	delay(1000);
+
+
+uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
+writeregs( bbcal , sizeof(bbcal) );
+
+
+uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+writeregs( rfcal , sizeof(rfcal) );
+
+
+uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
+writeregs( demodcal , sizeof(demodcal) );
+
 
 int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
 xn_writerxaddress( rxaddress);
@@ -94,14 +91,14 @@ xn_writerxaddress( rxaddress);
 	
 }
 
-int statusdebug;
+//int statusdebug;
 
 static char checkpacket()
 {
 	//int status = xn_command(NOP);
 	spi_cson();
 	int status = spi_sendzerorecvbyte();
-	statusdebug = status;
+//	statusdebug = status;
 	spi_csoff();
 	if ( status&(1<<MASK_RX_DR) )
 	{	 // rx clear bit
@@ -120,11 +117,6 @@ static char checkpacket()
 }
 
 
-float rx[7];
-// the last 2 are always on and off respectively
-char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 1 , 0};
-char lastaux[AUXNUMBER];
-char auxchange[AUXNUMBER];
 int rxdata[15];
 
 #define CHANOFFSET 512
@@ -171,16 +163,17 @@ static int decodepacket( void)
 //			rx[1] = rx[1] + 0.03225 * 0.5 * (float)(((rxdata[6])>>2) - 31);
 //			rx[2] = rx[2] + 0.03225 * 0.5 * (float)(((rxdata[10])>>2) - 31);
 	
-		//	rx[4] = (rxdata[2] &  0x08)?1:0; // flip channel
+		  // flip channel
 			aux[0] = (rxdata[2] &  0x08)?1:0;
 	
-		//	rx[5] = (rxdata[1] == 0xfa)?1:0; // expert mode
+		  // expert mode
 			aux[1] = (rxdata[1] == 0xfa)?1:0;
 	
-		//	rx[6] = (rxdata[2] &  0x02)?1:0; // headless channel
+		  // headless channel
 		  aux[2] = (rxdata[2] &  0x02)?1:0;
 
-			aux[3] = (rxdata[2] &  0x01)?1:0;// rth channel
+			// rth channel
+			aux[3] = (rxdata[2] &  0x01)?1:0;
 
 			for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
 			{
@@ -217,15 +210,20 @@ unsigned long secondtimer;
 int failsafe = 0;
 
 
-//#define RXDEBUG
-
 #ifdef RXDEBUG	
-unsigned long packettime;
-int channelcount[4];
-int failcount;
+struct rxdebug
+	{
+	unsigned long packettime;
+	int failcount;
+	int packetpersecond;
+	int channelcount[4];
+	} 
+	rxdebug;
 int packetrx;
-int packetpersecond;
+unsigned long lastrxtime;
+unsigned long secondtimer;
 #warning "RX debug enabled"
+
 #endif
 
 
@@ -263,8 +261,8 @@ void checkrx( void)
 			else
 			{	// normal mode	
 				#ifdef RXDEBUG	
-				channelcount[chan]++;	
-				packettime = gettime() - lastrxtime;
+				rxdebug.channelcount[chan]++;	
+				rxdebug.packettime = gettime() - lastrxtime;
 				#endif
 				
 				// for longer loop times than 3ms it was skipping 2 channels
@@ -287,7 +285,7 @@ void checkrx( void)
 				else
 				{
 				#ifdef RXDEBUG	
-				failcount++;
+				rxdebug.failcount++;
 				#endif	
 				}
 			
@@ -314,7 +312,7 @@ void checkrx( void)
 #ifdef RXDEBUG	
 			if ( gettime() - secondtimer  > 1000000)
 			{
-				packetpersecond = packetrx;
+				rxdebug.packetpersecond = packetrx;
 				packetrx = 0;
 				secondtimer = gettime();
 			}

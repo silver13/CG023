@@ -40,7 +40,7 @@ THE SOFTWARE.
 #include "drv_adc.h"
 #include "drv_gpio.h"
 #include "drv_serial.h"
-#include "rx_bayang.h"
+#include "rx.h"
 #include "drv_spi.h"
 #include "control.h"
 #include "defines.h"
@@ -52,26 +52,55 @@ THE SOFTWARE.
 
 #include <inttypes.h>
 
+
+
+#ifdef DEBUG
+#include "debug.h"
+debug_type debug;
+#endif
+
+
+
 // hal
 void clk_init(void);
 
 void imu_init(void);
 
+// looptime in seconds
 float looptime;
+// filtered battery in volts
 float vbattfilt = 0.0;
-unsigned int lastlooptime;
-int lowbatt = 1;	
-int lowbatt2 = 1;
 
+unsigned int lastlooptime;
+// signal for lowbattery
+int lowbatt = 1;	
+// signal for lowbattery second threshold
+int lowbatt2 = 1;
 
 //float vref = 1.0;
 //float startvref;
 
-#ifdef DEBUG
-static float totaltime = 0;
-float battdebug;
-#endif
+// holds the main four channels, roll, pitch , yaw , throttle
+float rx[4];
 
+// holds auxilliary channels
+// the last 2 are always on and off respectively
+char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 1 , 0};
+char lastaux[AUXNUMBER];
+// if an aux channel has just changed
+char auxchange[AUXNUMBER];
+
+// bind / normal rx mode
+extern int rxmode;
+// failsafe on / off
+extern int failsafe;
+
+
+
+#ifdef DISABLE_HEADLESS
+// definition of rxcopy[4] as alias of rx[4]
+extern float rxcopy __attribute__((alias("rx")));
+#endif
 
 void failloop( int val);
 
@@ -82,7 +111,6 @@ int main(void)
 	delay(1000);
 	
   gpio_init();
-
 	
 	//i2c_init();	
 	
@@ -123,6 +151,7 @@ delay(100000);
 if ( RCC->CSR & 0x80000000 )
 {
 	// low power reset flag
+	// not functioning
 	failloop(3);
 }
 
@@ -158,7 +187,6 @@ if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 	gyro_cal();
 		
 #ifndef ACRO_ONLY
-
 	imu_init();
 	
 // read accelerometer calibration values from option bytes ( 2* 8bit)
@@ -182,8 +210,6 @@ if ( liberror )
 
 
  lastlooptime = gettime();
- extern int rxmode;
- extern int failsafe;
 
  float thrfilt;
 
@@ -193,9 +219,6 @@ if ( liberror )
 //
 //
 
-#ifdef DEBUG
-static float timefilt;
-#endif
 
 	while(1)
 	{
@@ -211,8 +234,8 @@ static float timefilt;
 		}
 	
 		#ifdef DEBUG				
-		totaltime += looptime;
-		lpf ( &timefilt , looptime, 0.998 );
+		debug.totaltime += looptime;
+		lpf ( &debug.timefilt , looptime, 0.998 );
 		#endif
 		lastlooptime = time;
 		
@@ -228,10 +251,9 @@ static float timefilt;
 		gyro_read();
 		#else		
 		sixaxis_read();
-		extern void imu_calc(void);
 		
-		imu_calc();
-		
+		extern void imu_calc(void);		
+		imu_calc();		
 		#endif
 
 		control();
@@ -259,7 +281,7 @@ static float timefilt;
 
 		float batt_compensated = vbattfilt + (float) VDROP_FACTOR * thrfilt;
 #ifdef DEBUG
-		battdebug = batt_compensated ;
+		debug.vbatt_comp = batt_compensated ;
 #endif		
 		if ( batt_compensated <(float) VBATTLOW + hyst ) lowbatt = 1;
 		else lowbatt = 0;

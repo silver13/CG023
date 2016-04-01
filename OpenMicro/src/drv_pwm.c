@@ -14,7 +14,23 @@ TIM_OCInitTypeDef  TIM_OCInitStructure;
 //#define PWMTOP 1499
 
 // 8K
-#define PWMTOP 5999
+//#define PWMTOP 5999
+
+//#define PWMFREQ 8000
+
+#define PWMTOP ((48000000/PWMFREQ ) - 1)
+
+#if ( PWMTOP< 1400 ) 
+	#undef PWMTOP
+	#define PWMTOP 6000
+	#warning PWM FREQUENCY TOO HIGH
+#endif
+
+#if ( PWMTOP> 65535 ) 
+	#undef PWMTOP
+	#define PWMTOP 6000
+	#warning PWM FREQUENCY TOO LOW
+#endif
 
 
 #ifdef PWM_PA0
