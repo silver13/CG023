@@ -34,7 +34,7 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
 ####03.04.16
 * added automatic flips
-* flash saving optimization ( 900 bytes ) 
+* flash saving optimization 
 
 ####01.04.16
 * flash saving optimizations
