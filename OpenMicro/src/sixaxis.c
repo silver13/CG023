@@ -347,7 +347,7 @@ else
 				
 					limitf( &limit[i] , 800);
 				
-					if ( fabs(gyro[i]) > 100+ fabs(limit[i]) ) 
+					if ( fabsf(gyro[i]) > 100+ fabsf(limit[i]) ) 
 					{										
 						timestart = gettime();
 					}
@@ -402,7 +402,7 @@ void acc_cal(void)
 
 	for (int x = 0; x < 3; x++)
 	  {
-			accelcal[x] = lroundf ( accelcal[x] ); 
+			accelcal[x] = roundf ( accelcal[x] ); 
 		  limitf(&accelcal[x], 127);
 	  }
 

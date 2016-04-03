@@ -19,7 +19,7 @@ float apidki[APIDNUMBER] = { 6.2e-2, 6.2e-2 };
 // code variables below
 
 // rate limit
-#define OUTLIMIT_FLOAT LEVEL_MAX_RATE*DEGTORAD
+#define OUTLIMIT_FLOAT (float)LEVEL_MAX_RATE*DEGTORAD
 
 #define ITERMLIMIT_FLOAT OUTLIMIT_FLOAT
 

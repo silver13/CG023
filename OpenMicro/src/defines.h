@@ -36,6 +36,13 @@
 #define CH4 3
 
 
+#define int32 int_fast32_t
+#define int16 int_fast16_t
+#define int8 int_fast8_t
+
+#define uint32 uint_fast32_t
+#define uint16 uint_fast16_t
+#define uint8 uint_fast8_t
 
 
 

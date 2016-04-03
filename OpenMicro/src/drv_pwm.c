@@ -391,7 +391,7 @@ void pwm_set( uint8_t number , float pwm)
 	if ( pwm < 0 ) pwm = 0;
   if ( pwm > PWMTOP ) pwm = PWMTOP;
 	
-	pwm = lroundf(pwm);
+	pwm = roundf(pwm);
 	
 	TIM_OCInitStructure.TIM_Pulse = pwm;
 	

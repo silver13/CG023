@@ -12,8 +12,8 @@
 // max angle for level mode
 #define MAX_ANGLE_HI 55.0f
 
-// max rate used by level pid
-#define LEVEL_MAX_RATE 2000.0f
+// max rate used by level pid ( limit )
+#define LEVEL_MAX_RATE 2000
 
 // disable inbuilt expo functions
 #define DISABLE_EXPO
@@ -90,7 +90,7 @@
 // 0 - flip, 1 - expert, 2 - headfree, 3 - headingreturn
 
 // cg023 protocol chanels
-// 0 - headless, 
+// 0 - flip, 
 // 1 , 2 , 3 - video , still ,led
 
 // 4 - on always ( all protocols)
@@ -98,6 +98,8 @@
 #define HEADLESSMODE 5
 
 #define LEVELMODE 2
+
+#define STARTFLIP 0
 
 
 
@@ -130,16 +132,31 @@
 
 // Flash saving features
 //#define DISABLE_HEADLESS
+//#define DISABLE_FLIP_SEQUENCER
 
 
 
 //##################################
 // debug / other things
 // this should not be usually changed
+//##################################
 
+
+// level mode "manual" trims ( in degrees)
+// pitch positive forward
+// roll positive right
+#define TRIM_PITCH 0.0
+#define TRIM_ROLL 0.0
 
 // disable motors for testing
 // #define NOMOTORS
+
+// throttle direct to motors for thrust measure
+// #define MOTORS_TO_THROTTLE
+
+// loop time in uS
+// this affects soft gyro lpf frequency if used
+#define LOOPTIME 1000
 
 // not available
 // enable serial out
@@ -170,8 +187,13 @@
 //--fpmode=fast
 
 
+// define logic
+///////////////
 
-
+#ifdef ACRO_ONLY
+	#define DISABLE_FLIP_SEQUENCER
+	#undef AUTO_THROTTLE
+#endif
 
 
 

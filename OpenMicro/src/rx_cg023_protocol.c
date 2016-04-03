@@ -42,7 +42,7 @@ THE SOFTWARE.
 #ifdef RX_CG023_PROTOCOL
 
 
-extern float rx[7];
+extern float rx[4];
 // the last 2 are always on and off respectively
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
@@ -227,7 +227,7 @@ int decode_cg023( void)
 		// switch flags
 		
 
-		aux[0] = (rxdata[13] &  CG023_EASY_MASK)?1:0;
+		aux[0] = (rxdata[13] &  CG023_FLIP_MASK)?1:0;
 		aux[1] = (rxdata[13] &  CG023_VIDEO_MASK)?1:0;
 		aux[2] = (rxdata[13] &  CG023_STILL_MASK)?1:0;
 		aux[3] = (rxdata[13] &  CG023_LED_OFF_MASK)?1:0;

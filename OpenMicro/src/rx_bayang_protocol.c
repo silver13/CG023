@@ -42,7 +42,7 @@ THE SOFTWARE.
 #define BAYANG_LOWRATE_MULTIPLIER 0.5
 
 
-extern float rx[7];
+extern float rx[4];
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 extern char auxchange[AUXNUMBER];

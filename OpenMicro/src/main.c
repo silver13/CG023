@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 
-// Eachine H8mini acro firmware
+// STM32 acro firmware
 // files of this project should be assumed MIT licence unless otherwise noted
 
 
@@ -58,6 +58,7 @@ THE SOFTWARE.
 #include "debug.h"
 debug_type debug;
 #endif
+
 
 
 
@@ -319,20 +320,20 @@ else
 #endif
 #if ( AUX_LED_NUMBER > 0)		
 //AUX led flash logic		
-		if ( rxmode == RXMODE_BIND)
-		{// bind mode
-		auxledflash ( 100000+ 500000*(lowbatt) , 12);
-		}
-		else
-		{// non bind				
-			if ( lowbatt2 ) 
-				 auxledflash ( 250000 , 8);	
-			else auxledoff( 255);						
+		if ( lowbatt2 ) 
+				auxledflash ( 250000 , 8);	
+		else 
+		{
+			if ( rxmode == RXMODE_BIND)
+			{// bind mode
+			auxledflash ( 100000 , 12);
+			}
+			else auxledoff( 255);
 		}
 #endif
 	
 // the delay is required or it becomes endless loop ( truncation in time routine)
-while ( (gettime() - time) < 1000 ) delay(10); 		
+while ( (gettime() - time) < LOOPTIME ) delay(10); 		
 
 		
 	}// end loop

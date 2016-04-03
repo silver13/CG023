@@ -1,24 +1,3 @@
-/*
-    IMU file of H8 mini firmware
-    Copyright (C) 2015  silverx
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-#define TRIM_PITCH 0.0
-#define TRIM_ROLL 0.0
 
 // library headers
 #include <stdbool.h>
@@ -86,7 +65,7 @@ void limit180(float *);
 
 void lpf(float *out, float in, float coeff);
 
-static float GEstG[3] = { 0, 0, ACC_1G };
+float GEstG[3] = { 0, 0, ACC_1G };
 
 float attitude[3];
 
@@ -282,9 +261,9 @@ void imu_calc(void)
 
 	vectorcopy(&GEstG[0], &EstG[0]);
 
-	attitude[0] = atan2approx(EstG[0], EstG[2]) - TRIM_ROLL;
+	attitude[0] = atan2approx(EstG[0], EstG[2]) ;
 
-	attitude[1] = atan2approx(EstG[1], EstG[2]) - TRIM_PITCH ;
+	attitude[1] = atan2approx(EstG[1], EstG[2])  ;
 
 }
 

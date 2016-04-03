@@ -480,6 +480,11 @@
               <FilePath>.\src\imu.c</FilePath>
             </File>
             <File>
+              <FileName>flip_sequencer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\flip_sequencer.c</FilePath>
+            </File>
+            <File>
               <FileName>filter.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\src\filter.cpp</FilePath>

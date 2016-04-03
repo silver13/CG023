@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "drv_time.h"
 #include "sixaxis.h"
 #include "drv_fmc.h"
-
+#include "flip_sequencer.h"
 
 extern float rx[7];
 extern float gyro[3];
@@ -68,6 +68,11 @@ float tempx[4];
 
 unsigned long timecommand = 0;
 
+extern int controls_override;
+extern float rx_override[];
+extern int acro_override;
+
+
 void control( void)
 {	
 #ifndef DISABLE_HEADLESS	
@@ -81,6 +86,24 @@ void control( void)
 	// defined as alias of rx[];
 	extern float rxcopy[];
 #endif	
+
+#ifndef DISABLE_FLIP_SEQUENCER	
+  flip_sequencer();
+	
+	if ( controls_override)
+	{
+		for ( int i = 0 ; i < 3 ; i++)
+		{
+			rxcopy[i] = rx_override[i];
+		}
+	}
+
+	if ( auxchange[STARTFLIP]&&!aux[STARTFLIP] )
+	{// only on high -> low transition
+		start_flip();		
+	}
+#endif	
+	
 	// check for accelerometer calibration command
 	if ( onground )
 	{
@@ -130,11 +153,11 @@ pid_precalc();
 
 #ifndef ACRO_ONLY
 	// dual mode build
-	if (aux[LEVELMODE])
+	if (aux[LEVELMODE]&&!acro_override)
 	  {			// level mode
 
-		  angleerror[0] = rxcopy[0] * MAX_ANGLE_HI - attitude[0];
-		  angleerror[1] = rxcopy[1] * MAX_ANGLE_HI - attitude[1];
+		  angleerror[0] = rxcopy[0] * MAX_ANGLE_HI - attitude[0] + (float) TRIM_ROLL;
+		  angleerror[1] = rxcopy[1] * MAX_ANGLE_HI - attitude[1] + (float) TRIM_PITCH;
 
 		  error[0] = apid(0)  - gyro[0];
 		  error[1] = apid(1)  - gyro[1];
@@ -174,12 +197,12 @@ pid_precalc();
 float	throttle;
 
 // map throttle so under 10% it is zero	
-if ( rxcopy[3] < 0.1f ) throttle = 0;
+if ( rx[3] < 0.1f ) throttle = 0;
 else throttle = (rx[3] - 0.1f)*1.11111111f;
 
 
 // turn motors off if throttle is off and pitch / roll sticks are centered
-	if ( failsafe || (throttle < 0.001f && (!ENABLESTIX||  (fabs(rx[ROLL]) < 0.5f && fabs(rx[PITCH]) < 0.5f ) ) ) ) 
+	if ( failsafe || (throttle < 0.001f && (!ENABLESTIX||  (fabsf(rx[ROLL]) < 0.5f && fabsf(rx[PITCH]) < 0.5f ) ) ) ) 
 
 	{ // motors off
 		for ( int i = 0 ; i <= 3 ; i++)
@@ -198,6 +221,11 @@ else throttle = (rx[3] - 0.1f)*1.11111111f;
 	{
 		onground = 0;
 		float mix[4];	
+		
+	if ( controls_override)
+	{// change throttle in flip mode
+		throttle = rx_override[3];
+	}
 		
 		
 		  // throttle angle compensation
@@ -242,7 +270,11 @@ thrsum = 0;
 		mix[i] = motorfilter(  mix[i] , i);
 		#endif
 		#ifndef NOMOTORS
+		#ifndef MOTORS_TO_THROTTLE
 		pwm_set( i ,motormap( mix[i] ) );
+		#else
+		pwm_set( i , throttle );
+		#endif
 		#else
 		tempx[i] = motormap( mix[i] );
 		#endif
