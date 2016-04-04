@@ -113,3 +113,11 @@ float fastcos( float x )
 	return fastsin(x);
 }
 
+
+void limit180(float *x)
+{
+	while (*x < -180)
+		*x += 360;
+	while (*x > 180)
+		*x -= 360;
+}

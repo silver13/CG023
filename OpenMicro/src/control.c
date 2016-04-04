@@ -75,17 +75,14 @@ extern int acro_override;
 
 void control( void)
 {	
-#ifndef DISABLE_HEADLESS	
+
 	// make local copy
 	float rxcopy[4];	
 	for ( int i = 0 ; i <4 ; i++)
 	{
 		rxcopy[i] = rx[i];
 	}
-#else
-	// defined as alias of rx[];
-	extern float rxcopy[];
-#endif	
+
 
 #ifndef DISABLE_FLIP_SEQUENCER	
   flip_sequencer();

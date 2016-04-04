@@ -61,7 +61,6 @@
 #define ssin(val) (val)
 #define scos(val) 1.0f
 
-void limit180(float *);
 
 void lpf(float *out, float in, float coeff);
 
@@ -73,7 +72,6 @@ extern float gyro[3];
 extern float accel[3];
 extern float accelcal[3];
 
-#define RADTODEG 57.29577951f
 
 void imu_init(void)
 {
@@ -303,10 +301,3 @@ float atan2approx(float y, float x)
 	return 57.29577951 * dphi;
 }
 
-void limit180(float *x)
-{
-	while (*x < -180)
-		*x += 360;
-	while (*x > 180)
-		*x -= 360;
-}

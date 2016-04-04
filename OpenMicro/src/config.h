@@ -136,10 +136,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 //##################################
 // debug / other things
 // this should not be usually changed
-//##################################
+
 
 
 // level mode "manual" trims ( in degrees)
@@ -167,7 +179,7 @@
 //#define INVERT_YAW_PID
 
 // debug things ( debug struct and other)
-// #define DEBUG
+//#define DEBUG
 
 // rxdebug structure
 //#define RXDEBUG
@@ -185,6 +197,9 @@
 #pragma diag_error 260
 
 //--fpmode=fast
+
+
+
 
 
 // define logic

@@ -98,10 +98,6 @@ extern int failsafe;
 
 
 
-#ifdef DISABLE_HEADLESS
-// definition of rxcopy[4] as alias of rx[4]
-extern float rxcopy __attribute__((alias("rx")));
-#endif
 
 void failloop( int val);
 

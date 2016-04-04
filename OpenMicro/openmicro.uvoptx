@@ -329,12 +329,7 @@
         <Ww>
           <count>16</count>
           <WinNumber>2</WinNumber>
-          <ItemText>GestG</ItemText>
-        </Ww>
-        <Ww>
-          <count>17</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>GEstG</ItemText>
+          <ItemText>debug</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

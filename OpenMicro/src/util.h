@@ -15,3 +15,5 @@ void TE( void);
 float fastsin( float x );
 float fastcos( float x );
 
+
+void limit180(float *);

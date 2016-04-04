@@ -42,7 +42,8 @@ void spi_init(void)
 #define SCKHIGH gpioset( SPI_CLK_PORT, SPI_CLK_PIN);
 #define SCKLOW gpioreset( SPI_CLK_PORT, SPI_CLK_PIN);
 
-#define READMISO (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15) )
+//#define READMISO (GPIO_ReadInputDataBit(SPI_MISO_PORT, SPI_MISO_PIN) )
+#define READMISO (SPI_MISO_PORT->IDR & SPI_MISO_PIN)
 
 #pragma push
 
