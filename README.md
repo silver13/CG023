@@ -31,6 +31,8 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
 ###History:
 
+####13.04.16
+* fixed bug setting motor to PA11
 
 ####03.04.16
 * added automatic flips
