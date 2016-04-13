@@ -53,16 +53,14 @@ void sixaxis_init( void)
 {
 // gyro soft reset
 	
-// i2c_writereg( 107 , 128);	
 	
 	softi2c_write( 0x68 , 107 , 128);
 	 
  delay(40000);
 	
-// clear sleep bit on old type gyro (mpu-6050)
-//i2c_writereg( 107 , 0);
-	
-	softi2c_write( 0x68 , 107 , 0);
+
+// set pll to 1, clear sleep bit old type gyro (mpu-6050)	
+	softi2c_write( 0x68 , 107 , 1);
 	
 	int newboard = !(0x68 == softi2c_read( 0x68, 117));
 	
@@ -75,11 +73,10 @@ void sixaxis_init( void)
 	
 // gyro scale 2000 deg (FS =3)
 
-	//i2c_writereg( 27 , 24);	
 	softi2c_write( 0x68 , 27 , 24);
 	
 // Gyro DLPF low pass filter
-//i2c_writereg( 26 , GYRO_LOW_PASS_FILTER);	
+
 	softi2c_write( 0x68 , 26 , GYRO_LOW_PASS_FILTER);
 }
 
@@ -87,7 +84,6 @@ void sixaxis_init( void)
 int sixaxis_check( void)
 {
 	// read "who am I" register
-	//int id = i2c_readreg( 117 );
 	
 	int id = softi2c_read( 0x68, 117 );
 	// new board returns 78h (unknown gyro maybe mpu-6500 compatible) marked m681
@@ -119,25 +115,11 @@ void sixaxis_read(void)
 {
 	int data[16];
 
-//	int error = 0;
-	float gyronew[3];
 
-//error = (i2c_readdata(59, data, 14));
+	float gyronew[3];
 	
 	softi2c_readdata( 0x68 , 59 , data , 14 );	
-	
-// 2nd attempt at an i2c read   
-//	if (error)
-	  {
-//		  error = (i2c_readdata(59, data, 14));
-		  // set a warning flag 
-		  // not implemented
-		  // warningflag = 1;
-	  }
-
-
-//if (error) return;
-
+		
 	accel[0] = -(int16_t) ((data[0] << 8) + data[1]);
 	accel[1] = -(int16_t) ((data[2] << 8) + data[3]);
 	accel[2] = (int16_t) ((data[4] << 8) + data[5]);
@@ -225,8 +207,6 @@ gyronew[2] = - gyronew[2];
 void gyro_read( void)
 {
 int data[6];
-
-// i2c_readdata( 67 , data, 6 );
 	
 	softi2c_readdata( 0x68 , 67 , data , 6 );
 	
@@ -302,7 +282,6 @@ unsigned long timemax = time;
 unsigned long lastlooptime = time;
 
 float gyro[3];	
-//float limit[3];
 	
  for ( int i = 0 ; i < 3 ; i++)
 			{
@@ -318,7 +297,6 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 		lastlooptime = time;
 		if ( looptime == 0 ) looptime = 1;
 
-//	i2c_readdata( 67 , data, 6 );
 	softi2c_readdata( 0x68 , 67 , data , 6 );	
 
 			

@@ -39,18 +39,18 @@ THE SOFTWARE.
 
 #include "defines.h"
 
-#define YAW_DIFF_GAIN_POS 0.8
-#define YAW_DIFF_GAIN_NEG 1.0
+
+
 
 #define GAIN 0.8
 // Kp											ROLL       PITCH     YAW
-float pidkp[PIDNUMBER] = { GAIN*20.0e-2 , GAIN*20.0e-2  , 10e-1 }; 
+float pidkp[PIDNUMBER] = { 16.0e-2 , 16.0e-2  , 10e-1 }; 
 
 // Ki											ROLL       PITCH     YAW
-float pidki[PIDNUMBER] = { GAIN*10e-1  , GAIN*10e-1 , 5e-1 };	
+float pidki[PIDNUMBER] = { 8e-1  , 8e-1 , 5e-1 };	
 
 // Kd											ROLL       PITCH     YAW
-float pidkd[PIDNUMBER] = { GAIN*11e-1 , GAIN*11e-1  , 5.0e-1 };	
+float pidkd[PIDNUMBER] = { 8.8e-1 , 8.8e-1  , 5.0e-1 };	
 
 // "setpoint weighting" 0.0 - 1.0 where 0.0 = normal pid
 float b[3] = { 0.3 , 0.3 , 0.0};
@@ -64,7 +64,7 @@ float pidkd[PIDNUMBER] = { 5.0e-1 , 5.0e-1 , 5.0e-1 };
 // output limit			
 const float outlimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };
 
-// limit of integral term
+// limit of integral term (abs)
 const float integrallimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };
 
 
@@ -181,14 +181,15 @@ float pid(int x )
 					lastratexx[x][1] = lastratexx[x][0];
 					lastratexx[x][0] = gyro[x];
 			  #endif
+				
 
-if( x == 2 ) 
-{
-	if ( pidoutput[x] > 0 )
-		pidoutput[x] *= (float) YAW_DIFF_GAIN_POS ;
-	else
-		pidoutput[x] *= (float) YAW_DIFF_GAIN_NEG ;
-}
+
+
+
+
+
+
+
 
 				  limitf(  &pidoutput[x] , outlimit[x]);
 

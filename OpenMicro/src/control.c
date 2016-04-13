@@ -78,7 +78,7 @@ void control( void)
 
 	// make local copy
 	float rxcopy[4];	
-	for ( int i = 0 ; i <4 ; i++)
+	for ( int i = 0 ; i < 4 ; i++)
 	{
 		rxcopy[i] = rx[i];
 	}
