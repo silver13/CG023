@@ -54,6 +54,9 @@
 #define SOFTI2C_SCLPIN GPIO_Pin_6
 #define SOFTI2C_SCLPORT GPIOB
 
+#define SOFTI2C_GYRO_ADDRESS 0x68
+//#define SOFTI2C_GYRO_ADDRESS 0x69
+
 // Analog battery input pin and adc channel
 
 #define BATTERYPIN GPIO_Pin_7

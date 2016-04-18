@@ -54,30 +54,30 @@ void sixaxis_init( void)
 // gyro soft reset
 	
 	
-	softi2c_write( 0x68 , 107 , 128);
+	softi2c_write( SOFTI2C_GYRO_ADDRESS , 107 , 128);
 	 
  delay(40000);
 	
 
 // set pll to 1, clear sleep bit old type gyro (mpu-6050)	
-	softi2c_write( 0x68 , 107 , 1);
+	softi2c_write( SOFTI2C_GYRO_ADDRESS , 107 , 1);
 	
-	int newboard = !(0x68 == softi2c_read( 0x68, 117));
+	int newboard = !(0x68 == softi2c_read( SOFTI2C_GYRO_ADDRESS, 117));
 	
-	softi2c_write( 0x68, 28, B00011000);	// 16G scale
+	softi2c_write( SOFTI2C_GYRO_ADDRESS, 28, B00011000);	// 16G scale
 
 // acc lpf for the new gyro type
 //       0-6 ( same as gyro)
 	if (newboard)
-		softi2c_write( 0x68, 29, ACC_LOW_PASS_FILTER);
+		softi2c_write( SOFTI2C_GYRO_ADDRESS, 29, ACC_LOW_PASS_FILTER);
 	
 // gyro scale 2000 deg (FS =3)
 
-	softi2c_write( 0x68 , 27 , 24);
+	softi2c_write( SOFTI2C_GYRO_ADDRESS , 27 , 24);
 	
 // Gyro DLPF low pass filter
 
-	softi2c_write( 0x68 , 26 , GYRO_LOW_PASS_FILTER);
+	softi2c_write( SOFTI2C_GYRO_ADDRESS , 26 , GYRO_LOW_PASS_FILTER);
 }
 
 
@@ -85,7 +85,7 @@ int sixaxis_check( void)
 {
 	// read "who am I" register
 	
-	int id = softi2c_read( 0x68, 117 );
+	int id = softi2c_read( SOFTI2C_GYRO_ADDRESS, 117 );
 	// new board returns 78h (unknown gyro maybe mpu-6500 compatible) marked m681
 	// old board returns 68h (mpu - 6050)
 	// a new (rare) gyro marked m540 returns 7Dh
@@ -118,7 +118,7 @@ void sixaxis_read(void)
 
 	float gyronew[3];
 	
-	softi2c_readdata( 0x68 , 59 , data , 14 );	
+	softi2c_readdata( SOFTI2C_GYRO_ADDRESS , 59 , data , 14 );
 		
 	accel[0] = -(int16_t) ((data[0] << 8) + data[1]);
 	accel[1] = -(int16_t) ((data[2] << 8) + data[3]);
@@ -208,7 +208,7 @@ void gyro_read( void)
 {
 int data[6];
 	
-	softi2c_readdata( 0x68 , 67 , data , 6 );
+	softi2c_readdata( SOFTI2C_GYRO_ADDRESS , 67 , data , 6 );
 	
 float gyronew[3];
 	// order
