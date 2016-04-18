@@ -1,1 +1,2 @@
-void _sbrk() {}
+void _sbrk() {
+}

@@ -1,4 +1,3 @@
-
 // HARDWARE PINS SETTING
 //
 // do not change hardware pins below
@@ -8,7 +7,6 @@
 // example: pin "PB2" ( port b , pin 2 )
 // pin: GPIO_Pin_2
 // port: GPIOB
-
 
 // setting procedure:
 // set led number zero, led aux number zero
@@ -64,7 +62,6 @@
 #define BATTERYPORT GPIOA
 #define BATTERY_ADC_CHANNEL ADC_Channel_2
 
-
 // SPI PINS DEFINITONS ( for radio ic )
 // MOSI , CLK , SS - outputs , MISO input
 
@@ -83,10 +80,8 @@
 #define SPI_SS_PIN GPIO_Pin_4
 #define SPI_SS_PORT GPIOA
 
-
 // PWM PINS DEFINITIONS 
 // currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported
-
 
 // pwm pins disable
 // disable all pwm pins / function
@@ -103,7 +98,6 @@
 #define PWM_PA9
 #define PWM_PA10
 #define PWM_PA11
-
 
 // Assingment of pin to motor
 // Assign one pin to one motor
@@ -157,14 +151,10 @@
 #define MOTOR3_PIN_PA10
 //#define MOTOR3_PIN_PA11
 
-
 // gyro orientation
 // the expected orientation is with the dot in the front-left corner
 // use this to rotate to the correct orientation 
 //#define SENSOR_ROTATE_90_CW
 //#define SENSOR_ROTATE_90_CCW
 #define SENSOR_ROTATE_180
-
-
-
 

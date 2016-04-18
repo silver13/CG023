@@ -1,5 +1,4 @@
 
-
 #include "project.h"
 #include "drv_spi.h"
 #include "binary.h"
@@ -7,32 +6,30 @@
 
 #ifndef DISABLE_SPI_PINS	
 
-void spi_init(void)
-{    
-	// spi port inits
+void spi_init(void) {
+    // spi port inits
 
-		GPIO_InitTypeDef  GPIO_InitStructure;
-	
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN;
-	GPIO_Init(SPI_MOSI_PORT, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = SPI_CLK_PIN;
-	GPIO_Init(SPI_CLK_PORT, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = SPI_SS_PIN;
-	GPIO_Init(SPI_SS_PORT, &GPIO_InitStructure);
-	
-	//miso should be input by default
-	
-	spi_csoff();
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_InitStructure.GPIO_Pin = SPI_MOSI_PIN;
+    GPIO_Init(SPI_MOSI_PORT, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = SPI_CLK_PIN;
+    GPIO_Init(SPI_CLK_PORT, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = SPI_SS_PIN;
+    GPIO_Init(SPI_SS_PORT, &GPIO_InitStructure);
+
+    //miso should be input by default
+
+    spi_csoff();
 
 }
-
 
 #define gpioset( port , pin) port->BSRR = pin
 #define gpioreset( port , pin) port->BRR = pin
@@ -50,107 +47,100 @@ void spi_init(void)
 #pragma Otime
 #pragma O2
 
-void spi_cson( )
-{
-	SPI_SS_PORT->BRR = SPI_SS_PIN;
+void spi_cson() {
+    SPI_SS_PORT->BRR = SPI_SS_PIN;
 }
 
-void spi_csoff( )
-{
-	SPI_SS_PORT->BSRR = SPI_SS_PIN;
+void spi_csoff() {
+    SPI_SS_PORT->BSRR = SPI_SS_PIN;
 }
 
+void spi_sendbyte(int data) {
+    for (int i = 7; i >= 0; i--) {
+        if ((data >> i) & 1) {
+            MOSIHIGH;
+        } else {
+            MOSILOW
+            ;
+        }
 
-void spi_sendbyte ( int data)
-{
-for ( int i =7 ; i >=0 ; i--)
-	{
-		if (  (data>>i)&1  ) 
-		{
-			MOSIHIGH;
-		}
-		else 
-		{
-			MOSILOW;
-		}
-	
-		SCKHIGH;
-		SCKLOW;
-	}
+        SCKHIGH
+        ;
+        SCKLOW
+        ;
+    }
 }
 
-
-int spi_sendrecvbyte2( int data)
-{ 
-	int recv = 0;
-	for ( int i =7 ; i >=0 ; i--)
-	{
-		if ( (data) & (1<<7)  ) 
-		{
-			MOSIHIGH;
-		}
-		else 
-		{
-			MOSILOW;
-		}
-		SCKHIGH;
-		data = data<<1;
-		if ( READMISO ) recv= recv|(1<<7);
-		recv = recv<<1;
-		SCKLOW;
-	}	
-	  recv = recv>>8;
+int spi_sendrecvbyte2(int data) {
+    int recv = 0;
+    for (int i = 7; i >= 0; i--) {
+        if ((data) & (1 << 7)) {
+            MOSIHIGH;
+        } else {
+            MOSILOW
+            ;
+        }
+        SCKHIGH
+        ;
+        data = data << 1;
+        if ( READMISO)
+            recv = recv | (1 << 7);
+        recv = recv << 1;
+        SCKLOW
+        ;
+    }
+    recv = recv >> 8;
     return recv;
 }
 
+int spi_sendrecvbyte(int data) {
+    int recv = 0;
 
- int spi_sendrecvbyte( int data)
-{ int recv = 0;
+    for (int i = 7; i >= 0; i--) {
+        recv = recv << 1;
+        if ((data) & (1 << 7)) {
+            MOSIHIGH;
+        } else {
+            MOSILOW
+            ;
+        }
 
-	for ( int i = 7 ; i >=0 ; i--)
-	{
-		recv = recv<<1;
-		if ( (data) & (1<<7)  ) 
-		{
-			MOSIHIGH;
-		}
-		else 
-		{
-			MOSILOW;
-		}
-		
-		data = data<<1;
-		
-		SCKHIGH;
-		
-		if ( READMISO ) recv= recv|1;
+        data = data << 1;
 
-		SCKLOW;
-		
-	}	
+        SCKHIGH
+        ;
+
+        if ( READMISO)
+            recv = recv | 1;
+
+        SCKLOW
+        ;
+
+    }
 
     return recv;
 }
 
+int spi_sendzerorecvbyte() {
+    int recv = 0;
+    MOSILOW
+    ;
 
- int spi_sendzerorecvbyte( )
-{ int recv = 0;
-	MOSILOW;
+    for (int i = 7; i >= 0; i--) {
+        recv = recv << 1;
 
-	for ( int i = 7 ; i >=0 ; i--)
-	{
-		recv = recv<<1;
-		
-		SCKHIGH;
-		
-		if ( READMISO ) recv= recv|1;
+        SCKHIGH
+        ;
 
-		SCKLOW;
-		
-	}	
+        if ( READMISO)
+            recv = recv | 1;
+
+        SCKLOW
+        ;
+
+    }
     return recv;
 }
-
 
 #pragma pop
 
@@ -158,27 +148,17 @@ int spi_sendrecvbyte2( int data)
 // spi disabled (for pin setting)
 
 void spi_init(void)
-  {}
+{}
 void spi_cson(void)
-	{}
+{}
 void spi_csoff(void)
-	{}
+{}
 void spi_sendbyte( int x)
-	{ }
+{}
 int spi_sendrecvbyte( int x)
-	{ return 255;}
+{   return 255;}
 int spi_sendzerorecvbyte( void )
-	{ return 255;}
-
+{   return 255;}
 
 #endif
-
-
-
-
-
-
-
-
-
 

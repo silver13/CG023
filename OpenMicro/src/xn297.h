@@ -1,13 +1,12 @@
-
-void xn_writepayload(  int size );
-void xn_writerxaddress(  int *addr )	;
-void xn_writereg( int reg , int val);
-int xn_command( int command);
-int xn_readreg( int reg);
-void _spi_write_address( int reg, int val);
-void xn_readpayload( int *data , int size );
-void xn_writepayload(  int size );
-void xn_writerxaddress(  int *addr )	;
+void xn_writepayload(int size);
+void xn_writerxaddress(int *addr);
+void xn_writereg(int reg, int val);
+int xn_command(int command);
+int xn_readreg(int reg);
+void _spi_write_address(int reg, int val);
+void xn_readpayload(int *data, int size);
+void xn_writepayload(int size);
+void xn_writerxaddress(int *addr);
 
 // registers
 #define CONFIG      0x00
@@ -85,17 +84,4 @@ void xn_writerxaddress(  int *addr )	;
 #define FLUSH_RX      0xE2
 #define REUSE_TX_PL   0xE3
 #define NOP           0xFF
-
-
-
-
-
-
-
-
-
-
-
-
-
 

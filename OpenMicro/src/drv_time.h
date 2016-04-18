@@ -5,7 +5,3 @@ unsigned long gettime(void);
 
 void delay(uint32_t data);
 
-
-
-
-

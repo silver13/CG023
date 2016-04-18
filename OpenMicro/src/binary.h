@@ -1,4 +1,3 @@
-
 // Binary 8 bit defines
 // PUBLIC DOMAIN
 // by silverx
@@ -7,30 +6,29 @@
 
 // the original idea comes from the arduino ide
 
-
 // obtained by this code
 /*
-#include <iostream>
+ #include <iostream>
 
-using namespace std;
+ using namespace std;
 
-int main()
-{
-    for ( int i = 0 ; i < 256 ; i++)
-    {
-    cout << "#define B"; 
-    for ( int x = 7 ; x >= 0 ; x--)
-    {
-    if ( (i>>x)&1UL) cout << "1";
-    else cout << "0";
-    }
-    cout << " ";
-    cout << i;
-    cout << endl; 
-    }
-   return 0;
-}
-*/
+ int main()
+ {
+ for ( int i = 0 ; i < 256 ; i++)
+ {
+ cout << "#define B";
+ for ( int x = 7 ; x >= 0 ; x--)
+ {
+ if ( (i>>x)&1UL) cout << "1";
+ else cout << "0";
+ }
+ cout << " ";
+ cout << i;
+ cout << endl;
+ }
+ return 0;
+ }
+ */
 
 #pragma once
 
@@ -290,5 +288,4 @@ int main()
 #define B11111101 253
 #define B11111110 254
 #define B11111111 255
-
 

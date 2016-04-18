@@ -1,4 +1,3 @@
-
 #include "defines.h"
 #include "hardware.h"
 
@@ -25,11 +24,8 @@
 #define EXPO_XY 0.3
 #define EXPO_YAW 0.0
 
-
-
 // failsafe time in uS
 #define FAILSAFETIME 1000000  // one second
-
 
 // battery saver
 // do not start software if battery is too low
@@ -54,9 +50,6 @@
 // in volts
 #define HYST 0.10
 
-
-
-
 // Gyro LPF filter frequency
 // gyro filter 0 = 260hz
 // gyro filter 1 = 184hz
@@ -64,7 +57,6 @@
 // gyro filter 3 = 42hz
 // 4 , 5, 6
 #define GYRO_LOW_PASS_FILTER 3
-
 
 // software gyro lpf ( iir )
 // set only one below
@@ -78,11 +70,9 @@
 //#define SOFT_LPF_4TH_250HZ
 #define SOFT_LPF_NONE
 
-
 // this works only on newer boards (non mpu-6050)
 // on older boards the hw gyro setting controls the acc as well
 #define ACC_LOW_PASS_FILTER 5
-
 
 // channel for headless mode switch
 
@@ -101,12 +91,9 @@
 
 #define STARTFLIP 0
 
-
-
 // enable motor filter
 // hanning 3 sample fir filter
 #define MOTOR_FILTER
-
 
 // pwm frequency for motor control
 // a higher frequency makes the motors more linear
@@ -135,25 +122,9 @@
 //#define DISABLE_HEADLESS
 //#define DISABLE_FLIP_SEQUENCER
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //##################################
 // debug / other things
 // this should not be usually changed
-
-
 
 // level mode "manual" trims ( in degrees)
 // pitch positive forward
@@ -188,44 +159,20 @@
 // disable the check for known gyro that causes the 4 times flash
 // #define DISABLE_GYRO_CHECK
 
-
 // enable motors if pitch / roll controls off center (at zero throttle)
 // possible values: 0 / 1
 #define ENABLESTIX 0
-
 
 #pragma diag_warning 1035 , 177 , 4017
 #pragma diag_error 260
 
 //--fpmode=fast
 
-
-
-
-
 // define logic
 ///////////////
 
 #ifdef ACRO_ONLY
-	#define DISABLE_FLIP_SEQUENCER
-	#undef AUTO_THROTTLE
+#define DISABLE_FLIP_SEQUENCER
+#undef AUTO_THROTTLE
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
