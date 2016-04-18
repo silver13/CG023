@@ -99,6 +99,19 @@ static unsigned long gptimer;
 
 float atan2approx(float y, float x);
 
+#define simplerand(x) gettime(x)
+
+//based on: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
+float simplesqrtf(float S)
+{
+    //TODO: https://en.wikipedia.org/wiki/Fast_inverse_square_root
+    float xn = S/2.0f;
+    for (uint8_t i = 0; i < 40; i++)
+        xn = (xn+S/xn)/2.0f;
+    return xn;
+}
+
+
 float calcmagnitude(float vector[3])
 {
 	float accmag = 0;
@@ -106,7 +119,7 @@ float calcmagnitude(float vector[3])
 	  {
 		  accmag += vector[axis] * vector[axis];
 	  }
-	accmag = sqrtf(accmag);
+	accmag = simplesqrtf(accmag);
 	return accmag;
 }
 
@@ -243,7 +256,7 @@ void imu_calc(void)
 	else
 	  {			// acc mag out of bounds
 		  count = 0;
-		  if (rand() % 20 == 5)
+		  if (simplerand() % 20 == 5)
 		    {
 			    float mag = 0;
 			    mag = calcmagnitude(&EstG[0]);
