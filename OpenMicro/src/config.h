@@ -124,6 +124,7 @@
 // Radio protocol selection
 // select only one
 #define RX_CG023_PROTOCOL
+//#define RX_H7_PROTOCOL
 //#define RX_BAYANG_PROTOCOL
 
 // mode 1 to mode 3 conversion
