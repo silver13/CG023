@@ -35,7 +35,7 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 ####19.04.16
 * merged gcc support by Paweł Stawicki
 * merged H7 protocol support by Paweł Stawicki
-* 
+
 ####13.04.16
 * fixed bug setting motor to PA11
 
