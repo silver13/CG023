@@ -460,6 +460,11 @@
               <FilePath>.\src\rx_bayang_protocol.c</FilePath>
             </File>
             <File>
+              <FileName>rx_h7_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rx_h7_protocol.c</FilePath>
+            </File>
+            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\led.c</FilePath>
