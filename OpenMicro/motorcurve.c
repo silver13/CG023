@@ -1,42 +1,40 @@
-
 #ifdef MOTOR_CURVE_6MM_490HZ
 // the old map for 490Hz
 float motormap(float input)
 {
-	// this is a thrust to pwm function
-	//  float 0 to 1 input and output
-	// output can go negative slightly
-	// measured eachine motors and prop, stock battery
-	// a*x^2 + b*x + c
-	// a = 0.262 , b = 0.771 , c = -0.0258
+    // this is a thrust to pwm function
+    //  float 0 to 1 input and output
+    // output can go negative slightly
+    // measured eachine motors and prop, stock battery
+    // a*x^2 + b*x + c
+    // a = 0.262 , b = 0.771 , c = -0.0258
 
-	if (input > 1)
-		input = 1;
-	if (input < 0)
-		input = 0;
+    if (input > 1)
+    input = 1;
+    if (input < 0)
+    input = 0;
 
-	input = input * input * 0.262f + input * (0.771f);
-	input += -0.0258f;
+    input = input * input * 0.262f + input * (0.771f);
+    input += -0.0258f;
 
-	return input;
+    return input;
 }
 #endif
 
-
 #ifdef MOTOR_CURVE_6MM_H101_490HZ
 float motormap( float input)
-{ 
+{
 
-	// H101 thrust curve for normal thrust direction
-	// a*x^2 + b*x + c
+    // H101 thrust curve for normal thrust direction
+    // a*x^2 + b*x + c
 
-if (input > 1.0f) input = 1.0f;
-if (input < 0) input = 0;
+    if (input > 1.0f) input = 1.0f;
+    if (input < 0) input = 0;
 
-input = input*input*0.277f  + input*(0.715f);
-input += 0.0102f;
+    input = input*input*0.277f + input*(0.715f);
+    input += 0.0102f;
 
-return input;   
+    return input;
 }
 #endif
 
@@ -45,7 +43,7 @@ return input;
 #ifdef MOTOR_CURVE_NONE
 float motormap(float input)
 {
-	return input;
+    return input;
 }
 #endif
 
@@ -55,18 +53,17 @@ float motormap(float input)
 {
 //      Hubsan 8.5mm motors and props 
 
-	if (input > 1)
-		input = 1;
-	if (input < 0)
-		input = 0;
+    if (input > 1)
+    input = 1;
+    if (input < 0)
+    input = 0;
 
-	input = input * input * 0.789f + input * (0.172f);
-	input += 0.04f;
+    input = input * input * 0.789f + input * (0.172f);
+    input += 0.04f;
 
-	return input;
+    return input;
 }
 #endif
-
 
 #ifdef MOTOR_CURVE_85MM_32KHZ
 // Hubsan 8.5mm 8khz pwm motor map
@@ -74,15 +71,15 @@ float motormap(float input)
 {
 //      Hubsan 8.5mm motors and props 
 
-	if (input > 1)
-		input = 1;
-	if (input < 0)
-		input = 0;
+    if (input > 1)
+    input = 1;
+    if (input < 0)
+    input = 0;
 
-	input = input * input * 0.197f + input * (0.74f);
-	input += 0.067f;
+    input = input * input * 0.197f + input * (0.74f);
+    input += 0.067f;
 
-	return input;
+    return input;
 }
 #endif
 

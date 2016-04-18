@@ -1,27 +1,3 @@
 
-
-void control( void);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void control(void);
 
