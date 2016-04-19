@@ -96,8 +96,7 @@ void imu_init(void)
 
 float Q_rsqrt( float number )
 {
-	// avoid special case zero
-	if (number < 1e-14f) return 1e-14;
+
 	long i;
 	float x2, y;
 	const float threehalfs = 1.5F;
