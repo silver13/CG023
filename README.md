@@ -31,6 +31,9 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
 ###History:
 
+####19.04.16
+* adc input fix
+* added invsqrt to imu (from quake) 
 
 ####19.04.16
 * merged gcc support by Paweł Stawicki
