@@ -157,7 +157,7 @@ int count = 0;
 	
 while ( count < 64 )
 {
-	vbattfilt += adc_read(3);
+	vbattfilt += adc_read(0);
 //	startvref += adc_read(1);
 	delay(1000);
 	count++;
@@ -258,7 +258,7 @@ if ( liberror )
 // battery low logic
 		
 		float hyst;
-		float battadc = adc_read(3);
+		float battadc = adc_read(0);
 		// average of all 4 motor thrusts
 		// should be proportional with battery current			
 		extern float thrsum; // from control.c

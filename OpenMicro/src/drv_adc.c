@@ -3,7 +3,7 @@
 #include "util.h"
 #include "config.h"
 
-uint16_t adcarray[4];
+uint16_t adcarray[2];
 
 void adc_init(void)
 {	 
@@ -27,7 +27,7 @@ void adc_init(void)
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)0x40012440;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)adcarray;
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-  DMA_InitStructure.DMA_BufferSize = 4;
+  DMA_InitStructure.DMA_BufferSize = 2;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -51,14 +51,11 @@ void adc_init(void)
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Backward;
   ADC_Init(ADC1, &ADC_InitStructure); 
-
-  ADC_ChannelConfig(ADC1, ADC_Channel_TempSensor , ADC_SampleTime_239_5Cycles);  
 	
   ADC_ChannelConfig(ADC1, ADC_Channel_Vrefint , ADC_SampleTime_239_5Cycles); 
-  
-	ADC_ChannelConfig(ADC1, ADC_Channel_7 , ADC_SampleTime_239_5Cycles); 
-	
+ 
 	ADC_ChannelConfig(ADC1, BATTERY_ADC_CHANNEL , ADC_SampleTime_239_5Cycles); 
+
 	
   ADC_GetCalibrationFactor(ADC1);
   
@@ -74,19 +71,12 @@ float adc_read(int channel)
 	switch(channel)
 	{
 		case 0:
-		return adcarray[0] ;	
+		return mapf( (float) adcarray[0] , 2727.0 , 3050.0 , 3.77 , 4.22);	
 		
 		case 1:
-		return adcarray[1] ;
+		return adcarray[1];
 		
-		case 2:
-		return adcarray[2];	
-		
-		case 3:
-		return mapf( (float) adcarray[3] , 2727.0 , 3050.0 , 3.77 , 4.22);	
-		
-		default:
-			
+		default:			
 	  return 0;
 	}
 	

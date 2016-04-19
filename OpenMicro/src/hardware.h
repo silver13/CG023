@@ -61,7 +61,7 @@
 
 #define BATTERYPIN GPIO_Pin_7
 #define BATTERYPORT GPIOA
-#define BATTERY_ADC_CHANNEL ADC_Channel_6
+#define BATTERY_ADC_CHANNEL ADC_Channel_7
 
 
 // SPI PINS DEFINITONS ( for radio ic )
