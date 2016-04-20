@@ -169,7 +169,9 @@ void checkrx(void) {
 				rxaddress[1] = rxdata[5];
 				rxaddress[2] = 0;
 				rxmode = RXMODE_NORMAL;
+
 				xn_writerxaddress(rxaddress);
+				xn_command(FLUSH_RX);
 
 				rf_channel_shift = 7;
 			}
@@ -190,7 +192,7 @@ void checkrx(void) {
 	}
 
 	newChannelIdx(packages);
-	xn_writereg(0x25, getChannel()); // Set channel frequency
+	xn_writereg(RF_CH, getChannel()); // Set channel frequency
 
 	if (timediff > FAILSAFETIME) {	//  failsafe
 		failsafe = 1;
