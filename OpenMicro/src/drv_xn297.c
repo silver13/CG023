@@ -74,6 +74,32 @@ spi_csoff();
 }
 
 
+void xn_writetxaddress(  int *addr )	
+{
+ int index = 0;
+spi_cson();
+spi_sendbyte(0x10|0x20);
+	while(index<5)
+	{
+	spi_sendbyte( addr[index] );
+	index++;
+	}
+spi_csoff();
+}
+
+
+void xn_writepayload( int data[] , int size )
+{
+	int index = 0;
+	spi_cson();
+	spi_sendrecvbyte( 0xA0 ); // write tx payload
+	while(index<size)
+	{
+	spi_sendrecvbyte( data[index] );
+	index++;
+	}
+	spi_csoff();
+}
 
 
 

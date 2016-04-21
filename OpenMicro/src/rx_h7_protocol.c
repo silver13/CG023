@@ -224,7 +224,7 @@ void checkrx(void) {
 
 unsigned long time = gettime();		
 	
-	if ( time - lastrxtime > SKIPCHANNELTIME )
+	if ( time - lastrxtime > SKIPCHANNELTIME && rxmode != RXMODE_BIND)
 	{
 		nextchannel();
 		lastrxtime= time;	

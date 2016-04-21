@@ -19,7 +19,7 @@
 #define YAW 2
 
 #define RXMODE_BIND 0
-#define RXMODE_NORMAL !RXMODE_BIND
+#define RXMODE_NORMAL (!RXMODE_BIND)
 
 
 #define CH_ON 4

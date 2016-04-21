@@ -61,88 +61,21 @@ delay(1000);
 }
 
 
-void rx_init()
-{
-
 uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
-
-writeregs( bbcal , sizeof(bbcal) );
-
-//spi_cson();
-//for ( int i = 0 ; i < sizeof(bbcal) ; i++)
-//{
-//	spi_sendbyte( bbcal[i]);
-//}
-//spi_csoff();
-//delay(1000);
-
-/*
-spi_cson();
-spi_sendbyte(0x3f);
-spi_sendbyte(0x4c);
-spi_sendbyte(0x84);
-spi_sendbyte(0x6F);
-spi_sendbyte(0x9c);
-spi_sendbyte(0x20);
-spi_csoff();
-delay(1000);
-*/
 
 uint8_t rfcal[8] = { 0x3e , 0xc9 , 220 , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
 
-
-writeregs( rfcal , sizeof(rfcal) );
-
-//spi_cson();
-//for ( int i = 0 ; i < sizeof(rfcal) ; i++)
-//{
-//	spi_sendbyte( rfcal[i]);
-//}
-//spi_csoff();
-//delay(1000);
-
-/*
-// RF_CAL registers
-delay(1000);
-spi_cson();
-spi_sendbyte(0x3e);
-spi_sendbyte(0xc9);
-spi_sendbyte(220);
-spi_sendbyte(0x80);
-spi_sendbyte(0x61);
-spi_sendbyte(0xbb);
-spi_sendbyte(0xab);
-spi_sendbyte(0x9c);
-spi_csoff();
-delay(1000);
-*/
-
 uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
 
+void rx_init()
+{
 
+writeregs( bbcal , sizeof(bbcal) );
+writeregs( rfcal , sizeof(rfcal) );
 writeregs( demodcal , sizeof(demodcal) );
 
-//spi_cson();
-//for ( int i = 0 ; i < sizeof(demodcal) ; i++)
-//{
-//	spi_sendbyte( demodcal[i]);
-//}
-//spi_csoff();
-//delay(1000);
-
-// DEMOD_CAL registers
-/*
-spi_cson();
-spi_sendbyte(0x39);
-spi_sendbyte(0x0b);
-spi_sendbyte(0xdf);
-spi_sendbyte(0xc4);
-spi_sendbyte(0xa7);
-spi_sendbyte(0x03);
-spi_csoff();
-delay(1000);
-*/
 int rxaddress[5] =  {0x26, 0xA8, 0x67, 0x35, 0xCC};
+
 xn_writerxaddress( rxaddress);
 
 	xn_writereg( EN_AA , 0 );	// aa disabled
@@ -231,6 +164,7 @@ int decode_cg023( void)
 		aux[1] = (rxdata[13] &  CG023_VIDEO_MASK)?1:0;
 		aux[2] = (rxdata[13] &  CG023_STILL_MASK)?1:0;
 		aux[3] = (rxdata[13] &  CG023_LED_OFF_MASK)?1:0;
+
 
 		float ratemulti = 1.0;
 		if ( rxdata[13] & CG023_RATE_100_MASK )
