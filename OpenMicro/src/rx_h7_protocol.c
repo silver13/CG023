@@ -44,11 +44,19 @@ extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 extern char auxchange[AUXNUMBER];
 
+
 #define H7_FLIP_MASK  0x80 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
 #define H7_F_S_MASK  0x01
-
+#define H7_FLAG_VIDEO  0x10
 
 #define PACKET_SIZE 9   // packets have 9-byte payload
+#define SKIPCHANNELTIME 35000
+
+
+int failsafe = 0;
+int rxdata[PACKET_SIZE];
+int rxmode = 0;
+
 
 void writeregs(const uint8_t data[], uint8_t size) {
 
@@ -67,30 +75,15 @@ static int rxaddress[5] = {0xcc, 0xcc, 0xcc, 0xcc, 0xcc};
 //{0xb2, 0xbe, 0x00, 0xcc, 0xcc};
 
 
-static uint8_t rf_channel_idx = 0;
-static uint8_t rx_channel = 0;
-static uint8_t rf_channel_shift = 0;
-static const uint8_t rf_channel_list[] = {
-		 2, 12, 22, 32, 42, 52, 62, 72,
+
+static const uint8_t H7_freq[] = {
+0x02, 0x48, 0x0C, 0x3e, 0x16, 0x34, 0x20, 0x2A,
+0x2A, 0x20, 0x34, 0x16, 0x3e, 0x0c, 0x48, 0x02
 };
 
-static uint8_t getChannel()
-{
-	uint8_t ch = rf_channel_list[rf_channel_idx] + rf_channel_shift;
-    return ch;
-}
+int channeloffset;
+int channel;
 
-static void newChannelIdx(uint8_t shift) {
-	uint8_t rx = rx_channel;
-	uint8_t backward = rx & 0x10;
-	rx += shift;
-	rx &= 7;
-	if(backward) {
-		rf_channel_idx = 7 - rx;
-	} else {
-		rf_channel_idx = rx;
-	}
-}
 
 
 void rx_init() {
@@ -125,42 +118,75 @@ static char checkpacket() {
 	return 0;
 }
 
-int rxdata[PACKET_SIZE];
 
-int txid[2];
-int rxmode = 0;
-#define PACKET_PERIOD    2625
+uint8_t checksum_offset = 0;
 
-int decode_cg023(void) {
-// throttle		 
-		rx[3] = 0.00390625f * (225 - rxdata[0]);
+uint8_t calc_checksum( void) 
+{
+uint8_t result=checksum_offset;
+for(uint8_t i=0; i<8; i++)
+result += rxdata[i];
+return result & 0xFF;
+}
 
-		rx[1] = ( ((int)rxdata[3]) - 112) * 0.00166666f;
+void nextchannel(void)
+{
+	channel++;
+	if(channel > 15) channel = 0;
+	xn_writereg(0x25,  H7_freq[channel]+ channeloffset ); // Set channel frequency	
+}
 
-		rx[0] = ( ((int)rxdata[2]) - 112) * 0.00166666f; // roll
 
-		rx[2] = (-((int)rxdata[1]) + 112) * 0.00166666f;
+int decode_h7(void) {		
+	if (rxdata[8] != calc_checksum() ) return 0;
+	
+		rx[3] = 0.0045000f * (225 - rxdata[0]);
+
+		rx[1] = ( ((int)rxdata[3]) - 112) * 0.00888888f;
+
+		rx[0] = ( ((int)rxdata[2]) - 112) * 0.00888888f; // roll
+
+		rx[2] = (-((int)rxdata[1]) + 112) * 0.00888888f;
 
 		//rxdata[4] L-R: default:32, (63..1)
 		//rxdata[5] F-B: default:32, (1..63)
 		//rxdata[6] default:0, 1: F/S, 128: flip
 
 		aux[0] = (rxdata[6] & H7_FLIP_MASK)?1:0;
+	
+		aux[1] = (rxdata[6] & H7_FLAG_VIDEO)?1:0;
+	
 		aux[2] = (rxdata[6] & H7_F_S_MASK)?1:0; //??
 
-		rx_channel = rxdata[7]; //next channel
-
-		//rxdata[8]; //checksum
-
+		
+#ifndef DISABLE_EXPO
+		rx[0] = rcexpo ( rx[0] , EXPO_XY );
+		rx[1] = rcexpo ( rx[1] , EXPO_XY ); 
+		rx[2] = rcexpo ( rx[2] , EXPO_YAW ); 	
+#endif
+	
+		for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
+		{
+			auxchange[i] = 0;
+			if ( lastaux[i] != aux[i] ) auxchange[i] = 1;
+			lastaux[i] = aux[i];
+		}
+	
 		return 1;
 }
 
 static unsigned long failsafetime;
+static unsigned long lastrxtime;
 
-int failsafe = 0;
+#ifdef DEBUG
+int failcount = 0;
+int chan[16];
+#endif
 
 void checkrx(void) {
-	if (checkpacket()) {
+	if (checkpacket()) 
+		{
+		unsigned long time = gettime();		
 		xn_readpayload(rxdata, PACKET_SIZE);
 		if (rxmode == RXMODE_BIND) {	// rx startup , bind mode
 			if (rxdata[0] == 0x20) {	// bind packet received
@@ -171,28 +197,41 @@ void checkrx(void) {
 				rxmode = RXMODE_NORMAL;
 				xn_writerxaddress(rxaddress);
 
-				rf_channel_shift = 7;
+				channeloffset = (((rxdata[7] & 0xf0)>>4) + (rxdata[7] & 0x0f)) % 8;
+				nextchannel();
+				checksum_offset = rxdata[7];
 			}
-		} else {	// normal mode
-			decode_cg023();
-			failsafetime = gettime();
-			failsafe = 0;
+		} else {	// normal mode	
+			if ( decode_h7() )
+			{
+				failsafetime = time;
+				lastrxtime = failsafetime;
+				failsafe = 0;
+				#ifdef DEBUG
+				chan[channel]++;
+				#endif
+				nextchannel();			
+			}
+			else
+			{
+				#ifdef DEBUG
+				failcount++;
+				#endif
+			}
 		}	// end normal rx mode
 
 	}	// end packet received
 
-	unsigned long timediff = gettime() - failsafetime;
-	unsigned long packages = timediff / (PACKET_PERIOD * 2);
-
-	if(packages > 8) {
-		//we are lost
-		packages /= 8;
+unsigned long time = gettime();		
+	
+	if ( time - lastrxtime > SKIPCHANNELTIME )
+	{
+		nextchannel();
+		lastrxtime= time;	
 	}
 
-	newChannelIdx(packages);
-	xn_writereg(0x25, getChannel()); // Set channel frequency
 
-	if (timediff > FAILSAFETIME) {	//  failsafe
+	if (time - failsafetime > FAILSAFETIME) {	//  failsafe
 		failsafe = 1;
 		rx[0] = 0;
 		rx[1] = 0;
