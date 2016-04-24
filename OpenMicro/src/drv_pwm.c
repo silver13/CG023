@@ -384,14 +384,12 @@ void init_timer( TIM_TypeDef* TIMx , int period)
 
 #include  <math.h>
 
-void pwm_set( uint8_t number , float pwm)
+void pwm_set( uint8_t number , float pwmf)
 {
-	pwm = pwm * PWMTOP ;
+	int pwm = pwmf * PWMTOP ;
 	
 	if ( pwm < 0 ) pwm = 0;
   if ( pwm > PWMTOP ) pwm = PWMTOP;
-	
-	pwm = roundf(pwm);
 	
 	TIM_OCInitStructure.TIM_Pulse = pwm;
 	
