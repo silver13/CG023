@@ -50,7 +50,7 @@ extern char auxchange[AUXNUMBER];
 #define H7_FLAG_VIDEO  0x10
 
 #define PACKET_SIZE 9   // packets have 9-byte payload
-#define SKIPCHANNELTIME 35000
+#define SKIPCHANNELTIME 28000
 
 
 int failsafe = 0;
@@ -189,8 +189,7 @@ void checkrx(void) {
 		unsigned long time = gettime();		
 		xn_readpayload(rxdata, PACKET_SIZE);
 		if (rxmode == RXMODE_BIND) {	// rx startup , bind mode
-			if (rxdata[0] == 0x20) {	// bind packet received
-
+			if (rxdata[0] == 0x20) {	// bind packet received				
 				rxaddress[0] = rxdata[4];
 				rxaddress[1] = rxdata[5];
 				rxaddress[2] = 0;
@@ -198,6 +197,7 @@ void checkrx(void) {
 				xn_writerxaddress(rxaddress);
 
 				channeloffset = (((rxdata[7] & 0xf0)>>4) + (rxdata[7] & 0x0f)) % 8;
+				xn_command( FLUSH_RX);
 				nextchannel();
 				checksum_offset = rxdata[7];
 			}

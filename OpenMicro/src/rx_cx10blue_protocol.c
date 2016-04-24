@@ -208,15 +208,15 @@ void checkrx( void)
 				if ( rxdata[0] == 0xAA ) 
 				{// bind packet
 					
-				  unsigned int temp = rxdata[2]&0x2F;	
+				  unsigned int temp = rxdata[2];//&0x2F;	
 					
 					rfchannel[0] = ( (uint8_t) rxdata[1] & 0x0F) + 0x03;
 					rfchannel[1] = ( (uint8_t) rxdata[1] >> 4) + 0x16;
 					rfchannel[2] = ( (uint8_t) temp & 0x0F) + 0x2D;
-					rfchannel[3] = ( (uint8_t) temp >> 4) + 0x40;
+					rfchannel[3] = ( (uint8_t) temp >> 4);
 					
 					rxdata[9] = 1;
-					for ( int i = 100; i!=0; i--)
+					for ( int i = 200; i!=0; i--)
 					{
 						// sent confirmation to tx  
 																
@@ -235,10 +235,10 @@ void checkrx( void)
 						txcount++;
 					}
 					*/
-					delay(3000);
+					delay(1000);
 					xn_writereg( 0 , B00001111 ); 
 					//xn_writereg( STATUS , B00100000 );
-					delay(3000);
+					delay(1000);
 					}
 					rxmode = RXMODE_NORMAL;				
 					
