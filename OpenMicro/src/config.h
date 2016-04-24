@@ -107,6 +107,8 @@
 // hanning 3 sample fir filter
 #define MOTOR_FILTER
 
+// clip feedforward attempts to resolve issues that occur near full throttle
+#define CLIP_FF
 
 // pwm frequency for motor control
 // a higher frequency makes the motors more linear
