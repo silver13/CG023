@@ -380,7 +380,6 @@ void acc_cal(void)
 
 	for (int x = 0; x < 3; x++)
 	  {
-			accelcal[x] = roundf ( accelcal[x] ); 
 		  limitf(&accelcal[x], 127);
 	  }
 

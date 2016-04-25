@@ -7,17 +7,6 @@ void init_timer( TIM_TypeDef* TIMx , int period);
 
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-// 16K
-//#define PWMTOP 2999
-
-// 32K not working
-//#define PWMTOP 1499
-
-// 8K
-//#define PWMTOP 5999
-
-//#define PWMFREQ 8000
-
 #define PWMTOP ((48000000/PWMFREQ ) - 1)
 
 #if ( PWMTOP< 1400 ) 
@@ -148,7 +137,6 @@ TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 
 
-
 #ifndef DISABLE_PWM_PINS
 void pwm_init(void)
 {
@@ -177,7 +165,6 @@ void pwm_init(void)
 
 	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6 , ENABLE);
 	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7 , ENABLE);
-
 
 
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
@@ -384,16 +371,14 @@ void init_timer( TIM_TypeDef* TIMx , int period)
 
 #include  <math.h>
 
-void pwm_set( uint8_t number , float pwm)
+void pwm_set( uint8_t number , float pwmf)
 {
-	pwm = pwm * PWMTOP ;
 	
-	if ( pwm < 0 ) pwm = 0;
-  if ( pwm > PWMTOP ) pwm = PWMTOP;
+int pwm = pwmf * PWMTOP ;
 	
-	pwm = roundf(pwm);
-	
-	TIM_OCInitStructure.TIM_Pulse = pwm;
+if ( pwm < 0 ) pwm = 0;
+if ( pwm > PWMTOP ) pwm = PWMTOP;
+
 	
   switch( number)
 	{
