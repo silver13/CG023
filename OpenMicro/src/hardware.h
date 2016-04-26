@@ -57,6 +57,15 @@
 #define SOFTI2C_GYRO_ADDRESS 0x68
 //#define SOFTI2C_GYRO_ADDRESS 0x69
 
+// disable the check for known gyro that causes the 4 times flash
+//#define DISABLE_GYRO_CHECK
+
+// gyro ids for the gyro check
+#define GYRO_ID_1 0x68
+#define GYRO_ID_2 0x78
+#define GYRO_ID_3 0x7D
+#define GYRO_ID_4 0x68
+
 // Analog battery input pin and adc channel
 
 #define BATTERYPIN GPIO_Pin_7

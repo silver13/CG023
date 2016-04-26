@@ -53,7 +53,7 @@ float rx_override[4];
 void start_flip()
 {
 
-	if ( isflipping == 0 || !onground)
+	if ( isflipping == 0 && !onground)
 	{
 		isflipping = 1;
 		fliptime = gettime();

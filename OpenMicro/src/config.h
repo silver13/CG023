@@ -188,10 +188,6 @@
 // rxdebug structure
 //#define RXDEBUG
 
-// disable the check for known gyro that causes the 4 times flash
-// #define DISABLE_GYRO_CHECK
-
-
 // enable motors if pitch / roll controls off center (at zero throttle)
 // possible values: 0 / 1
 #define ENABLESTIX 0

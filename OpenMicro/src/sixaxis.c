@@ -48,6 +48,19 @@ extern float lpffilter( float in,int num );
 #include "debug.h"
 extern debug_type debug;
 
+// temporary fix for compatibility between versions
+#ifndef GYRO_ID_1 
+#define GYRO_ID_1 0x68 
+#endif
+#ifndef GYRO_ID_2
+#define GYRO_ID_2 0x78
+#endif
+#ifndef GYRO_ID_3
+#define GYRO_ID_3 0x7D
+#endif
+#ifndef GYRO_ID_4
+#define GYRO_ID_4 0x68
+#endif
 
 void sixaxis_init( void)
 {
@@ -83,8 +96,8 @@ void sixaxis_init( void)
 
 int sixaxis_check( void)
 {
+	#ifndef DISABLE_GYRO_CHECK
 	// read "who am I" register
-	
 	int id = softi2c_read( SOFTI2C_GYRO_ADDRESS, 117 );
 	// new board returns 78h (unknown gyro maybe mpu-6500 compatible) marked m681
 	// old board returns 68h (mpu - 6050)
@@ -92,10 +105,11 @@ int sixaxis_check( void)
 	#ifdef DEBUG
 	debug.gyroid = id;
 	#endif
-	#ifdef DISABLE_GYRO_CHECK
+	
+	return (GYRO_ID_1==id||GYRO_ID_2==id||GYRO_ID_3==id||GYRO_ID_4==id );
+	#else
 	return 1;
 	#endif
-	return (0x78==id||0x68==id||0x7d==id );
 }
 
 

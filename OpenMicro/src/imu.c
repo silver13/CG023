@@ -234,22 +234,21 @@ void imu_calc(void)
 
 
 // calc acc mag
-	float accmag = 0;
+	float accmag;
 
 	accmag = calcmagnitude(&accel[0]);
-
-	// normalize acc
-	for (int axis = 0; axis < 3; axis++)
-	  {
-		  accel[axis] = accel[axis] * ( ACC_1G / accmag);
-	  }
 		
 	static unsigned int count = 0;
 
 	if ((accmag > ACC_MIN * ACC_1G) && (accmag < ACC_MAX * ACC_1G) && !DISABLE_ACC)
-	  {
+	  {	
 		  if (count >= 3 || 1)	//
 		    {
+						// normalize acc
+					for (int axis = 0; axis < 3; axis++)
+					{
+						accel[axis] = accel[axis] * ( ACC_1G / accmag);
+					}
 			    float filtcoeff = lpfcalc(deltatime, FILTERTIME);
 			    for (int x = 0; x < 3; x++)
 			      {
