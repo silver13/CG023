@@ -33,6 +33,9 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
 ###History:
 
+####29.04.16
+* added motor curves
+
 ####21.04.16
 * added CX-10 (blue) protocol
 
