@@ -115,6 +115,15 @@
 // in Hz
 #define PWMFREQ 8000
 
+// motor curve to use
+// the pwm frequency has to be set independently
+// 720motors - use 8khz and curve none.
+#define MOTOR_CURVE_NONE
+//#define MOTOR_CURVE_6MM_490HZ
+//#define MOTOR_CURVE_85MM_8KHZ
+//#define MOTOR_CURVE_85MM_32KHZ
+
+
 // throttle angle compensation in level mode
 // comment out to disable
 #define AUTO_THROTTLE

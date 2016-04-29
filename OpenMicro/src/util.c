@@ -122,3 +122,15 @@ void limit180(float *x)
 	while (*x > 180)
 		*x -= 360;
 }
+
+
+#include <inttypes.h>
+uint32_t seed = 7;
+uint32_t random( void)
+{
+  seed ^= seed << 13;
+  seed ^= seed >> 17;
+  seed ^= seed << 5;
+  return seed;
+}
+

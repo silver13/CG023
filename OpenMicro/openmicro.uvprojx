@@ -480,6 +480,11 @@
               <FilePath>.\src\sixaxis.c</FilePath>
             </File>
             <File>
+              <FileName>motorcurve.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\motorcurve.c</FilePath>
+            </File>
+            <File>
               <FileName>util.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\util.c</FilePath>

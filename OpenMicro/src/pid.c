@@ -41,8 +41,6 @@ THE SOFTWARE.
 
 
 
-
-#define GAIN 0.8
 // Kp											ROLL       PITCH     YAW
 float pidkp[PIDNUMBER] = { 16.0e-2 , 16.0e-2  , 10e-1 }; 
 

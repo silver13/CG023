@@ -1,3 +1,5 @@
+#include "config.h"
+
 
 #ifdef MOTOR_CURVE_6MM_490HZ
 // the old map for 490Hz
@@ -49,7 +51,27 @@ float motormap(float input)
 }
 #endif
 
+
 #ifdef MOTOR_CURVE_85MM_8KHZ
+// Hubsan 8.5mm 8khz pwm motor map
+float motormap(float input)
+{
+//      Hubsan 8.5mm motors and props 
+
+	if (input > 1)
+		input = 1;
+	if (input < 0)
+		input = 0;
+
+	input = input * input * 0.683f + input * (0.262f);
+	input += 0.06f;
+
+	return input;
+}
+#endif
+
+
+#ifdef MOTOR_CURVE_85MM_8KHZ_OLD
 // Hubsan 8.5mm 8khz pwm motor map
 float motormap(float input)
 {
@@ -69,7 +91,7 @@ float motormap(float input)
 
 
 #ifdef MOTOR_CURVE_85MM_32KHZ
-// Hubsan 8.5mm 8khz pwm motor map
+// Hubsan 8.5mm 32khz pwm motor map
 float motormap(float input)
 {
 //      Hubsan 8.5mm motors and props 

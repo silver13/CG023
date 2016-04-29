@@ -272,47 +272,26 @@ thrsum = 0;
 		#endif	
 		#ifndef NOMOTORS
 		#ifndef MOTORS_TO_THROTTLE
+		//normal mode
 		pwm_set( i ,motormap( mix[i] ) );
 		#else
+		// test mode
 		pwm_set( i , throttle );
 		#endif
 		#else
+		// no motors mode ( anti-optimization)
 		tempx[i] = motormap( mix[i] );
 		#endif
 		if ( mix[i] < 0 ) mix[i] = 0;
 		if ( mix[i] > 1 ) mix[i] = 1;
 		thrsum+= mix[i];
 		}	
-	
 		thrsum = thrsum / 4;
 		
 	}// end motors on
 	
 }
 
-
-float motormap( float input)
-{
-	return input;
-}
-
-float motormapx( float input)
-{ 
-	// this is a thrust to pwm function
-	//  float 0 to 1 input and output
-	// output can go negative slightly
-	// measured eachine motors and prop, stock battery
-	// a*x^2 + b*x + c
-	// a = 0.262 , b = 0.771 , c = -0.0258
-
-if (input > 1.0f) input = 1.0f;
-if (input < 0) input = 0;
-
-input = input*input*0.262f  + input*(0.771f);
-input += -0.0258f;
-
-return input;   
-}
 
 
 float hann_lastsample[4];
