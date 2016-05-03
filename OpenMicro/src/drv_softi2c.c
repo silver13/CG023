@@ -70,7 +70,7 @@ void setoutput(void);
  void sdalow()
 {
 	if(!sdaout) setoutput();	
-  GPIOB->BRR = SOFTI2C_SDAPIN;
+  SOFTI2C_SDAPORT->BRR = SOFTI2C_SDAPIN;
   sda=0;
 	_delay;
 }
@@ -79,7 +79,7 @@ void setoutput(void);
   void sdahigh()
 {
 	if(!sdaout) setoutput();
-	GPIOB->BSRR = SOFTI2C_SDAPIN;
+	SOFTI2C_SDAPORT->BSRR = SOFTI2C_SDAPIN;
 	_delay;
   sda = 1; 
 }
@@ -87,23 +87,23 @@ void setoutput(void);
 
   void scllow()
 {
- GPIOB->BRR = SOFTI2C_SCLPIN;
+ SOFTI2C_SCLPORT->BRR = SOFTI2C_SCLPIN;
 _delay;
  scl = 0;
 }
 
   void sclhigh()
 {
-  GPIOB->BSRR = SOFTI2C_SCLPIN;
+  SOFTI2C_SCLPORT->BSRR = SOFTI2C_SCLPIN;
 	_delay;
  scl = 1; 
 }
 
   void sclhighlow()
 {
- GPIOB->BSRR = SOFTI2C_SCLPIN;
+ SOFTI2C_SCLPORT->BSRR = SOFTI2C_SCLPIN;
 	_delay;
- GPIOB->BRR = SOFTI2C_SCLPIN;
+ SOFTI2C_SCLPORT->BRR = SOFTI2C_SCLPIN;
 _delay;
  scl = 0;
 }
