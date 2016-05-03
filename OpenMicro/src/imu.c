@@ -312,8 +312,7 @@ float atan2approx(float y, float x)
 
 	t = (y / x);
 	// atan function for 0 - 1 interval
-	dphi = M_PI / 4 * t - t * ((t) - 1) * (0.2447f + 0.0663f * (t));
-
+	dphi = t*( ( M_PI/4 + 0.2447f ) + t *( ( -0.2447f + 0.0663f ) + t*( - 0.0663f)) );
 	phi *= M_PI / 4;
 	dphi = phi + dphi;
 	if (dphi > (float) M_PI)
