@@ -311,7 +311,7 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 		lastlooptime = time;
 		if ( looptime == 0 ) looptime = 1;
 
-	softi2c_readdata( 0x68 , 67 , data , 6 );	
+	softi2c_readdata( SOFTI2C_GYRO_ADDRESS , 67 , data , 6 );	
 
 			
 	gyro[1] = (int16_t) ((data[0]<<8) + data[1]);
