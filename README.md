@@ -32,6 +32,10 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
 
 ###History:
+####09.05.16
+* added extra pwm pins from H8 port( A4,A6,A7,B0,B1 )
+* i2c speed setting from D1 port
+* GPIOF pins can now be used
 
 ####29.04.16
 * added motor curves
