@@ -38,8 +38,33 @@ static GPIO_InitTypeDef  sdainit;
 
 void delay(int);
 
-#define _delay  //delay(1)
+// inter-version fix
+#ifndef SOFTI2C_SPEED_SLOW1
+#ifndef SOFTI2C_SPEED_SLOW2
+#define SOFTI2C_SPEED_FAST
+#endif
+#endif
+
+#ifdef SOFTI2C_SPEED_FAST
+#define _delay  //
+#define _delay2 //
+#endif
+
+#ifdef SOFTI2C_SPEED_SLOW1
+void delayraw()
+{
+	uint32_t count = 1;
+	while (count--);
+}
+
+#define _delay  delayraw()
 #define _delay2 //delay(1)
+#endif
+
+#ifdef SOFTI2C_SPEED_SLOW2
+#define _delay  delay(1)
+#define _delay2 //delay(1)
+#endif
 
 	#ifdef i2cdebug
 	int debug = 1;   		// prints error info, set in setup()

@@ -48,6 +48,13 @@
 // disable softi2c pins 
 //#define DISABLE_SOFTI2C_PINS
 
+// I2C speed: fast = no delays 
+// slow1 = for i2c without pull-up resistors
+// slow2 = i2c failsafe speed
+#define SOFTI2C_SPEED_FAST
+//#define SOFTI2C_SPEED_SLOW1
+//#define SOFTI2C_SPEED_SLOW2
+
 #define SOFTI2C_SDAPIN GPIO_Pin_7
 #define SOFTI2C_SDAPORT GPIOB
 

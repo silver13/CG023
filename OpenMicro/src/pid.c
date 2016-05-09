@@ -53,11 +53,6 @@ float pidkd[PIDNUMBER] = { 8.8e-1 , 8.8e-1  , 5.0e-1 };
 // "setpoint weighting" 0.0 - 1.0 where 0.0 = normal pid
 float b[3] = { 0.3 , 0.3 , 0.0};
 
-/*
-float pidkp[PIDNUMBER] = { 7.0e-2 , 7.0e-2 , 5e-1 };
-float pidki[PIDNUMBER] = { 2e-1 , 2e-1 , 5e-1 };
-float pidkd[PIDNUMBER] = { 5.0e-1 , 5.0e-1 , 5.0e-1 }; 
-*/
 
 // output limit			
 const float outlimit[PIDNUMBER] = { 0.8 , 0.8 , 0.4 };
@@ -181,17 +176,7 @@ float pid(int x )
 			  #endif
 				
 
-
-
-
-
-
-
-
-
 				  limitf(  &pidoutput[x] , outlimit[x]);
-
-				
 
 
 

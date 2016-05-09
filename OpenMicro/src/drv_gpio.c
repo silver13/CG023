@@ -5,7 +5,7 @@
 void gpio_init(void)
 {
 // clocks on to all ports			
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB , ENABLE);
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBENR_GPIOFEN , ENABLE);
 
 #if ( LED_NUMBER > 0|| AUX_LED_NUMBER > 0 )
   GPIO_InitTypeDef  GPIO_InitStructure;
