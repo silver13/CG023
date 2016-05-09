@@ -21,7 +21,7 @@ Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a le
  * LEVEL_MAX_RATE is now a hardware limit and does not affect pid kp and ki
 
 ###Hardware settings
-The STM32 port ( this firmware ) is designed to be configurable in order to be adaptable to other boards.Hardware configuration  settings are found in file hardware.h . Right now, only xn297 radio and invensense gyro (sometimes marked M5xx or M6xx) are supported. Pwm pins can be set to PA0, PA1, PA2, PA3 , PA5 , PA8 , PA9 , PA10 , PA11. Radio SPI and gyro I2C can be set to any PAx or PBx pins.
+The STM32 port ( this firmware ) is designed to be configurable in order to be adaptable to other boards.Hardware configuration  settings are found in file hardware.h . Right now, only xn297 radio and invensense gyro (sometimes marked M5xx or M6xx) are supported. Pwm pins can be set to PA0 - PA11 , PB0 , PB1. Radio SPI and gyro I2C can be set to any PAx or PBx pins.
 
 ###Linux/gcc version
 The gcc version compiles close to 16k, and may need turning off features in order to make it fit.
