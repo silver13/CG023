@@ -113,11 +113,16 @@
 #define PWM_PA1
 //#define PWM_PA2
 //#define PWM_PA3
+//#define PWM_PA4
 //#define PWM_PA5
+//#define PWM_PA6
+//#define PWM_PA7
 #define PWM_PA8
 #define PWM_PA9
 //#define PWM_PA10
 //#define PWM_PA11
+//#define PWM_PB0
+//#define PWM_PB1
 
 
 // Assingment of pin to motor
@@ -130,11 +135,16 @@
 //#define MOTOR0_PIN_PA1
 //#define MOTOR0_PIN_PA2
 //#define MOTOR0_PIN_PA3
+//#define MOTOR0_PIN_PA4
 //#define MOTOR0_PIN_PA5
+//#define MOTOR0_PIN_PA6
+//#define MOTOR0_PIN_PA7
 //#define MOTOR0_PIN_PA8
 //#define MOTOR0_PIN_PA9
 //#define MOTOR0_PIN_PA10
 //#define MOTOR0_PIN_PA11
+//#define MOTOR0_PIN_PB0
+//#define MOTOR0_PIN_PB1
 
 // front-left motor
 // motor 1 pin
@@ -143,10 +153,16 @@
 #define MOTOR1_PIN_PA1
 //#define MOTOR1_PIN_PA2
 //#define MOTOR1_PIN_PA3
+//#define MOTOR1_PIN_PA4
+//#define MOTOR1_PIN_PA5
+//#define MOTOR1_PIN_PA6
+//#define MOTOR1_PIN_PA7
 //#define MOTOR1_PIN_PA8
 //#define MOTOR1_PIN_PA9
 //#define MOTOR1_PIN_PA10
 //#define MOTOR1_PIN_PA11
+//#define MOTOR1_PIN_PB0
+//#define MOTOR1_PIN_PB1
 
 // front-right motor
 // motor 2 pin
@@ -155,10 +171,16 @@
 //#define MOTOR2_PIN_PA1
 //#define MOTOR2_PIN_PA2
 //#define MOTOR2_PIN_PA3
+//#define MOTOR2_PIN_PA4
+//#define MOTOR2_PIN_PA5
+//#define MOTOR2_PIN_PA6
+//#define MOTOR2_PIN_PA7
 #define MOTOR2_PIN_PA8
 //#define MOTOR2_PIN_PA9
 //#define MOTOR2_PIN_PA10
 //#define MOTOR2_PIN_PA11
+//#define MOTOR2_PIN_PB0
+//#define MOTOR2_PIN_PB1
 
 // back-right motor
 // motor 3 pin
@@ -167,10 +189,16 @@
 //#define MOTOR3_PIN_PA1
 //#define MOTOR3_PIN_PA2
 //#define MOTOR3_PIN_PA3
+//#define MOTOR3_PIN_PA4
+//#define MOTOR3_PIN_PA5
+//#define MOTOR3_PIN_PA6
+//#define MOTOR3_PIN_PA7
 //#define MOTOR3_PIN_PA8
 #define MOTOR3_PIN_PA9
 //#define MOTOR3_PIN_PA10
 //#define MOTOR3_PIN_PA11
+//#define MOTOR3_PIN_PB0
+//#define MOTOR3_PIN_PB1
 
 
 // gyro orientation
