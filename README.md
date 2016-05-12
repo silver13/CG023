@@ -30,6 +30,8 @@ The gcc version compiles close to 16k, and may need turning off features in orde
 Currently this port is covered by the it's own thread on rcgroups.
 http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 
+###Wiki
+http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 ####09.05.16
