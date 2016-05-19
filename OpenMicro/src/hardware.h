@@ -18,6 +18,18 @@
 // do not set PA13 , PA14 (stm32f031) as this will break the programming interface
 // to disable led pins set number to zero
 
+
+
+// always on pin ( for vreg if present)
+// used by cx-10 boards and other quads with switches
+// comment out to disable
+//#define ENABLE_VREG_PIN
+
+#define VREG_PIN_1 GPIO_Pin_5
+#define VREG_PORT_1 GPIOA
+
+
+// set zero to disable
 #define LED_NUMBER 4
 
 #define LED1PIN GPIO_Pin_4
@@ -33,7 +45,7 @@
 #define LED4PORT GPIOB
 
 // aux leds
-
+// set zero to disable
 #define AUX_LED_NUMBER 1
 
 #define AUX_LED1PIN GPIO_Pin_2
