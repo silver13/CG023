@@ -114,6 +114,11 @@
 // PWM PINS DEFINITIONS 
 // currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported
 
+// pwm driver = brushed motors
+// esc driver = servo type signal for brushless esc
+
+#define USE_PWM_DRIVER
+//#define USE_ESC_DRIVER
 
 // pwm pins disable
 // disable all pwm pins / function

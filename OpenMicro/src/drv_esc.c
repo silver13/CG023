@@ -2,39 +2,68 @@
 #include "project.h"
 #include "drv_pwm.h"
 #include "config.h"
+#ifdef USE_ESC_DRIVER
 
-#ifdef USE_PWM_DRIVER
+// working motor range (microseconds)
+#define ESC_MIN 1000
+#define ESC_MAX 2000
 
+// esc throttle off setting (microseconds
+#define ESC_OFF 900
+
+// invert = signal after fets (may need 1k pullup resistor)
+// commented = signal straight from CPU pins
+#define ESC_INVERT_SIGNAL
+
+// enable preload
+#define ENABLE_PRELOAD 
+
+
+
+#undef ESC_FREQ
+// signal repetition frequency (hertz) min 185
+#define ESC_FREQ 333
+
+// do not change below
+
+
+
+
+
+
+
+
+
+
+
+
+
+// max pulse width in microseconds (auto calculated)
+#define ESC_uS ((float)1000000.0f/ESC_FREQ)
+
+#define PWMTOP ((48000000/ESC_FREQ ) - 1)
 #define PWM_DIVIDER 1
-#define PWMTOP ((48000000/PWMFREQ ) - 1)
 
-// pwm frequency checking macros
 #if ( PWMTOP< 1400 ) 
-  // approx 34Khz
-	#undef PWMTOP
-	#define PWMTOP 6000
-	#warning PWM FREQUENCY TOO HIGH
+	#error PWM FREQUENCY TOO HIGH
 #endif
 
 #if ( PWMTOP> 65535 ) 
-// under approx 732Hz we add the divider by 4
 	#undef PWMTOP
-	#define PWMTOP ((12000000/PWMFREQ ) - 1)
 	#undef PWM_DIVIDER
+	#define PWMTOP ((12000000/ESC_FREQ ) - 1)
+	//#define PWMTOP 6000
 	#define PWM_DIVIDER 4
-	//#warning PWM DIVIDE BY 4 ON
+//	#warning USING DIVIDER
 #endif
 
 #if ( PWMTOP> 65535 ) 
-// approx 183Hz is min frequency
 	#undef PWMTOP
 	#undef PWM_DIVIDER
 	#define PWMTOP 6000
 	#define PWM_DIVIDER 1
-	#warning PWM FREQUENCY TOO LOW
+	#error PWM FREQUENCY TOO LOW
 #endif
-// end pwm frequency macros
-
 
 #ifdef PWM_PA0
 #define PWM_PA0_PIN GPIO_Pin_0
@@ -262,7 +291,11 @@ void pwm_init(void)
 
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	#ifdef ESC_INVERT_SIGNAL
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+	#else
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;	
+	#endif
   TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
 
   TIM_OCInitStructure.TIM_Pulse = 0;
@@ -562,25 +595,38 @@ void init_timer( TIM_TypeDef* TIMx , int period)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	
-	TIM_TimeBaseStructure.TIM_Prescaler = PWM_DIVIDER - 1;
+	TIM_TimeBaseStructure.TIM_Prescaler = PWM_DIVIDER -1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseStructure.TIM_Period = period;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
   TIM_TimeBaseInit( TIMx, &TIM_TimeBaseStructure);
-	
+#ifdef ENABLE_PRELOAD	
+	TIM_ARRPreloadConfig(TIMx , ENABLE );
+#endif	
 }
 
 #include  <math.h>
+#include "util.h"
+
+extern int onground;
 
 void pwm_set( uint8_t number , float pwmf)
 {
+
+if ( pwmf < 0.0f ) pwmf = 0.0f;
+if ( pwmf > 1.0f ) pwmf = 1.0f;
+	
+pwmf = mapf( pwmf , 0.0 , 1.0 , (float)ESC_MIN /ESC_uS , (float) ESC_MAX/ESC_uS);
+
+if (onground) pwmf = (float)ESC_OFF / ESC_uS;
 	
 int pwm = pwmf * PWMTOP ;
 	
 if ( pwm < 0 ) pwm = 0;
 if ( pwm > PWMTOP ) pwm = PWMTOP;
+
 
 	
   switch( number)
@@ -790,8 +836,8 @@ void pwm_set( uint8_t number , float pwm)
 {
 }
 
-#endif 
+#endif
 
-#endif // end USE_PWM_DRIVER
+#endif // end USE_ESC_DRIVER
 
 
