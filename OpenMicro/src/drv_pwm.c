@@ -7,19 +7,35 @@ void init_timer( TIM_TypeDef* TIMx , int period);
 
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 
+#define PWM_DIVIDER 1
 #define PWMTOP ((48000000/PWMFREQ ) - 1)
 
+// pwm frequency checking macros
 #if ( PWMTOP< 1400 ) 
+  // approx 34Khz
 	#undef PWMTOP
 	#define PWMTOP 6000
 	#warning PWM FREQUENCY TOO HIGH
 #endif
 
 #if ( PWMTOP> 65535 ) 
+// under approx 732Hz we add the divider by 4
 	#undef PWMTOP
+	#define PWMTOP ((12000000/PWMFREQ ) - 1)
+	#undef PWM_DIVIDER
+	#define PWM_DIVIDER 4
+	//#warning PWM DIVIDE BY 4 ON
+#endif
+
+#if ( PWMTOP> 65535 ) 
+// approx 183Hz is min frequency
+	#undef PWMTOP
+	#undef PWM_DIVIDER
 	#define PWMTOP 6000
+	#define PWM_DIVIDER 1
 	#warning PWM FREQUENCY TOO LOW
 #endif
+// end pwm frequency macros
 
 
 #ifdef PWM_PA0
@@ -542,7 +558,7 @@ void init_timer( TIM_TypeDef* TIMx , int period)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	
-	TIM_TimeBaseStructure.TIM_Prescaler = 0;
+	TIM_TimeBaseStructure.TIM_Prescaler = PWM_DIVIDER - 1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseStructure.TIM_Period = period;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
