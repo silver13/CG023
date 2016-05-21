@@ -11,7 +11,7 @@ Compile using MDK-ARM toolchain aka Keil uVision. A special version is available
 Opening the project file in Keil will also ask to install the pack if not present.
 
 ###Radio protocol:
-Current options are stock cg023 transmitter ,H8 mini transmitter / devo, CX-10 (later "blue" variant) and H7. Protocol is by default stock CG023 protocol, and can be changed in file config.h
+Current options are stock cg023 transmitter ,H8 mini transmitter / devo, CX-10 (later "blue" variant) and H7. Protocol is by default H8 mini protocol, and can be changed in file config.h
 
 ###Accelerometer calibration:
 Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a level surface. Saved so it only needs to be done once. You may need to use high rates in order to reach the treshold.
@@ -36,6 +36,12 @@ http://www.rcgroups.com/forums/showthread.php?t=2634611#post34381034
 http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
+
+####21.05.16
+* added esc driver
+* pwm frequency now works to 185Hz
+* default protocol changed to H8mini
+
 ####09.05.16
 * added extra pwm pins from H8 port( A4,A6,A7,B0,B1 )
 * i2c speed setting from D1 port
