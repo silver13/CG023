@@ -242,7 +242,6 @@ if ( liberror )
 			// endless loop
 		}
 
-		checkrx();
 
 		#ifdef ACRO_ONLY
 		gyro_read();
@@ -327,7 +326,10 @@ else
 			else auxledoff( 255);
 		}
 #endif
-	
+
+
+checkrx();
+		
 // the delay is required or it becomes endless loop ( truncation in time routine)
 while ( (gettime() - time) < LOOPTIME ) delay(10); 		
 
