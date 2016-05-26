@@ -181,7 +181,7 @@
 //#define MOTOR1_PIN_PB0
 //#define MOTOR1_PIN_PB1
 
-// front-right motor
+// back-right motor
 // motor 2 pin
 
 //#define MOTOR2_PIN_PA0
@@ -199,7 +199,7 @@
 //#define MOTOR2_PIN_PB0
 //#define MOTOR2_PIN_PB1
 
-// back-right motor
+// front-right motor
 // motor 3 pin
 
 //#define MOTOR3_PIN_PA0
