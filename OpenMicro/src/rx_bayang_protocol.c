@@ -88,17 +88,27 @@ xn_writerxaddress( rxaddress);
 	xn_command( FLUSH_RX);
   xn_writereg( RF_CH , 0 );  // bind on channel 0
   xn_writereg( 0 , B00001111 ); // power up, crc enabled
-	
+
+#ifdef RADIO_CHECK
+void check_radio(void);
+ check_radio();
+#endif	
 }
 
-//int statusdebug;
+
+void check_radio()
+{	
+	int temp = xn_readreg( 0x0f); // rx address pipe 5	
+	// should be 0xc6
+	extern void failloop( int);
+	if ( temp != 0xc6) failloop(3);
+}
+
 
 static char checkpacket()
 {
-	//int status = xn_command(NOP);
 	spi_cson();
 	int status = spi_sendzerorecvbyte();
-//	statusdebug = status;
 	spi_csoff();
 	if ( status&(1<<MASK_RX_DR) )
 	{	 // rx clear bit

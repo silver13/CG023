@@ -243,7 +243,16 @@ else throttle = (rx[3] - 0.1f)*1.11111111f;
 
 		    }
 #endif
-		
+	
+#ifdef LVC_PREVENT_RESET
+extern float vbatt;
+if (vbatt < (float) LVC_PREVENT_RESET_VOLTAGE) 
+{
+	throttle = 0;
+}
+#endif
+
+				
 #ifdef INVERT_YAW_PID
 pidoutput[2] = -pidoutput[2];			
 #endif

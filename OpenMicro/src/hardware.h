@@ -110,6 +110,8 @@
 #define SPI_SS_PIN GPIO_Pin_5
 #define SPI_SS_PORT GPIOB
 
+// check for radio chip ( 3 times flash = not found)
+#define RADIO_CHECK
 
 // PWM PINS DEFINITIONS 
 // currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported

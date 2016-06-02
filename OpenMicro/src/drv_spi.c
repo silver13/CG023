@@ -133,7 +133,7 @@ int spi_sendrecvbyte2( int data)
 }
 
 
- int spi_sendzerorecvbyte( )
+int spi_sendzerorecvbyte( )
 { int recv = 0;
 	MOSILOW;
 

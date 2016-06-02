@@ -54,6 +54,11 @@
 // in volts
 #define HYST 0.10
 
+// lower throttle when battery below treshold
+//#define LVC_PREVENT_RESET
+
+// threshold for above (volts)
+#define LVC_PREVENT_RESET_VOLTAGE 2.85
 
 
 

@@ -96,6 +96,7 @@ extern int rxmode;
 // failsafe on / off
 extern int failsafe;
 
+float vbatt = 4.20;
 
 
 
@@ -252,12 +253,16 @@ if ( liberror )
 		imu_calc();		
 		#endif
 
+		float battadc = adc_read(0);
+		vbatt = battadc;
+		
+// all flight calculations and motors
 		control();
 
 // battery low logic
 		
 		float hyst;
-		float battadc = adc_read(0);
+
 		// average of all 4 motor thrusts
 		// should be proportional with battery current			
 		extern float thrsum; // from control.c

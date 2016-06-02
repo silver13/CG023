@@ -92,8 +92,22 @@ xn_writetxaddress( rxaddress);
   xn_writereg( 0 , B00001111 ); // power up, crc enabled
 
 
-	
+#ifdef RADIO_CHECK
+void check_radio(void);
+ check_radio();
+#endif	
 }
+
+
+void check_radio()
+{	
+	int temp = xn_readreg( 0x0f); // rx address pipe 5	
+	// should be 0xc6
+	extern void failloop( int);
+	if ( temp != 0xc6) failloop(3);
+}
+
+
 
 
 static char checkpacket()
