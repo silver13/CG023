@@ -29,7 +29,7 @@
 #define CH_HEADFREE 2
 #define CH_RTH 3
 
-
+// used for the pwm driver
 #define CH1 0
 #define CH2 1
 #define CH3 2

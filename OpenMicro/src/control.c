@@ -209,6 +209,14 @@ else throttle = (rx[3] - 0.1f)*1.11111111f;
 			motorfilter( 0 , i);
 			#endif
 		}	
+		
+		#ifdef USE_PWM_DRIVER
+		#ifdef MOTOR_BEEPS
+		extern void motorbeep( void);
+		motorbeep();
+		#endif
+		#endif
+		
 		onground = 1;
 		thrsum = 0;
 		

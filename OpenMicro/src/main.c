@@ -313,7 +313,13 @@ else
 				{
 					ledflash ( 500000, 15);			
 				}
-			else ledon( 255);	
+			else 
+			{
+				if ( aux[LEDS_ON] )
+				ledon( 255);
+				else 
+				ledoff( 255);
+			}
 		} 		
 		
 	}

@@ -63,11 +63,14 @@
 
 
 // Gyro LPF filter frequency
-// gyro filter 0 = 260hz
-// gyro filter 1 = 184hz
-// gyro filter 2 = 94hz
-// gyro filter 3 = 42hz
-// 4 , 5, 6
+// gyro filter 0 = 250hz delay 0.97mS
+// gyro filter 1 = 184hz delay 2.9mS
+// gyro filter 2 = 92hz delay 3.9mS
+// gyro filter 3 = 41hz delay 5.9mS (Default)
+// gyro filter 4 = 20hz
+// gyro filter 5 = 10hz
+// gyro filter 6 = 5hz
+// gyro filter 7 = 3600hz delay 0.17mS
 #define GYRO_LOW_PASS_FILTER 3
 
 
@@ -98,14 +101,15 @@
 // 0 - flip, 
 // 1 , 2 , 3 - video , still ,led
 
-// 4 - on always ( all protocols)
-// 5 - off always ( all protocols)
-#define HEADLESSMODE 5
+// CH_ON - on always ( all protocols)
+// CH_OFF - off always ( all protocols)
+#define HEADLESSMODE CH_OFF
 
 #define LEVELMODE 2
 
-#define STARTFLIP 0
+#define STARTFLIP CH_FLIP
 
+#define LEDS_ON CH_ON
 
 
 // enable motor filter
@@ -128,6 +132,8 @@
 //#define MOTOR_CURVE_85MM_8KHZ
 //#define MOTOR_CURVE_85MM_32KHZ
 
+// lost quad beeps using motors
+//#define MOTOR_BEEPS
 
 // throttle angle compensation in level mode
 // comment out to disable
