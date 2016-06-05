@@ -538,6 +538,11 @@
               <FileType>5</FileType>
               <FilePath>.\src\debug.h</FilePath>
             </File>
+            <File>
+              <FileName>gestures.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gestures.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

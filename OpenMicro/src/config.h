@@ -95,22 +95,31 @@
 // channel for headless mode switch
 
 // H8 protocol channels
-// 0 - flip, 1 - expert, 2 - headfree, 3 - headingreturn
+// CH_FLIP - flip,  CH_HEADFREE - headfree, CH_RTH - headingreturn
 
 // cg023 protocol chanels
-// 0 - flip, 
-// 1 , 2 , 3 - video , still ,led
+// CH_CG023_FLIP , CH_CG023_VIDEO , CH_CG023_STILL , CH_CG023_LED
+
+// H7 channels
+// CH_H7_FLIP , CH_H7_VIDEO , CH_H7_FS
+
+// CX10
+// CH_CX10_CH0  (unknown) , CH_CX10_CH2 ( rates mid)
 
 // CH_ON - on always ( all protocols)
 // CH_OFF - off always ( all protocols)
 #define HEADLESSMODE CH_OFF
 
-#define LEVELMODE 2
+#define LEVELMODE CH_AUX1
 
 #define STARTFLIP CH_FLIP
 
 #define LEDS_ON CH_ON
 
+
+// Gestures enable ( gestures 1 = acc only)
+//#define GESTURES1_ENABLE
+#define GESTURES2_ENABLE
 
 // enable motor filter
 // hanning 3 sample fir filter
@@ -132,7 +141,7 @@
 //#define MOTOR_CURVE_85MM_8KHZ
 //#define MOTOR_CURVE_85MM_32KHZ
 
-// lost quad beeps using motors
+// lost quad beeps using motors (30 sec timeout)
 //#define MOTOR_BEEPS
 
 // throttle angle compensation in level mode
@@ -230,8 +239,11 @@
 	#undef AUTO_THROTTLE
 #endif
 
-
-
+#ifdef MOTOR_BEEPS
+ #ifdef USE_ESC_DRIVER
+ #warning "MOTOR BEEPS_WORKS WITH BRUSHED MOTORS ONLY"
+#endif
+#endif
 
 
 

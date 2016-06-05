@@ -29,7 +29,7 @@
 #define VREG_PORT_1 GPIOA
 
 
-// set zero to disable
+// set zero to disable (0 - 4)
 #define LED_NUMBER 4
 
 #define LED1PIN GPIO_Pin_4
@@ -45,7 +45,7 @@
 #define LED4PORT GPIOB
 
 // aux leds
-// set zero to disable
+// set zero to disable (0 - 2)
 #define AUX_LED_NUMBER 1
 
 #define AUX_LED1PIN GPIO_Pin_2
@@ -53,6 +53,14 @@
 
 #define AUX_LED2PIN GPIO_Pin_x
 #define AUX_LED2PORT GPIOx
+
+// invert - leds turn on when high
+//#define LED1_INVERT
+//#define LED2_INVERT
+//#define LED3_INVERT
+//#define LED4_INVERT
+//#define AUX_LED1_INVERT
+//#define AUX_LED2_INVERT
 
 // softi2c pins definitons:
 // sda - out/in , sck - out
