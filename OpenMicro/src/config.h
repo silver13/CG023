@@ -116,6 +116,8 @@
 
 #define LEDS_ON CH_ON
 
+// aux1 channel starts on if this is defined, otherwise off.
+//#define AUX1_START_ON
 
 // Gestures enable ( gestures 1 = acc only)
 //#define GESTURES1_ENABLE
