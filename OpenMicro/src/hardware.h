@@ -93,6 +93,9 @@
 #define GYRO_ID_3 0x7D
 #define GYRO_ID_4 0x68
 
+// disable lvc functions
+//#define DISABLE_LVC
+
 // Analog battery input pin and adc channel
 
 #define BATTERYPIN GPIO_Pin_7
