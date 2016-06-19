@@ -40,7 +40,7 @@
 // if STOP_LOWBATTERY is defined above
 #define STOP_LOWBATTERY_TRESH 3.3
 
-// voltage too start warning
+// voltage to start warning
 // volts
 #define VBATTLOW 3.5
 
