@@ -193,14 +193,9 @@ void nextchannel()
 
 
 #ifdef RXDEBUG	
-struct rxdebug
-	{
-	unsigned long packettime;
-	int failcount;
-	int packetpersecond;
-	int channelcount[4];
-	} 
-	rxdebug;
+
+struct rxdebug rxdebug;
+
 int packetrx;
 unsigned long lastrxtime;
 unsigned long secondtimer;
@@ -259,7 +254,7 @@ void checkrx( void)
 					nextchannel();
 				  extern unsigned long lastlooptime;
 					lastlooptime = gettime();
-					#ifdef SERIAL	
+					#ifdef SERIAL_INFO	
 					printf( " BIND \n");
 					#endif
 				}

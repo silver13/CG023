@@ -23,29 +23,25 @@ THE SOFTWARE.
 */
 
 
-#include <inttypes.h>
+
 #include "binary.h"
 #include "sixaxis.h"
 #include "drv_time.h"
-
-
 #include "util.h"
 #include "config.h"
 #include "led.h"
-
 #include "drv_serial.h"
-
-
 #include "drv_softi2c.h"
 //#include "drv_i2c.h"
 
-#include <math.h>
 
-// for soft gyro filter
-extern float lpffilter( float in,int num );
+#include <math.h>
+#include <stdio.h>
+#include <inttypes.h>
 
 
 #include "debug.h"
+
 extern debug_type debug;
 
 // temporary fix for compatibility between versions
@@ -369,7 +365,7 @@ if ( time - timestart < CAL_TIME )
 }
 
 	
-#ifdef SERIAL	
+#ifdef SERIAL_INFO	
 printf("gyro calibration  %f %f %f \n "   , gyrocal[0] , gyrocal[1] , gyrocal[2]);
 #endif
 	

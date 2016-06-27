@@ -52,6 +52,7 @@ extern char auxchange[AUXNUMBER];
 #define PACKET_SIZE 9   // packets have 9-byte payload
 #define SKIPCHANNELTIME 28000
 
+struct rxdebug rxdebug;
 
 int failsafe = 0;
 int rxdata[PACKET_SIZE];

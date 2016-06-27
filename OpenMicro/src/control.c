@@ -332,6 +332,7 @@ thrsum = 0;
 		pwm_set( i ,motormap( mix[i] ) );
 		#else
 		// test mode
+		ledcommand = 1;
 		pwm_set( i , throttle );
 		#endif
 		#else

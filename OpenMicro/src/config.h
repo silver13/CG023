@@ -189,6 +189,14 @@
 
 
 
+// enable serial driver ( pin SWCLK after calibration) 
+// WILL DISABLE PROGRAMMING AFTER GYRO CALIBRATION - 2 - 3 seconds after powerup)
+//#define SERIAL_ENABLE
+// enable some serial info output
+//#define SERIAL_INFO
+// enable osd out
+//#define OSD_LTM_PROTOCOL
+
 // level mode "manual" trims ( in degrees)
 // pitch positive forward
 // roll positive right
@@ -205,10 +213,6 @@
 // this affects soft gyro lpf frequency if used
 #define LOOPTIME 1000
 
-// not available
-// enable serial out
-// 57600 default
-// #define SERIAL
 
 // invert yaw pid for hubsan motors
 //#define INVERT_YAW_PID
@@ -247,6 +251,9 @@
 #endif
 #endif
 
+#ifdef OSD_LTM_PROTOCOL
+#define RXDEBUG
+#endif
 
 
 

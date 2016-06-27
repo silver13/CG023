@@ -226,13 +226,8 @@ int failsafe = 0;
 //#define RXDEBUG
 
 #ifdef RXDEBUG	
-struct rxdebug
-	{
-	unsigned long packettime;
-	int failcount;
-	int packetpersecond;
-	} 
-	rxdebug;
+struct rxdebug rxdebug;
+
 int packetrx;
 unsigned long lastrxtime;
 unsigned long secondtimer;
@@ -257,7 +252,7 @@ void checkrx( void)
 
 				  xn_writereg(0x25, (uint8_t)(rxdata[1] - 0x7D) ); // Set channel frequency	
 				
-					#ifdef SERIAL	
+					#ifdef SERIAL_INFO	
 					printf( " BIND \n");
 					#endif
 				}

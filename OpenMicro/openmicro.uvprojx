@@ -474,6 +474,16 @@
               <FilePath>.\src\rx_cx10blue_protocol.c</FilePath>
             </File>
             <File>
+              <FileName>gestures.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\gestures.c</FilePath>
+            </File>
+            <File>
+              <FileName>osd_ltm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\osd_ltm.c</FilePath>
+            </File>
+            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\led.c</FilePath>
@@ -537,11 +547,6 @@
               <FileName>debug.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\debug.h</FilePath>
-            </File>
-            <File>
-              <FileName>gestures.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\gestures.c</FilePath>
             </File>
           </Files>
         </Group>

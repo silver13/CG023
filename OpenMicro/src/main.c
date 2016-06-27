@@ -48,7 +48,11 @@ THE SOFTWARE.
 
 #include "drv_softi2c.h"
 
+#include "drv_serial.h"
+
 #include "binary.h"
+
+#include <stdio.h>
 
 #include <inttypes.h>
 
@@ -117,7 +121,11 @@ int main(void)
   softi2c_init();
 	
 	spi_init();
-delay(100000);	
+	
+  time_init();
+
+	delay(100000);
+	
 	pwm_init();
 
 	pwm_set( MOTOR_BL , 0);
@@ -125,19 +133,18 @@ delay(100000);
 	pwm_set( MOTOR_FR , 0); 
 	pwm_set( MOTOR_BR , 0); 
 
-  time_init();
 
 	sixaxis_init();
 	
 	if ( sixaxis_check() ) 
 	{
-		#ifdef SERIAL	
+		#ifdef SERIAL_INFO	
 		printf( " MPU found \n" );
 		#endif
 	}
 	else 
 	{
-		#ifdef SERIAL	
+		#ifdef SERIAL_INFO	
 		printf( "ERROR: MPU NOT FOUND \n" );	
 		#endif
 		failloop(4);
@@ -174,13 +181,6 @@ while ( count < 64 )
  vbattfilt = vbattfilt/64;	
 // startvref = startvref/64;
 
-#ifdef SERIAL	
-		printf( "Vbatt %2.2f \n", vbattfilt );
-		#ifdef NOMOTORS
-    printf( "NO MOTORS\n" );
-		#warning "NO MOTORS"
-		#endif
-#endif
 	
 #ifdef STOP_LOWBATTERY
 // infinite loop
@@ -190,7 +190,19 @@ if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 
 
 	gyro_cal();
-		
+
+#ifdef SERIAL_ENABLE
+serial_init();
+#endif
+
+#ifdef SERIAL_INFO	
+		printf( "Vbatt %2.2f \n", vbattfilt );
+		#ifdef NOMOTORS
+    printf( "NO MOTORS\n" );
+		#warning "NO MOTORS"
+		#endif
+#endif
+
 #ifndef ACRO_ONLY
 	imu_init();
 	
@@ -206,7 +218,7 @@ extern int readdata( int datanumber);
 extern unsigned int liberror;
 if ( liberror ) 
 {
-	  #ifdef SERIAL	
+	  #ifdef SERIAL_INFO	
 		printf( "ERROR: I2C \n" );	
 		#endif
 		failloop(7);
@@ -359,8 +371,10 @@ else
 		}
 #endif
 
-
 checkrx();
+	
+extern void osdcycle();	
+osdcycle();
 		
 // the delay is required or it becomes endless loop ( truncation in time routine)
 while ( (gettime() - time) < LOOPTIME ) delay(10); 		
