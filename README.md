@@ -37,6 +37,11 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+####27.06.16
+* added serial support (tx) on SWCLK pin
+* added osd output using LTM protocol
+* changed delay() so it's actually close to what it's supposed to be
+ 
 ####21.05.16
 * added esc driver
 * pwm frequency now works to 185Hz
