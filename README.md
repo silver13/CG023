@@ -37,6 +37,10 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+####30.06.16
+* removed cpu speed dependancies in pwm and systimer routines
+* added overclock option to 64Mhz from 48
+
 ####27.06.16
 * added serial support (tx) on SWCLK pin
 * added osd output using LTM protocol
