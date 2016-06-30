@@ -2,6 +2,7 @@
 #include "project.h"
 #include "drv_pwm.h"
 #include "config.h"
+
 #ifdef USE_ESC_DRIVER
 
 // working motor range (microseconds)
@@ -35,33 +36,35 @@
 
 
 
-
+#ifndef SYS_CLOCK_FREQ_HZ
+#define SYS_CLOCK_FREQ_HZ 48000000
+#warning SYS_CLOCK_FREQ_HZ not present
+#endif
 
 
 // max pulse width in microseconds (auto calculated)
 #define ESC_uS ((float)1000000.0f/ESC_FREQ)
 
-#define PWMTOP ((48000000/ESC_FREQ ) - 1)
+#define PWMTOP ((SYS_CLOCK_FREQ_HZ / ESC_FREQ ) - 1)
 #define PWM_DIVIDER 1
 
-#if ( PWMTOP< 1400 ) 
+#if ( PWMTOP< 1000 ) 
 	#error PWM FREQUENCY TOO HIGH
 #endif
 
 #if ( PWMTOP> 65535 ) 
 	#undef PWMTOP
 	#undef PWM_DIVIDER
-	#define PWMTOP ((12000000/ESC_FREQ ) - 1)
-	//#define PWMTOP 6000
+	#define PWMTOP (((SYS_CLOCK_FREQ_HZ/4)/ESC_FREQ ) - 1)
 	#define PWM_DIVIDER 4
 //	#warning USING DIVIDER
 #endif
 
 #if ( PWMTOP> 65535 ) 
-	#undef PWMTOP
-	#undef PWM_DIVIDER
-	#define PWMTOP 6000
-	#define PWM_DIVIDER 1
+//	#undef PWMTOP
+//	#undef PWM_DIVIDER
+//	#define PWMTOP 6000
+//	#define PWM_DIVIDER 1
 	#error PWM FREQUENCY TOO LOW
 #endif
 

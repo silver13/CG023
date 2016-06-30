@@ -227,6 +227,9 @@
 // possible values: 0 / 1
 #define ENABLESTIX 0
 
+// overclock to 64Mhz
+//#define ENABLE_OVERCLOCK
+
 
 #pragma diag_warning 1035 , 177 , 4017
 #pragma diag_error 260
@@ -237,8 +240,15 @@
 
 
 
-// define logic
+// define logic - do not change
 ///////////////
+
+
+#ifdef ENABLE_OVERCLOCK
+#define SYS_CLOCK_FREQ_HZ 64000000
+#else
+#define SYS_CLOCK_FREQ_HZ 48000000
+#endif
 
 #ifdef ACRO_ONLY
 	#define DISABLE_FLIP_SEQUENCER

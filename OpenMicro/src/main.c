@@ -110,9 +110,13 @@ void failloop( int val);
 
 int main(void)
 {
-	clk_init();
 	
 	delay(1000);
+
+
+#ifdef ENABLE_OVERCLOCK
+clk_init();
+#endif
 	
   gpio_init();
 	

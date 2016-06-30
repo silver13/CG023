@@ -5,8 +5,14 @@
 
 #ifdef USE_PWM_DRIVER
 
+
+#ifndef SYS_CLOCK_FREQ_HZ
+#define SYS_CLOCK_FREQ_HZ 48000000
+#warning SYS_CLOCK_FREQ_HZ not present
+#endif
+
 #define PWM_DIVIDER 1
-#define PWMTOP ((48000000/PWMFREQ ) - 1)
+#define PWMTOP (( SYS_CLOCK_FREQ_HZ / PWMFREQ ) - 1)
 
 // pwm frequency checking macros
 #if ( PWMTOP< 1400 ) 
@@ -19,7 +25,7 @@
 #if ( PWMTOP> 65535 ) 
 // under approx 732Hz we add the divider by 4
 	#undef PWMTOP
-	#define PWMTOP ((12000000/PWMFREQ ) - 1)
+	#define PWMTOP (((SYS_CLOCK_FREQ_HZ/4)/PWMFREQ ) - 1)
 	#undef PWM_DIVIDER
 	#define PWM_DIVIDER 4
 	//#warning PWM DIVIDE BY 4 ON
