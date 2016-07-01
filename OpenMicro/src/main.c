@@ -119,10 +119,10 @@ clk_init();
 #endif
 	
   gpio_init();
+
+
+	i2c_init();	
 	
-	//i2c_init();	
-	
-  softi2c_init();
 	
 	spi_init();
 	
