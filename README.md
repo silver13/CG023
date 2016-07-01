@@ -37,6 +37,11 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+
+####01.07.16
+* added hw i2c, it can work at full speed in some cases where softi2c needs a slowdown
+* pins PB6 and PB7 by default for hw i2c
+
 ####30.06.16
 * removed cpu speed dependancies in pwm and systimer routines
 * added overclock option to 64Mhz from 48
