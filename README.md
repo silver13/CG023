@@ -14,7 +14,7 @@ Opening the project file in Keil will also ask to install the pack if not presen
 Current options are stock cg023 transmitter ,H8 mini transmitter / devo, CX-10 (later "blue" variant) and H7. Protocol is by default H8 mini protocol, and can be changed in file config.h
 
 ###Accelerometer calibration:
-Hold pitch stick down for 3 seconds, with throttle off. Needs to be done on a level surface. Saved so it only needs to be done once. You may need to use high rates in order to reach the treshold.
+Move the pitch stick down 3 times within about 2 seconds. Needs to be done on a level surface. Saved so it only needs to be done once. You may need to use high rates in order to reach the treshold.
 
 ###Differences from H8 version:
  * rates have been integrated into protocol file, and depend on protocol abilities
