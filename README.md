@@ -26,7 +26,7 @@ Move the pitch stick down 3 times within about 2 seconds. Needs to be done on a 
 The STM32 port ( this firmware ) is designed to be configurable in order to be adaptable to other boards.Hardware configuration  settings are found in file hardware.h . Right now, only xn297 radio and invensense gyro (sometimes marked M5xx or M6xx) are supported. Pwm pins can be set to PA0 - PA11 , PB0 , PB1. Radio SPI and gyro I2C can be set to any PAx or PBx pins.
 
 ###Linux/gcc version
-The gcc version compiles close to 16k, and may need turning off features in order to make it fit.
+The gcc version compiles close to 16k, and may need turning off features in order to make it fit. Read install.md for additional information.
 
 ###Installation and Support
 Currently this port is covered by the it's own thread on rcgroups.
