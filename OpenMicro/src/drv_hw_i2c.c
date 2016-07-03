@@ -103,7 +103,11 @@ THE SOFTWARE.
 #endif
 #endif
 
-
+// default if not set
+#ifndef HW_I2C_TIMINGREG
+	// 400khz (fast)
+	#define HW_I2C_TIMINGREG 0x00901850
+#endif
 
 extern int liberror;
 

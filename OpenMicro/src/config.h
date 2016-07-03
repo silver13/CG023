@@ -92,7 +92,7 @@
 #define ACC_LOW_PASS_FILTER 5
 
 
-// channel for headless mode switch
+// switch function selection
 
 // H8 protocol channels
 // CH_FLIP - flip,  CH_HEADFREE - headfree, CH_RTH - headingreturn
@@ -106,13 +106,16 @@
 // CX10
 // CH_CX10_CH0  (unknown) , CH_CX10_CH2 ( rates mid)
 
+// DEVO channels (bayang protocol)
+// DEVO_CHAN_5 - DEVO_CHAN_10
+
 // CH_ON - on always ( all protocols)
 // CH_OFF - off always ( all protocols)
 #define HEADLESSMODE CH_OFF
 
 #define LEVELMODE CH_AUX1
 
-#define STARTFLIP CH_FLIP
+#define STARTFLIP CH_OFF
 
 #define LEDS_ON CH_ON
 

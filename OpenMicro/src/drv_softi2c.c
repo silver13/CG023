@@ -40,7 +40,9 @@ void delay(int);
 // inter-version fix
 #ifndef SOFTI2C_SPEED_SLOW1
 #ifndef SOFTI2C_SPEED_SLOW2
-#define SOFTI2C_SPEED_FAST
+#ifndef SOFTI2C_SPEED_FAST
+	#define SOFTI2C_SPEED_FAST
+#endif
 #endif
 #endif
 
