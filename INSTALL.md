@@ -1,6 +1,7 @@
 # Install and Flashing Instructions
+The flashing procedure consists of the "unlocking" of the board,as it is read/write protected originally, and flashing the actual firmware. A ST-LINK v2 is used, either clone, original, or Discovery/Nucleo board.
 
-Information on Flashing the FC is mostly collected on the [RC Groups Thread](http://www.rcgroups.com/forums/showthread.php?t=2512604), but distributed over hundreds of post. The install instructions in this file consolidate this information.
+Connections to the programming port require 3 wires, ground, swclk and swdat (swio). While flashing, the quad is powered from its battery.
 
 # Windows
 
@@ -60,3 +61,7 @@ Once the board is unlocked, the firmware can be flashed using
 ```
 openocd -f /usr/share/openocd/scripts/interface/stlink-v2.cfg -f /usr/share/openocd/scripts/target/stm32f0x.cfg -c init -c "reset halt" -c "flash write_image erase cg023 0x08000000" -c "verify_image cg023 0x08000000" -c "reset run" -c shutdown
 ```
+
+#Size
+
+The firmware compiled by gcc seems about 40% larger, presumably due to the libs used by gcc. This means it may be over 16K in some cases. Some options can be disabled to reduce size, mainly headless and the flip sequencer. Of couse, the acro only build is a lot smaller, and should always fit.
