@@ -52,12 +52,19 @@ void delay(int);
 #endif
 
 #ifdef SOFTI2C_SPEED_SLOW1
+#ifdef __GNUC__
 void delayraw()
 {
-	uint32_t count = 1;
+	volatile uint8_t count = 1;
 	while (count--);
 }
-
+#else
+void delayraw()
+{
+	uint8_t count = 1;
+	while (count--);
+}
+#endif
 #define _delay  delayraw()
 #define _delay2 //delay(1)
 #endif
@@ -71,7 +78,6 @@ void delayraw()
 	int debug = 1;   		// prints error info, set in setup()
 	#endif
 	
-	int error1;
 	int sda;
 	int scl;	
 	
@@ -178,7 +184,7 @@ void _sendstart()
 	#ifdef i2cdebug
 	printf("_sendstart: sda pulled low by slave"); 
 	#endif
-	error1 = 1;
+	//error1 = 1;
 	}
   sdalow();
 }
@@ -399,12 +405,7 @@ sclhigh();
 	
 }
 
-uint8_t i2c_error()
-{
-uint8_t errora = error1;
-error1 = 0;
-return errora;
-}
+
 
 
 

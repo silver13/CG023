@@ -25,11 +25,7 @@ THE SOFTWARE.
 
 
 #include "project.h"
-#include <stdint.h>
-#include <stdio.h>
-
 #include "drv_hw_i2c.h"
-
 #include "drv_time.h"
 #include "config.h"
 
@@ -38,7 +34,7 @@ THE SOFTWARE.
 // pins for hw i2c , select one only
 // select pins PB6 and PB7
 // OR select pins PA9 and PA10
-#define HW_I2C_PINS_PB67
+//#define HW_I2C_PINS_PB67
 //#define HW_I2C_PINS_PA910
 
 
@@ -105,8 +101,8 @@ THE SOFTWARE.
 
 // default if not set
 #ifndef HW_I2C_TIMINGREG
-	// 400khz (fast)
-	#define HW_I2C_TIMINGREG 0x00901850
+// 400khz (fast)
+#define HW_I2C_TIMINGREG 0x00901850
 #endif
 
 extern int liberror;
@@ -138,7 +134,7 @@ GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_1);
 GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_1);
 #endif
 
-#ifdef HW_I2C_PINS_PB910
+#ifdef HW_I2C_PINS_PA910
 GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_4);
 GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_4);
 #endif
@@ -179,9 +175,8 @@ I2C_Cmd(I2C1, ENABLE);
 
 //#define I2C_TIMEOUT 50000
 //#define I2C_CONDITION i2c_timeout > I2C_TIMEOUT
-int i2cdebug = 0;
 
-#define I2C_CONDITION ((i2c_timeout>>16))
+#define I2C_CONDITION ((i2c_timeout>>13))
 
 int hw_i2c_sendheader( int reg, int bytes)
 {
@@ -228,7 +223,6 @@ while(I2C_GetFlagStatus(I2C1, I2C_FLAG_TXE) == RESET)
 		}
 	}
 	
-i2cdebug = i2c_timeout;
 return 1;
 }
 

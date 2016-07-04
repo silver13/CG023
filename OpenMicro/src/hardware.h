@@ -76,11 +76,16 @@
 //#define SOFTI2C_SPEED_SLOW1
 //#define SOFTI2C_SPEED_SLOW2
 
-//  hardware i2c speed ( 1000, 400 , 200 , 100Khz)
-//#define HW_I2C_SPEED_FAST2
-#define HW_I2C_SPEED_FAST
+// hardware i2c speed ( 1000, 400 , 200 , 100Khz)
+#define HW_I2C_SPEED_FAST2
+//#define HW_I2C_SPEED_FAST
 //#define HW_I2C_SPEED_SLOW1
 //#define HW_I2C_SPEED_SLOW2
+
+// pins for hw i2c , select one only
+// select pins PB6 and PB7 OR select pins PA9 and PA10
+#define HW_I2C_PINS_PB67
+//#define HW_I2C_PINS_PA910
 
 // softi2c pins definitons
 #define SOFTI2C_SDAPIN GPIO_Pin_7
