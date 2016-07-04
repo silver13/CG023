@@ -37,6 +37,8 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+####05.07.16
+* software i2c optimizations (speed/size)
 
 ####01.07.16
 * added hw i2c, it can work at full speed in some cases where softi2c needs a slowdown
