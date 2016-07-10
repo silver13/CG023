@@ -195,11 +195,11 @@ static int decodepacket( void)
 			// rth channel
 			aux[CH_RTH] = (rxdata[2] &  0x01)?1:0;
 
-			aux[CH_INV] = (rxdata[1] & 0x80)?1:0; // inverted flag
+			aux[CH_INV] = (rxdata[3] & 0x80)?1:0; // inverted flag
 						
 			aux[CH_VID] = (rxdata[2] & 0x10) ? 1 : 0;
 												
-			aux[CH_HEADFREE] = (rxdata[2] & 0x20) ? 1 : 0;			
+			aux[CH_PIC] = (rxdata[2] & 0x20) ? 1 : 0;			
 
 
 			for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
