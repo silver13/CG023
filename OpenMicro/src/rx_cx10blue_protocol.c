@@ -41,7 +41,12 @@ THE SOFTWARE.
 
 #ifdef RX_CX10BLUE_PROTOCOL
 
-#define PAYLOAD_LENGHT 19
+// compatibility with older version hardware.h
+#if ( !defined RADIO_XN297 && !defined RADIO_XN297L)
+#define RADIO_XN297
+#endif
+
+
 
 extern float rx[4];
 extern char aux[AUXNUMBER];
@@ -63,18 +68,22 @@ delay(1000);
 }
 
 
- uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
- uint8_t rfcal[8] = { 0x3e , 0xc9 , 220 , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
- uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
+
 
 void rx_init()
 {	
 
+#ifdef RADIO_XN297	
+static uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
+static uint8_t rfcal[8] = { 0x3e , 0xc9 , 220 , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+static uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
+
 writeregs( bbcal , sizeof(bbcal) );
 writeregs( rfcal , sizeof(rfcal) );
 writeregs( demodcal , sizeof(demodcal) );
+#endif
 
-int rxaddress[5] =  {0xCC,0xCC,0xCC,0xCC,0xCC};
+static int rxaddress[5] =  {0xCC,0xCC,0xCC,0xCC,0xCC};
 
 xn_writerxaddress( rxaddress);
 
@@ -84,18 +93,25 @@ xn_writetxaddress( rxaddress);
 	xn_writereg( EN_RXADDR , 1 ); // pipe 0 only
 //	xn_writereg( RF_SETUP , B00000001);  // lna high current on ( better performance )
 	xn_writereg( RF_SETUP , B00000111);
-	xn_writereg( RX_PW_P0 , PAYLOAD_LENGHT ); // payload size
+	xn_writereg( RX_PW_P0 , 19 ); // payload size
 	xn_writereg( SETUP_RETR , 0 ); // no retransmissions ( redundant?)
 	xn_writereg( SETUP_AW , 3 ); // address size (5 bits)
 	xn_command( FLUSH_RX);
   xn_writereg( RF_CH , 2 );  // bind  channel 
-  xn_writereg( 0 , B00001111 ); // power up, crc enabled
 
+#ifdef RADIO_XN297
+  xn_writereg( 0 , B00001111 ); // power up, crc enabled
+#endif
+
+#ifdef RADIO_XN297L
+  xn_writereg( 0 , B10001111 ); // power up, crc enabled
+#endif
 
 #ifdef RADIO_CHECK
 void check_radio(void);
  check_radio();
 #endif	
+
 }
 
 
@@ -134,7 +150,7 @@ static char checkpacket()
 }
 
 
-int rxdata[PAYLOAD_LENGHT];
+int rxdata[19];
 
 
 float cx10scale( int num)
@@ -228,11 +244,18 @@ void checkrx( void)
 					for ( int i = 200; i!=0; i--)
 					{
 						// sent confirmation to tx  
-																
-					xn_writereg( 0 , B00001110 ); 
+					
+					#ifdef RADIO_XN297
+						xn_writereg( 0 , B00001110 ); // power up, crc enabled
+					#endif
+
+					#ifdef RADIO_XN297L
+						xn_writereg( 0 , B10001110 ); // power up, crc enabled
+					#endif
+						
 					delay(130);
 					
-					xn_writepayload(  rxdata , PAYLOAD_LENGHT );
+					xn_writepayload(  rxdata , 19 );
 					/*					
 					int status;
 					status = 0;
@@ -267,7 +290,7 @@ void checkrx( void)
 		
 				
 				lastrxtime = gettime();				
-				xn_readpayload( rxdata , PAYLOAD_LENGHT);
+				xn_readpayload( rxdata , 19);
 				pass = decodepacket();
 				 
 				if (pass)

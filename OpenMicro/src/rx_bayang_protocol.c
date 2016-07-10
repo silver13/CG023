@@ -39,6 +39,11 @@ THE SOFTWARE.
 
 #ifdef RX_BAYANG_PROTOCOL
 
+// compatibility with older version hardware.h
+#if ( !defined RADIO_XN297 && !defined RADIO_XN297L)
+#define RADIO_XN297
+#endif
+
 #define BAYANG_LOWRATE_MULTIPLIER 0.5
 
 
@@ -63,20 +68,18 @@ delay(1000);
 void rx_init()
 {
 
-
-uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
+#ifdef RADIO_XN297
+static uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
 writeregs( bbcal , sizeof(bbcal) );
 
-
-uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+static uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
 writeregs( rfcal , sizeof(rfcal) );
 
-
-uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
+static uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
 writeregs( demodcal , sizeof(demodcal) );
+#endif
 
-
-int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
+static int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
 xn_writerxaddress( rxaddress);
 
 	xn_writereg( EN_AA , 0 );	// aa disabled
@@ -87,7 +90,14 @@ xn_writerxaddress( rxaddress);
 	xn_writereg( SETUP_AW , 3 ); // address size (5 bits)
 	xn_command( FLUSH_RX);
   xn_writereg( RF_CH , 0 );  // bind on channel 0
+
+#ifdef RADIO_XN297
   xn_writereg( 0 , B00001111 ); // power up, crc enabled
+#endif
+
+#ifdef RADIO_XN297L
+  xn_writereg( 0 , B10001111 ); // power up, crc enabled
+#endif
 
 #ifdef RADIO_CHECK
 void check_radio(void);

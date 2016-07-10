@@ -38,11 +38,10 @@
 
 #ifdef RX_H7_PROTOCOL
 
-extern float rx[4];
-
-extern char aux[AUXNUMBER];
-extern char lastaux[AUXNUMBER];
-extern char auxchange[AUXNUMBER];
+// compatibility with older version hardware.h
+#if ( !defined RADIO_XN297 && !defined RADIO_XN297L)
+#define RADIO_XN297
+#endif
 
 
 #define H7_FLIP_MASK  0x80 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
@@ -51,6 +50,15 @@ extern char auxchange[AUXNUMBER];
 
 #define PACKET_SIZE 9   // packets have 9-byte payload
 #define SKIPCHANNELTIME 28000
+
+
+extern float rx[4];
+
+extern char aux[AUXNUMBER];
+extern char lastaux[AUXNUMBER];
+extern char auxchange[AUXNUMBER];
+
+
 
 struct rxdebug rxdebug;
 
@@ -103,7 +111,14 @@ void rx_init() {
 	xn_writereg( SETUP_AW, 3); // address size (5 bits)
 	xn_command( FLUSH_RX);
 	xn_writereg( RF_CH, 22);  // bind  channel
-	xn_writereg(0, B00001111); // power up, crc enabled
+
+	#ifdef RADIO_XN297
+  xn_writereg( 0 , B00001111 ); // power up, crc enabled
+#endif
+
+#ifdef RADIO_XN297L
+  xn_writereg( 0 , B10001111 ); // power up, crc enabled
+#endif
 
 #ifdef RADIO_CHECK
 void check_radio(void);

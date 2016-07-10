@@ -172,7 +172,9 @@
 //#define DISABLE_HEADLESS
 //#define DISABLE_FLIP_SEQUENCER
 
-
+// led brightness in-flight ( solid lights only)
+// 0- 15 range
+#define LED_BRIGHTNESS 8
 
 
 

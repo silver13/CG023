@@ -161,6 +161,26 @@ void auxledflash( uint32_t period , int duty )
 }
 
 
+int ledlevel = 0;
+
+uint8_t led_pwm( uint8_t pwmval)
+{
+static int loopcount = 0;
+	
+ledlevel = pwmval;
+loopcount++;
+loopcount&=0xF;
+if ( ledlevel > loopcount )
+{
+ledon( 255);
+}
+else
+{
+ledoff( 255);
+}
+return ledlevel;
+}
+
 
 
 

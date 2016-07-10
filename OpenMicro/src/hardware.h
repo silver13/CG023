@@ -104,7 +104,7 @@
 #define GYRO_ID_1 0x68
 #define GYRO_ID_2 0x78
 #define GYRO_ID_3 0x7D
-#define GYRO_ID_4 0x68
+#define GYRO_ID_4 0x72
 
 // disable lvc functions
 //#define DISABLE_LVC
@@ -114,6 +114,13 @@
 #define BATTERYPIN GPIO_Pin_7
 #define BATTERYPORT GPIOA
 #define BATTERY_ADC_CHANNEL ADC_Channel_7
+
+// divider setting for adc uses 2 measurements
+// the adc readout can be found in debug mode , debug.adcfilt
+// #enable DEBUG should be in config.h
+// default for 1/2 divider
+#define ADC_BATT_VOLTAGE 3.77
+#define ADC_READOUT 2727.0
 
 
 // SPI PINS DEFINITONS ( for radio ic )
@@ -136,6 +143,10 @@
 
 // check for radio chip ( 3 times flash = not found)
 #define RADIO_CHECK
+
+// radio type
+#define RADIO_XN297
+//#define RADIO_XN297L
 
 // PWM PINS DEFINITIONS 
 // currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported

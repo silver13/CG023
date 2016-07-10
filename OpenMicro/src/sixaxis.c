@@ -55,7 +55,7 @@ extern debug_type debug;
 #define GYRO_ID_3 0x7D
 #endif
 #ifndef GYRO_ID_4
-#define GYRO_ID_4 0x68
+#define GYRO_ID_4 0x72
 #endif
 
 void sixaxis_init( void)
@@ -314,7 +314,7 @@ while ( time - timestart < CAL_TIME  &&  time - timemax < 15e6 )
 	gyro[2] = (int16_t) ((data[4]<<8) + data[5]);
 		
 
-		
+/*		
 if ( (time - timestart)%200000 > 100000) 
 {
 	ledon(B00000101);
@@ -325,7 +325,17 @@ else
 	ledon(B00001010);
 	ledoff(B00000101);
 }
-		
+*/
+#define GLOW_TIME 62500 
+static int brightness = 0;
+led_pwm( brightness);
+if ((brightness&1)^((time - timestart)%GLOW_TIME > (GLOW_TIME>>1) ))
+{
+brightness++;
+}
+
+brightness&=0xF;
+
 		 for ( int i = 0 ; i < 3 ; i++)
 			{
 
@@ -337,6 +347,7 @@ else
 					if ( fabsf(gyro[i]) > 100+ fabsf(limit[i]) ) 
 					{										
 						timestart = gettime();
+						brightness = 1;
 					}
 					else
 					{						
