@@ -155,6 +155,13 @@ void sixaxis_read(void)
 		accel[0] = -accel[0];	
 		}
 #endif		
+		
+#ifdef SENSOR_FLIP_180
+		{
+		accel[2] = -accel[2];
+		accel[0] = -accel[0];	
+		}
+#endif	
 //order
 	gyronew[1] = (int16_t) ((data[8] << 8) + data[9]);
 	gyronew[0] = (int16_t) ((data[10] << 8) + data[11]);
@@ -165,6 +172,7 @@ gyronew[0] = gyronew[0] - gyrocal[0];
 gyronew[1] = gyronew[1] - gyrocal[1];
 gyronew[2] = gyronew[2] - gyrocal[2];
 	
+		
 		
 #ifdef SENSOR_ROTATE_90_CW
 		{
@@ -189,9 +197,14 @@ gyronew[2] = gyronew[2] - gyrocal[2];
 		gyronew[0] = -gyronew[0];	
 		}
 #endif		
-
-
 		
+#ifdef SENSOR_FLIP_180
+		{
+		gyronew[1] = -gyronew[1];
+		gyronew[2] = -gyronew[2];	
+		}
+#endif	
+
 //gyronew[0] = - gyronew[0];
 gyronew[1] = - gyronew[1];
 gyronew[2] = - gyronew[2];
@@ -254,6 +267,14 @@ gyronew[2] = gyronew[2] - gyrocal[2];
 		{
 		gyronew[1] = -gyronew[1];
 		gyronew[0] = -gyronew[0];	
+		}
+#endif		
+		
+							
+#ifdef SENSOR_FLIP_180
+		{
+		gyronew[1] = -gyronew[1];
+		gyronew[2] = -gyronew[2];	
 		}
 #endif		
 	
