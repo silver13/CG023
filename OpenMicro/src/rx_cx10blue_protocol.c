@@ -46,6 +46,9 @@ THE SOFTWARE.
 #define RADIO_XN297
 #endif
 
+#ifdef RADIO_XN297L
+ #warning "CX10 protocol currently not working with XN297L non soic-8 version"
+#endif
 
 
 extern float rx[4];
@@ -253,8 +256,8 @@ void checkrx( void)
 						xn_writereg( 0 , B10001110 ); // power up, crc enabled
 					#endif
 						
-					delay(130);
-					
+//				delay(130);
+					delay(1300);
 					xn_writepayload(  rxdata , 19 );
 					/*					
 					int status;
@@ -267,8 +270,14 @@ void checkrx( void)
 						txcount++;
 					}
 					*/
-					delay(1000);
-					xn_writereg( 0 , B00001111 ); 
+					//delay(2000);
+					#ifdef RADIO_XN297
+						xn_writereg( 0 , B00001111 ); // power up, crc enabled
+					#endif
+
+					#ifdef RADIO_XN297L
+						xn_writereg( 0 , B10001111 ); // power up, crc enabled
+					#endif
 					//xn_writereg( STATUS , B00100000 );
 					delay(1000);
 					}

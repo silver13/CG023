@@ -236,6 +236,17 @@
 //#define ENABLE_OVERCLOCK
 
 
+// limit minimum motor output to a value (0.0 - 1.0)
+//#define MOTOR_MIN_ENABLE
+#define MOTOR_MIN_VALUE 0.05
+
+// limit max motor output to a value (0.0 - 1.0)
+//#define MOTOR_MAX_ENABLE
+#define MOTOR_MAX_VALUE 1.0
+
+
+
+
 #pragma diag_warning 1035 , 177 , 4017
 #pragma diag_error 260
 
