@@ -162,6 +162,7 @@
 //#define RX_CG023_PROTOCOL
 //#define RX_H7_PROTOCOL
 #define RX_BAYANG_PROTOCOL
+//#define RX_BAYANG_PROTOCOL_BLE_BEACON
 //#define RX_CX10BLUE_PROTOCOL
 
 // mode 1 to mode 3 conversion
