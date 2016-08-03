@@ -59,6 +59,9 @@ extern char auxchange[AUXNUMBER];
 	int rxmode = 0;
 	int rf_chan = 0;
 
+	
+void bleinit( void);
+
 void writeregs ( uint8_t data[] , uint8_t size )
 {
 spi_cson();
@@ -80,82 +83,7 @@ delay(1000);
 void rx_init()
 {
 
-/*
-uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
-writeregs( bbcal , sizeof(bbcal) );
-
-
-uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
-writeregs( rfcal , sizeof(rfcal) );
-
-
-uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
-writeregs( demodcal , sizeof(demodcal) );
-
-*/
-
 #ifdef XN297L
-	
-// demodcal	
-// disable xn297L scrambling (nrf24 compatible)
-// not working
-//xn_writereg( 0x19 , B00001110 );
-	
-// default bbcal
-//xn_writereg( 0x19 , B00001111 );
-
-// this bbcal
-// xn_writereg( 0x19 , B00000001 );
-
-// 0 - 1 (0)
-#define EN_CLK_OUT 0
-// 0 - 7 (5)
-#define DA_VREF_MB 5
-// 0 - 7 (6)
-#define DA_VREF_LB 6
-// 0 - 1 (1)
-// dac output amplitude control
-// 0 = 0.5 ; 1 = 0.8
-#define DA_LPF_CTRL 1
-
-// 0 - 1 (0)
-#define RSSI_EN 0
-// 0 - 3 (1)
-#define RSSI_GAIN_CTR 1
-// Mixer gain
-// 1 - 0 (1)
-// 0 = 8 dB ; 1 = 14dB
-#define MIXL_GC 1
-// 0 - 3 (3)
-// pa output stage current select
-#define PA_BC 3
-// 0 - 3 (3)
-#define LNA_GC 3
-
-// 0 - 7 (7)
-#define VCO_BIAS 7
-// 0 - 1 (0)
-#define IB_BPF_TRIM 0
-// rx mixer current selection 1 - high
-#define MIXL_BC 1
-// lna high current enable
-#define LNA_HCURR_ 1
-// bias current load 
-// 0- 26k 1- 24k 2- 22k 3- 20k
-#define RES_SEL 2
-
-//xn297L rfcal - default settings
-//uint8_t rfcal[4] = { 0x3e , 0xf6 , 0x3f , 0x5d };
-
-uint8_t rfcal[4] = { 0x3e , (VCO_BIAS<<5)|((RES_SEL) << 3)|(LNA_HCURR_<<2)|(MIXL_BC << 1)|IB_BPF_TRIM
-	, (RSSI_EN<<7)|(RSSI_GAIN_CTR<<5)|(MIXL_GC<<4)|(PA_BC<<2)|( LNA_GC ) 
-	, (EN_CLK_OUT<<7)|(DA_VREF_MB<<4)|(DA_VREF_LB<<1)|(DA_LPF_CTRL) };
-
-//uint8_t rfcal[4] = { 0x3e , 0xc0&((RES_SEL&3) << 4)&(LNA_HCURR_<<2)& (MIXL_BC << 1) & IB_BPF_TRIM, 0x3f , 0x5d };
-
-writeregs( rfcal , sizeof(rfcal) );
-
-//xn_writereg( 0x19 , B00001110 );
 	
 #define XN_TO_RX B10001111
 #define XN_TO_TX B10000010
@@ -167,8 +95,8 @@ writeregs( rfcal , sizeof(rfcal) );
 #ifdef RADIO_XN297
 static uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
 writeregs( bbcal , sizeof(bbcal) );
-
-static uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+// new values
+static uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0xA0 , 0x61 , 0xbb , 0xab , 0x9c  };
 writeregs( rfcal , sizeof(rfcal) );
 
 static uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
@@ -180,13 +108,8 @@ writeregs( demodcal , sizeof(demodcal) );
 #define XN_POWER B00000111
 #endif
 	
-	
-
-	
-void bleinit();
 bleinit();
 
-//	return;
 
 int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
 xn_writerxaddress( rxaddress);
@@ -325,15 +248,16 @@ void btLePacketEncode(uint8_t* packet, uint8_t len, uint8_t chan){
 // Length is of packet, including crc. pre-populate crc in packet with initial crc value!
 uint8_t i, dataLen = len - 3;
 
+
 packet[len - 3] = 0x55; //CRC start value: 0x555555
 packet[len - 2] = 0x55;
 packet[len - 1] = 0x55;
 
 btLeCrc(packet, dataLen, packet + dataLen);
-	TS();
+
 for(i = 0; i < 3; i++, dataLen++)
 	packet[dataLen] = swapbits(packet[dataLen]);
-TE();
+
 if (1)
 {	
 // faster array based whitening
@@ -380,7 +304,6 @@ uint8_t ch = 0; // RF channel for frequency hopping
 
 int payloadsize;
 
-//uint8_t testarray[42];
 
 void bleinit()
 {
@@ -419,12 +342,6 @@ txaddr[4] = 0xaa^0xe3;	// preamble
 xn_writetxaddress( txaddr );	
 
 
-//for( int i = 0 ; i <42; i++) testarray[i] = 0;
-//
-//	btLeWhiten( testarray , 42, btLeWhitenStart(chLe[0]));
-	
-
-
 
 //	xn_writereg( EN_AA , 0 );	// aa disabled -- duplicated
 //	xn_writereg( RF_SETUP , B00111011);  // high power xn297L only
@@ -438,10 +355,10 @@ xn_writetxaddress( txaddr );
 
 void send_beacon(void);
 
-unsigned int beacon_time;
 int loopcounter = 0;
 unsigned int ble_txtime;
 int ble_send = 0;
+int oldchan = 0;
 
 #define BLE_TX_TIMEOUT 10000
 
@@ -456,6 +373,7 @@ static int beacon_seq_state = 0;
 	   if ( gettime() - ble_txtime > BLE_INTERVAL )
 		 {
 		 ble_send = 1;
+		 oldchan = rf_chan;
 		 send_beacon();
 	   beacon_seq_state++;
 		 }
@@ -465,26 +383,26 @@ static int beacon_seq_state = 0;
 		 // wait for data to finish transmitting
 			if( (xn_readreg(0x17)&B00010000)  ) 
 			{
-			// xn_writereg( 0 , B10000011 ); 
 				xn_writereg( 0 , XN_TO_RX ); 
+				xn_writereg(0x25, rfchannel[oldchan]);
 			 beacon_seq_state++;
-
+			 goto next;
 			}
 			else
 			{// if it takes too long we get rid of it
 				if ( gettime() - ble_txtime > BLE_TX_TIMEOUT )
 				{
 				 xn_command( FLUSH_TX);
-				 //xn_writereg( 0 , B10000011 );
 					xn_writereg( 0 , XN_TO_RX ); 
 				 beacon_seq_state++;
-				 //ble_send = 0;
+				 ble_send = 0;
 				}
 			}
 	 break;
 	 
 		
 	 case 2:
+		 next:
 		 // restore radio settings to protocol compatible
 	   // mainly channel here
 		 ble_send = 0;	
@@ -509,8 +427,6 @@ int interleave = 0;
 
 void send_beacon()
 {
-
-	TS();
 	
 // Channel hopping
 ch++;
@@ -518,22 +434,29 @@ if (ch>2 )
 {
   ch = 0;
 }
-
+// sending on channel 37 only to use whitening array
 ch = 0;
-
-
 
 
 xn_writereg(RF_CH, chRf[ch]);
 
 uint8_t L=0;
-// max len 27 with 5 byte address = 37 total payload bytes
 
-//  xn_writereg( RF_CH , chRf[ch] ); 
+
+extern float vbattfilt;
+
+int vbatt = vbattfilt *1000.0f;
+
+unsigned int time = gettime();
+
+time = time>>20; // divide by 1024*1024, no time for accuracy here
+time = time * 10;
+ 
 L=0;
-//4C00 02 15 58 5C DE931B0142CC9A1325009BEDC65E 0000 0000 C5
 buf[L++] = B00100010; //PDU type, given address is random; 0x42 for Android and 0x40 for iPhone
 //buf[L++] = 0x42; //PDU type, given address is random; 0x42 for Android and 0x40 for iPhone
+
+// max len 27 with 5 byte address = 37 total payload bytes
 buf[L++] = 10+ 21; // length of payload
 buf[L++] = MY_MAC_0;
 buf[L++] = MY_MAC_1;
@@ -542,51 +465,39 @@ buf[L++] = MY_MAC_3;
 buf[L++] = MY_MAC_4;
 buf[L++] = MY_MAC_5;
 
-extern float vbattfilt;
-
-int vbatt = vbattfilt *1000.0f;
-
 // packet data unit
-buf[L++] = 2; //flags (LE-only, limited discovery mode)
-buf[L++] = 0x01;
-buf[L++] = 0x06;
-
-unsigned int time = gettime();
-
-time = time>>20; // divide by 1024*1024, no time for accuracy here
-time = time * 10;
-
-buf[L++] =  0x03;  // Length
+buf[L++] = 2; //flags lenght(LE-only, limited discovery mode)
+buf[L++] = 0x01; // compulsory flags
+buf[L++] = 0x06; // flag value
+buf[L++] =  0x03;  // Length of next block
 buf[L++] =  0x03;  // Param: Service List
-buf[L++] =  0xAA;
+buf[L++] =  0xAA;  // Eddystone ID - 16 bit 0xFEAA
 buf[L++] =  0xFE;  // Eddystone ID
-buf[L++] =  0x11;  // Length
+buf[L++] =  0x11;  // Length of next block
 buf[L++] =  0x16;  // Service Data
-buf[L++] =  0xAA;
-buf[L++] =  0xFE; // Eddystone ID
+buf[L++] =  0xAA;  // Eddystone ID
+buf[L++] =  0xFE;  // Eddystone ID
 buf[L++] =  0x20;  // TLM flag
-buf[L++] =  0x00; // TLM version
+buf[L++] =  0x00;  // TLM version
 buf[L++] =  vbatt>>8;  // Battery voltage
 buf[L++] =  vbatt;  // Battery voltage
-buf[L++] =  0x80;  // temp 8.8 fixed point
-buf[L++] =  0x00;  // temperature
-buf[L++] =  0x00;  // adv count 0
-buf[L++] =  0x00;  // adv count 1
-buf[L++] =  packetpersecond>>8&0xff;  // adv count 2
-buf[L++] =  packetpersecond&0xff;  // adv count 3
+buf[L++] =  0x80;  // temperature 8.8 fixed point
+buf[L++] =  0x00;  // temperature 8.8 fixed point
+buf[L++] =  0x00;  // advertisment count 0
+buf[L++] =  0x00;  // advertisment count 1
+buf[L++] =  packetpersecond>>8&0xff;  // advertisment count 2
+buf[L++] =  packetpersecond&0xff;  // advertisment count 3
 buf[L++] =  time>>24;  // powerup time 0 
 buf[L++] =  time>>16;  // powerup time 1
 buf[L++] =  time>>8;  // powerup time 2
-buf[L++] =  time;  // powerup time 3 0.1 sec resolution
-
-
+buf[L++] =  time;  // powerup time 3 in seconds times 10.
 
 L=L+3; //crc
 
 
 btLePacketEncode(buf, L, chLe[ch]);
 
-
+// undo xn297 data whitening
 for (uint8_t i = 0; i < L; ++i) 
 {
 buf[i] = buf[i] ^ xn297_scramble_rev[i+ XN297_ADDRESS_SIZE_BLE] ;
@@ -595,46 +506,25 @@ buf[i] = buf[i] ^ xn297_scramble_rev[i+ XN297_ADDRESS_SIZE_BLE] ;
 
 for( int i = 0 ; i < L ; i++) buffint[i] = buf[i];
 
-// 409 uS
-
-//374
-
-//348
 
 xn_command( FLUSH_TX);
-//xn_writereg( 0 , B10000010 ); 
+
 xn_writereg( 0 , XN_TO_TX );
 
 payloadsize = L;
 xn_writepayload( buffint , L );
 
-// 150uS
-/*
-while( !(status&B00010000)  ) 
-					{
-						status = xn_readreg(0x17);
-						delay(10);
-					}
-*/
-
-//xn_writereg( 0 , B10000010 ); 
-//delay(4000);
-
-
 ble_txtime = gettime();
 
-return;
-
-	
+return;	
 }
 
 
-int statusdebug;
 static char checkpacket()
 {
 	spi_cson();
 	int status = spi_sendzerorecvbyte();
-statusdebug = status;
+
 	spi_csoff();
 	if ( status&(1<<MASK_RX_DR) )
 	{	 // rx clear bit
@@ -655,11 +545,10 @@ statusdebug = status;
 
 int rxdata[15];
 
-#define CHANOFFSET 512
 
 float packettodata( int *  data)
 {
-	return ( ( ( data[0]&0x0003) * 256 + data[1] ) - CHANOFFSET ) * 0.001953125 ;	
+	return ( ( ( data[0]&0x0003) * 256 + data[1] ) - 512 ) * 0.001953125 ;	
 }
 
 
@@ -692,31 +581,21 @@ static int decodepacket( void)
 				rx[i] = rx[i] * (float) BAYANG_LOWRATE_MULTIPLIER;
 			}
 		}
-		// trims are 50% of controls at max		
-	// trims are not used because they interfere with dynamic trims feature of devo firmware
-			
-//			rx[0] = rx[0] + 0.03225 * 0.5 * (float)(((rxdata[4])>>2) - 31);
-//			rx[1] = rx[1] + 0.03225 * 0.5 * (float)(((rxdata[6])>>2) - 31);
-//			rx[2] = rx[2] + 0.03225 * 0.5 * (float)(((rxdata[10])>>2) - 31);
-	
-		  // flip channel
-			aux[CH_FLIP] = (rxdata[2] &  0x08)?1:0;
-	
-		  // expert mode
-			aux[CH_EXPERT] = (rxdata[1] == 0xfa)?1:0;
-	
-		  // headless channel
-		  aux[CH_HEADFREE] = (rxdata[2] &  0x02)?1:0;
 
-			// rth channel
-			aux[CH_RTH] = (rxdata[2] &  0x01)?1:0;
-
-			aux[CH_INV] = (rxdata[1] & 0x80)?1:0; // inverted flag
+//
+					aux[CH_INV] = (rxdata[3] & 0x80)?1:0; // inverted flag
 						
-			aux[CH_VID] = (rxdata[2] & 0x10) ? 1 : 0;
+					aux[CH_VID] = (rxdata[2] & 0x10) ? 1 : 0;
 												
-			aux[CH_HEADFREE] = (rxdata[2] & 0x20) ? 1 : 0;			
+					aux[CH_PIC] = (rxdata[2] & 0x20) ? 1 : 0;						
+							
+			    aux[CH_FLIP] = (rxdata[2] & 0x08) ? 1 : 0;
 
+			    aux[CH_EXPERT] = (rxdata[1] == 0xfa) ? 1 : 0;
+
+			    aux[CH_HEADFREE] = (rxdata[2] & 0x02) ? 1 : 0;
+
+			    aux[CH_RTH] = (rxdata[2] & 0x01) ? 1 : 0;	// rth channel
 
 			for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
 			{
@@ -737,8 +616,8 @@ return 0; // first byte different
 void nextchannel()
 {
 	rf_chan++;
-	if (rf_chan > 3 ) rf_chan = 0;
-	xn_writereg(0x25, rfchannel[rf_chan] );
+	rf_chan%=4;
+	xn_writereg(0x25, rfchannel[rf_chan]);
 }
 
 
@@ -753,12 +632,20 @@ int failsafe = 0;
 unsigned int skipchannel = 0;
 int lastrxchan;
 int timingfail = 0;
-float packettimefilt = 3000;
 
+// packet period in uS
+#define PACKET_PERIOD 3000
 
+// was 250 ( uS )
+#define PACKET_OFFSET 250
 
-#define FILTERCALC( sampleperiod, filtertime) (1.0f - ((float)sampleperiod) / ((float)filtertime))
+#ifdef USE_STOCK_TX
+#undef PACKET_OFFSET
+#define PACKET_OFFSET -250
+#endif
 
+// how many times to hop ahead if no reception
+#define HOPPING_NUMBER 4
 
 void checkrx(void)
 {
@@ -799,8 +686,6 @@ void checkrx(void)
 			    channelcount[rf_chan]++;
 			    packettime = gettime() - lastrxtime;
 					
-					//if ( packettime > 1500&& packettime < 4500 && !timingfail ) lpf( &packettimefilt , packettime , FILTERCALC( 1 , 1000));
-					//limitf(&packettimefilt , 4500);
 					if ( skipchannel&& !timingfail ) afterskip[skipchannel]++;
 					if ( timingfail ) afterskip[0]++;
 
@@ -840,23 +725,10 @@ unsigned long temptime = gettime();
 		
 	unsigned long time = gettime();
 
+		
 
-		if ( skipchannel <5 && rxmode != RXMODE_BIND && !ble_send)
-		{
-			unsigned int temp = time - lastrxtime ;
-
-			if (!timingfail&& temp > 500 && ( temp - 250 )/(int)packettimefilt >= (skipchannel + 1) ) 
-			{
-				nextchannel();
-#ifdef RXDEBUG				
-				skipstats[skipchannel]++;
-#endif				
-				skipchannel++;
-			}
-			
-		}
 	// sequence period 12000
-	if (time - lastrxtime > 13000 && rxmode != RXMODE_BIND)
+	if (time - lastrxtime > (HOPPING_NUMBER*PACKET_PERIOD + 1000) && rxmode != RXMODE_BIND)
 	  {			
 			//  channel with no reception   
 		  lastrxtime = time;
@@ -866,8 +738,21 @@ unsigned long temptime = gettime();
 		  nextchannel();
 			// set flag to discard packet timing
 			timingfail = 1;
-
 	  }
+		
+	if ( !timingfail && !ble_send && skipchannel < HOPPING_NUMBER+1 && rxmode != RXMODE_BIND)
+		{
+			unsigned int temp = time - lastrxtime ;
+
+			if ( temp > 1000 && ( temp - (PACKET_OFFSET) )/((int) PACKET_PERIOD) >= (skipchannel + 1) ) 
+			{
+				nextchannel();
+#ifdef RXDEBUG				
+				skipstats[skipchannel]++;
+#endif				
+				skipchannel++;
+			}
+		}	
 	
 	if (time - failsafetime > FAILSAFETIME)
 	  {	//  failsafe
