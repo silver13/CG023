@@ -37,6 +37,9 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+####03.08.16
+* added bluetooth beacon functionality
+
 ####05.07.16
 * software i2c optimizations (speed/size)
 
