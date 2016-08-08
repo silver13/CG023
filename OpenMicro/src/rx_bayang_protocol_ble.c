@@ -83,7 +83,7 @@ delay(1000);
 void rx_init()
 {
 
-#ifdef XN297L
+#ifdef RADIO_XN297L
 	
 #define XN_TO_RX B10001111
 #define XN_TO_TX B10000010
