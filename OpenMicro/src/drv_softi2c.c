@@ -31,8 +31,9 @@ THE SOFTWARE.
 #include "config.h"
 
 
+//#define i2cdebug
 
-//static GPIO_InitTypeDef  sdainit;
+static GPIO_InitTypeDef  sdainit;
 
 void delay(int);
 
@@ -40,7 +41,7 @@ void delay(int);
 #ifndef SOFTI2C_SPEED_SLOW1
 #ifndef SOFTI2C_SPEED_SLOW2
 #ifndef SOFTI2C_SPEED_FAST
-#define SOFTI2C_SPEED_FAST
+	#define SOFTI2C_SPEED_FAST
 #endif
 #endif
 #endif
@@ -51,7 +52,6 @@ void delay(int);
 #endif
 
 #ifdef SOFTI2C_SPEED_SLOW1
-
 #ifdef __GNUC__
 void delayraw()
 {
@@ -65,16 +65,18 @@ void delayraw()
 	while (count--);
 }
 #endif
-
 #define _delay  delayraw()
 #define _delay2 //delay(1)
 #endif
 
 #ifdef SOFTI2C_SPEED_SLOW2
 #define _delay  delay(1)
-#define _delay2 delay(1)
+#define _delay2 //delay(1)
 #endif
 
+	#ifdef i2cdebug
+	int debug = 1;   		// prints error info, set in setup()
+	#endif
 	
 	int sda;
 	int scl;	
@@ -90,6 +92,7 @@ void delayraw()
 	int _sendbyte( int);
 	int _readsda(void);
 	
+	int sdaout = 0;
 void setoutput(void);
 
 ////////////////////////////////
@@ -97,16 +100,17 @@ void setoutput(void);
 
 
  void sdalow()
-{	
+{
+	if(!sdaout) setoutput();	
   SOFTI2C_SDAPORT->BRR = SOFTI2C_SDAPIN;
-  sda = 0;
-	//_delay;
-	_delay2;
+  sda=0;
+	_delay;
 }
 
 
   void sdahigh()
 {
+	if(!sdaout) setoutput();
 	SOFTI2C_SDAPORT->BSRR = SOFTI2C_SDAPIN;
 	_delay;
   sda = 1; 
@@ -116,8 +120,8 @@ void setoutput(void);
   void scllow()
 {
  SOFTI2C_SCLPORT->BRR = SOFTI2C_SCLPIN;
+_delay;
  scl = 0;
- _delay2;
 }
 
   void sclhigh()
@@ -132,14 +136,32 @@ void setoutput(void);
  SOFTI2C_SCLPORT->BSRR = SOFTI2C_SCLPIN;
 	_delay;
  SOFTI2C_SCLPORT->BRR = SOFTI2C_SCLPIN;
-//_delay;
-	_delay2;
+_delay;
  scl = 0;
 }
 
+void setinput()
+{
+	sdaout = 0;
+  sdainit.GPIO_Mode = GPIO_Mode_IN;
+  GPIO_Init(SOFTI2C_SDAPORT, &sdainit);	
+	
+	_delay2;
+ }
+
+void setoutput()
+{
+	sdaout = 1;
+  sdainit.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_Init(SOFTI2C_SDAPORT, &sdainit);
+	_delay2;
+}
 
 int _readsda()
 {
+#ifdef i2cdebug
+  if (!sda)  printf("_readsda: sda low");
+#endif
 //if ( sdaout) setinput();	
 //return ( GPIO_ReadInputDataBit(SOFTI2C_SDAPORT, SOFTI2C_SDAPIN) ); 
 return	SOFTI2C_SDAPORT->IDR & SOFTI2C_SDAPIN;
@@ -148,12 +170,37 @@ return	SOFTI2C_SDAPORT->IDR & SOFTI2C_SDAPIN;
 
 void _sendstart()
 {
+ if (scl == 0) 
+ {
+ #ifdef i2cdebug
+   printf("_sendstart: scl low"); 
+ #endif
+  sclhigh();
+ } 
+ if (sda == 1)
+{
+  if(!_readsda())
+	{
+	#ifdef i2cdebug
+	printf("_sendstart: sda pulled low by slave"); 
+	#endif
+	//error1 = 1;
+	}
   sdalow();
+}
+ else {
+	  #ifdef i2cdebug
+    printf("_sendstart: sda low"); 
+	  #endif
+       } 
 }
 
 
 void _restart()
 {
+ #ifdef i2cdebug 
+ if (scl == 1) printf("_restart: scl high"); 
+ #endif
  if (sda == 0) 
  {
    sdahigh();
@@ -163,13 +210,25 @@ void _restart()
 }
 
 void _sendstop()
-{ 
+{
+  
   if (sda == 1) 
   {
-    sdalow(); 
+    if (!scl) sdalow(); else 
+		{
+		#ifdef i2cdebug
+		printf("stop: error");
+		#endif
+		}
   }
-  sclhigh();
+  if (scl == 0) sclhigh();
+  else {
+		#ifdef i2cdebug
+		printf("stop: scl high");
+		#endif
+		}
   sdahigh();
+ 
 }
 
 
@@ -177,22 +236,24 @@ void _sendstop()
 int _sendbyte( int value )
 {
 int i;
-
- scllow();
+ if (scl == 1) 
+ {
+  scllow();
+ }
  
  for ( i = 7; i >= 0 ;i--)
  {
-	 if ((value >> i)&1) 
-	 {
-		sdahigh();
-	 }
-	 else 
-	 {
-		sdalow();
-	 }
-	 //sclhigh();
-	 //scllow();
-	sclhighlow();
+ if ((value >> i)&1) 
+ {
+  sdahigh();
+ }
+ else 
+ {
+  sdalow();
+ }
+ //sclhigh();
+ //scllow();
+ sclhighlow();
  }
  
  if (!sda) sdahigh(); // release the line
@@ -213,12 +274,18 @@ return ack;
 
 int _readbyte(int ack)  //ACK 1 single byte ACK 0 multiple bytes
 {
- int data=0;
-
+ uint8_t data=0;
+#ifdef i2cdebug
+ if (scl == 1)
+	{	
+	printf("read: scl high");
+	}
+#endif
  if ( sda == 0) 
  {
    sdahigh();
  }
+ if(!sdaout) setoutput();
  int i;
  for( i = 7; i>=0;i--)
  {
@@ -308,7 +375,7 @@ void softi2c_readdata(int device_address ,int register_address , int *data, int 
 
 void softi2c_init()
 {
-	
+
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	
   GPIO_InitStructure.GPIO_Pin = SOFTI2C_SCLPIN;
@@ -318,16 +385,26 @@ void softi2c_init()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(SOFTI2C_SCLPORT, &GPIO_InitStructure);
 
-  GPIO_InitStructure.GPIO_Pin = SOFTI2C_SDAPIN;
-	GPIO_Init(SOFTI2C_SDAPORT, &GPIO_InitStructure);
+ GPIO_InitStructure.GPIO_Pin = SOFTI2C_SDAPIN;
+ GPIO_Init(SOFTI2C_SDAPORT, &GPIO_InitStructure);
 
-//sda = 0;
-//scl = 0;
+	
+  sdainit.GPIO_Pin = SOFTI2C_SDAPIN;
+  sdainit.GPIO_Mode = GPIO_Mode_IN;
+  sdainit.GPIO_OType = GPIO_OType_OD;
+  sdainit.GPIO_PuPd = GPIO_PuPd_UP;
+  sdainit.GPIO_Speed = GPIO_Speed_50MHz;
+	
+sdaout = 1;
+sda = 0;
+scl = 0;
 
+	
 sdahigh();
 sclhigh();
 	
 }
+
 
 
 
