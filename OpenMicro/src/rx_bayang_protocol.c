@@ -39,18 +39,44 @@ THE SOFTWARE.
 
 #ifdef RX_BAYANG_PROTOCOL
 
+
+
+// packet period in uS
+#define PACKET_PERIOD 3300
+
+// was 250 ( uS )
+#define PACKET_OFFSET 500
+
+#ifdef USE_STOCK_TX
+#undef PACKET_OFFSET
+#define PACKET_OFFSET 250
+#endif
+
+// how many times to hop ahead if no reception
+#define HOPPING_NUMBER 4
+
+
+//#define RXDEBUG
+
+#define BAYANG_LOWRATE_MULTIPLIER 0.5
+
+
 // compatibility with older version hardware.h
 #if ( !defined RADIO_XN297 && !defined RADIO_XN297L)
 #define RADIO_XN297
 #endif
 
-#define BAYANG_LOWRATE_MULTIPLIER 0.5
+
 
 
 extern float rx[4];
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 extern char auxchange[AUXNUMBER];
+
+// global variables
+int failsafe = 0;
+int rxmode = 0;
 
 
 void writeregs ( uint8_t data[] , uint8_t size )
@@ -71,8 +97,8 @@ void rx_init()
 #ifdef RADIO_XN297
 static uint8_t bbcal[6] = { 0x3f , 0x4c , 0x84 , 0x6F , 0x9c , 0x20  };
 writeregs( bbcal , sizeof(bbcal) );
-
-static uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0x80 , 0x61 , 0xbb , 0xab , 0x9c  };
+// new values
+static uint8_t rfcal[8] = { 0x3e , 0xc9 , 0x9a , 0xA0 , 0x61 , 0xbb , 0xab , 0x9c };
 writeregs( rfcal , sizeof(rfcal) );
 
 static uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
@@ -137,15 +163,21 @@ static char checkpacket()
 }
 
 
-int rxdata[15];
-
-#define CHANOFFSET 512
 
 float packettodata( int *  data)
 {
-	return ( ( ( data[0]&0x0003) * 256 + data[1] ) - CHANOFFSET ) * 0.001953125 ;	
+	return ( ( ( data[0]&0x0003) * 256 + data[1] ) - 512 ) * 0.001953125 ;	
 }
 
+// internal variables
+char rfchannel[4];
+int chan = 0;
+int rxdata[15];
+unsigned long lastrxtime;
+unsigned long failsafetime;
+unsigned int skipchannel = 0;
+int lastrxchan;
+int timingfail = 0;
 
 static int decodepacket( void)
 {
@@ -217,10 +249,6 @@ return 0; // first byte different
 }
 
 
-  char rfchannel[4];
-	int rxaddress[5];
-	int rxmode = 0;
-	int chan = 0;
 
 void nextchannel()
 {
@@ -230,130 +258,147 @@ void nextchannel()
 }
 
 
-unsigned long lastrxtime;
-unsigned long failsafetime;
-unsigned long secondtimer;
-
-int failsafe = 0;
-
 
 #ifdef RXDEBUG	
-/*
-struct rxdebug
-	{
-	unsigned long packettime;
-	int failcount;
-	int packetpersecond;
-	int channelcount[4];
-	} 
-	rxdebug;
-*/
+
 struct rxdebug rxdebug;
+
 int packetrx;
-unsigned long lastrxtime;
 unsigned long secondtimer;
+int skipstats[HOPPING_NUMBER+2];
+int afterskip[HOPPING_NUMBER+2];
 #warning "RX debug enabled"
 
 #endif
 
 
-void checkrx( void)
-{
-	int packetreceived =	checkpacket();
-	int pass = 0;
-		if ( packetreceived ) 
-		{ 
-			if ( rxmode == 0)
-			{	// rx startup , bind mode
-				xn_readpayload( rxdata , 15);
-		
-				if ( rxdata[0] == 164 ) 
-				{// bind packet
-					rfchannel[0] = rxdata[6];
-					rfchannel[1] = rxdata[7];
-					rfchannel[2] = rxdata[8];
-					rfchannel[3] = rxdata[9];		
-					
-					rxaddress[0] = rxdata[1];
-					rxaddress[1] = rxdata[2];
-					rxaddress[2] = rxdata[3];
-					rxaddress[3] = rxdata[4];
-					rxaddress[4] = rxdata[5];
-					rxmode = 123;				
-					xn_writerxaddress( rxaddress );
-				  xn_writereg(0x25, rfchannel[chan] ); // Set channel frequency	
-				
-					#ifdef SERIAL_INFO	
-					printf( " BIND \n");
-					#endif
-				}
-			}
-			else
-			{	// normal mode	
-				#ifdef RXDEBUG	
-				rxdebug.channelcount[chan]++;	
-				rxdebug.packettime = gettime() - lastrxtime;
-				#endif
-				
-				// for longer loop times than 3ms it was skipping 2 channels
-				//chan++;
-				//if (chan > 3 ) chan = 0;
-				nextchannel();
-				
-				lastrxtime = gettime();				
-				xn_readpayload( rxdata , 15);
-				pass = decodepacket();
-				 
-				if (pass)
-				{ 
-					#ifdef RXDEBUG	
-					packetrx++;
-					#endif
-					failsafetime = lastrxtime; 
-					failsafe = 0;
-				}	
-				else
-				{
-				#ifdef RXDEBUG	
-				rxdebug.failcount++;
-				#endif	
-				}
-			
-			}// end normal rx mode
-				
-		}// end packet received
 
-		unsigned long time = gettime();
+void checkrx(void)
+{
+	int packetreceived = checkpacket();
+	int pass = 0;
+	if (packetreceived)
+	  {
+		  if (rxmode == RXMODE_BIND)
+		    {		// rx startup , bind mode
+			    xn_readpayload(rxdata, 15);
+
+			    if (rxdata[0] == 164)
+			      {	// bind packet
+				      rfchannel[0] = rxdata[6];
+				      rfchannel[1] = rxdata[7];
+				      rfchannel[2] = rxdata[8];
+				      rfchannel[3] = rxdata[9];
+							
+							int rxaddress[5];
+				      rxaddress[0] = rxdata[1];
+				      rxaddress[1] = rxdata[2];
+				      rxaddress[2] = rxdata[3];
+				      rxaddress[3] = rxdata[4];
+				      rxaddress[4] = rxdata[5];
+				      
+				      xn_writerxaddress(rxaddress);
+				      xn_writereg(0x25, rfchannel[chan]);	// Set channel frequency 
+							rxmode = RXMODE_NORMAL;
+
+#ifdef SERIAL
+				      printf(" BIND \n");
+#endif
+			      }
+		    }
+		  else
+		    {		// normal mode  
+#ifdef RXDEBUG
+			    rxdebug.channelcount[chan]++;
+			    rxdebug.packettime = gettime() - lastrxtime;
+					
+					if ( skipchannel&& !timingfail ) afterskip[skipchannel]++;
+					if ( timingfail ) afterskip[0]++;
+
+#endif
+
+unsigned long temptime = gettime();
+	
+			    nextchannel();
+
+			    xn_readpayload(rxdata, 15);
+			    pass = decodepacket();
+
+			    if (pass)
+			      {
+#ifdef RXDEBUG
+				      packetrx++;
+#endif
+							skipchannel = 0;
+							timingfail = 0;
+							lastrxchan = chan;
+							lastrxtime = temptime;
+				      failsafetime = temptime;
+				      failsafe = 0;
+			      }
+			    else
+			      {
+#ifdef RXDEBUG
+				      rxdebug.failcount++;
+#endif
+			      }
+
+		    }		// end normal rx mode
+
+	  }			// end packet received
+
 		
-    // sequence period 12000
-		if( time - lastrxtime > 9000 && rxmode != 0)
-		{//  channel with no reception	 
-		 lastrxtime = time;
-		 nextchannel();	
-		}
-		if( time - failsafetime > FAILSAFETIME )
-		{//  failsafe
-		  failsafe = 1;
-			rx[0] = 0;
-			rx[1] = 0;
-			rx[2] = 0;
-			rx[3] = 0;
-		}
-#ifdef RXDEBUG	
-			if ( gettime() - secondtimer  > 1000000)
+	unsigned long time = gettime();
+
+		
+
+	// sequence period 12000
+	if (time - lastrxtime > (HOPPING_NUMBER*PACKET_PERIOD + 1000) && rxmode != RXMODE_BIND)
+	  {			
+			//  channel with no reception   
+		  lastrxtime = time;
+			// set channel to last with reception
+			if (!timingfail) chan = lastrxchan;
+			// advance to next channel
+		  nextchannel();
+			// set flag to discard packet timing
+			timingfail = 1;
+	  }
+		
+	if ( !timingfail && skipchannel < HOPPING_NUMBER+1 && rxmode != RXMODE_BIND)
+		{
+			unsigned int temp = time - lastrxtime ;
+
+			if ( temp > 1000 && ( temp + (PACKET_OFFSET) )/((int) PACKET_PERIOD) >= (skipchannel + 1) ) 
 			{
-				rxdebug.packetpersecond = packetrx;
-				packetrx = 0;
-				secondtimer = gettime();
+				nextchannel();
+#ifdef RXDEBUG				
+				skipstats[skipchannel]++;
+#endif				
+				skipchannel++;
 			}
+		}	
+	
+	if (time - failsafetime > FAILSAFETIME)
+	  {	//  failsafe
+		  failsafe = 1;
+		  rx[0] = 0;
+		  rx[1] = 0;
+		  rx[2] = 0;
+		  rx[3] = 0;
+	  }
+#ifdef RXDEBUG
+	if (gettime() - secondtimer > 1000000)
+	  {
+		  rxdebug.packetpersecond = packetrx;
+		  packetrx = 0;
+		  secondtimer = gettime();
+	  }
 #endif
 
 }
 
-// end bayang protocol
-#endif 
-
-
+#endif
 
 
 

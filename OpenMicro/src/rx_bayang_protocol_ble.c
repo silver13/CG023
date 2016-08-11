@@ -22,6 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/*
+
+// original bluetooth LE idea by Dmitry Grinberg
+// http://dmitry.gr/index.php?r=05.Projects&proj=11.%20Bluetooth%20LE%20fakery
+
+// some bluetooth LE functions adapted from nrf24 code by Lijun 
+// http://doc.lijun.li/misc-nrf24-ble.html
+// https://github.com/lijunhw/nRF24_BLE/blob/master/Arduino/nRF24_BLE_advertizer_demo/nRF24_BLE_advertizer_demo.ino
+
+*/
 
 #include "binary.h"
 #include "drv_spi.h"
@@ -48,6 +58,21 @@ THE SOFTWARE.
 #define BAYANG_LOWRATE_MULTIPLIER 0.5
 
 
+
+#define BLE_INTERVAL 30000
+
+// this allows different quads to show up at the same time.
+// 0 - 255 select a different number for each quad if you need several simultaneous
+#define BLE_QUAD_NUMBER 17
+
+// optimized one channel only (bluetooth)
+// uses precalculated whitening data
+#define ONE_CHANNEL 1
+
+#define BLE_TX_TIMEOUT 10000
+
+
+
 extern float rx[4];
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
@@ -58,7 +83,6 @@ extern char auxchange[AUXNUMBER];
 	int rxaddress[5];
 	int rxmode = 0;
 	int rf_chan = 0;
-
 	
 void bleinit( void);
 
@@ -73,11 +97,6 @@ spi_csoff();
 delay(1000);
 }
 
-#define BLE_INTERVAL 30000
-
-// this allows different quads to show up at the same time.
-// 0 - 255 select a different number for each quad if you need several simultaneous
-#define BLE_QUAD_NUMBER 17
 
 
 void rx_init()
@@ -145,26 +164,61 @@ int	rxcheck = xn_readreg( 0x0f); // rx address pipe 5
 // BLE FUNCTIONS
 //  https://github.com/lijunhw/nRF24_BLE/blob/master/Arduino/nRF24_BLE_advertizer_demo/nRF24_BLE_advertizer_demo.ino
 
+uint8_t swapbits_old(uint8_t a){
+// reverse the bit order in a single byte
+uint8_t v = 0;
+if(a & 0x80) v |= 0x01;
+if(a & 0x40) v |= 0x02;
+if(a & 0x20) v |= 0x04;
+if(a & 0x10) v |= 0x08;
+if(a & 0x08) v |= 0x10;
+if(a & 0x04) v |= 0x20;
+if(a & 0x02) v |= 0x40;
+if(a & 0x01) v |= 0x80;
+return v;
+}
 
-void btLeCrc(const uint8_t* data, uint8_t len, uint8_t* dst){
-// implementing CRC with LFSR
-uint8_t v, t, d;
-while(len--){
-d = *data++;
-for(v = 0; v < 8; v++, d >>= 1){
-t = dst[0] >> 7;
-dst[0] <<= 1;
-if(dst[1] & 0x80) dst[0] |= 1;
-dst[1] <<= 1;
-if(dst[2] & 0x80) dst[1] |= 1;
-dst[2] <<= 1;
-if(t != (d & 1)){
-dst[2] ^= 0x5B;
-dst[1] ^= 0x06;
+// from https://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits
+// reverse the bit order in a single byte
+uint8_t swapbits(uint8_t a){
+unsigned int b = a;
+b = ((b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
+return b;
 }
+
+
+
+void btLeCrc( uint8_t* buf ,uint8_t len, uint8_t* dst ) {
+
+union
+{
+  unsigned int int32;
+  uint8_t u8[4];
+} myint;
+
+myint.int32 = 0x00aaaaaa;
+
+while (len--) 
+	{
+	uint8_t d = *(buf++);
+	for ( int i=8 ; i>0 ; i--) 
+		{
+		uint8_t t = myint.int32&1;			
+		myint.int32>>=1;
+		if (t != (d & 1)) 
+			{
+			myint.u8[2] ^= 0xDA;
+			myint.u8[1] ^= 0x60;
+			}
+		 d >>=1;
+		}
+	}
+
+for ( int i = 0 ; i < 3 ; i++ )
+		dst[i] = (myint.u8[i]);
+
 }
-}
-}
+
 
 
 
@@ -196,27 +250,6 @@ const uint8 ble_whiten_37[] = {
 	0x5D , 0x4C
 }; // whitening sequence channel 37 ( 0 - index ; 2 - rf channel; 37 - ble spec)
 
-uint8_t swapbits_old(uint8_t a){
-// reverse the bit order in a single byte
-uint8_t v = 0;
-if(a & 0x80) v |= 0x01;
-if(a & 0x40) v |= 0x02;
-if(a & 0x20) v |= 0x04;
-if(a & 0x10) v |= 0x08;
-if(a & 0x08) v |= 0x10;
-if(a & 0x04) v |= 0x20;
-if(a & 0x02) v |= 0x40;
-if(a & 0x01) v |= 0x80;
-return v;
-}
-
-// from https://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith32Bits
-// reverse the bit order in a single byte
-uint8_t swapbits(uint8_t a){
-unsigned int b = a;
-b = ((b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16;
-return b;
-}
 
 void btLeWhiten(uint8_t* data, uint8_t len, uint8_t whitenCoeff)
 {
@@ -255,10 +288,10 @@ packet[len - 1] = 0x55;
 
 btLeCrc(packet, dataLen, packet + dataLen);
 
-for(i = 0; i < 3; i++, dataLen++)
-	packet[dataLen] = swapbits(packet[dataLen]);
+//for(i = 0; i < 3; i++, dataLen++)
+//	packet[dataLen] = swapbits(packet[dataLen]);
 
-if (1)
+if (ONE_CHANNEL)
 {	
 // faster array based whitening
 for(i = 0; i < len; i++) 
@@ -360,7 +393,6 @@ unsigned int ble_txtime;
 int ble_send = 0;
 int oldchan = 0;
 
-#define BLE_TX_TIMEOUT 10000
 
 void beacon_sequence()
 {
@@ -435,7 +467,7 @@ if (ch>2 )
   ch = 0;
 }
 // sending on channel 37 only to use whitening array
-ch = 0;
+if (ONE_CHANNEL) ch = 0;
 
 
 xn_writereg(RF_CH, chRf[ch]);

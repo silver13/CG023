@@ -12,9 +12,6 @@
 // max angle for level mode
 #define MAX_ANGLE_HI 55.0f
 
-// max rate used by level pid ( limit )
-#define LEVEL_MAX_RATE 2000
-
 // disable inbuilt expo functions
 #define DISABLE_EXPO
 
@@ -25,10 +22,6 @@
 #define EXPO_XY 0.3
 #define EXPO_YAW 0.0
 
-
-
-// failsafe time in uS
-#define FAILSAFETIME 1000000  // one second
 
 
 // battery saver
@@ -53,6 +46,8 @@
 // voltage hysteresys
 // in volts
 #define HYST 0.10
+
+
 
 // lower throttle when battery below treshold
 //#define LVC_PREVENT_RESET
@@ -111,6 +106,7 @@
 
 // CH_ON - on always ( all protocols)
 // CH_OFF - off always ( all protocols)
+
 #define HEADLESSMODE CH_OFF
 
 #define LEVELMODE CH_AUX1
@@ -118,6 +114,8 @@
 #define STARTFLIP CH_OFF
 
 #define LEDS_ON CH_ON
+
+
 
 // aux1 channel starts on if this is defined, otherwise off.
 //#define AUX1_START_ON
@@ -169,7 +167,7 @@
 // cg023 protocol
 //#define RX_CG023_SWAP_YAWROLL
 
-// Flash saving features
+// Flash saving features - some auto enabled at the end if this file
 //#define DISABLE_HEADLESS
 //#define DISABLE_FLIP_SEQUENCER
 
@@ -219,6 +217,11 @@
 // this affects soft gyro lpf frequency if used
 #define LOOPTIME 1000
 
+// failsafe time in uS
+#define FAILSAFETIME 1000000  // one second
+
+// max rate used by level pid ( limit )
+#define LEVEL_MAX_RATE 2000
 
 // invert yaw pid for hubsan motors
 //#define INVERT_YAW_PID
@@ -278,16 +281,23 @@
 #endif
 #endif
 
+//needed for rssi
 #ifdef OSD_LTM_PROTOCOL
 #define RXDEBUG
 #endif
 
+#if (STARTFLIP == CH_OFF)
+#define DISABLE_FLIP_SEQUENCER
+#endif
 
+#if (HEADLESSMODE == CH_OFF)
+#define DISABLE_HEADLESS
+#endif
 
-
-
-
-
+// so the beacon works after in-flight reset
+#ifdef RX_BAYANG_PROTOCOL_BLE_BEACON
+#undef STOP_LOWBATTERY
+#endif
 
 
 
