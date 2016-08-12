@@ -151,6 +151,10 @@
 // comment out to disable
 #define AUTO_THROTTLE
 
+// enable auto lower throttle near max throttle to keep control
+// comment out to disable
+//#define MIX_LOWER_THROTTLE
+
 // build acro only firmware
 // removes the distraction of level mode for learning
 //#define ACRO_ONLY
@@ -174,8 +178,6 @@
 // led brightness in-flight ( solid lights only)
 // 0- 15 range
 #define LED_BRIGHTNESS 8
-
-
 
 
 
