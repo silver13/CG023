@@ -205,7 +205,7 @@ uint8_t led_pwm( uint8_t pwmval)
 	
 	float desiredbrightness = pwmval*( 1.0f/ 15.0f);
 
-	limitf( &lastledbrightness, 2);
+//	limitf( &lastledbrightness, 2);
 
 	limitf( &ds_integrator, 2);
 	
