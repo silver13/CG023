@@ -324,7 +324,7 @@ pidoutput[2] = -pidoutput[2];
 
 #ifdef MIX_LOWER_THROTTLE
 
-//#define INCRESE_THROTTLE_MIX
+//#define MIX_INCREASE_THROTTLE
 
 // options for mix throttle lowering if enabled
 // 0 - 100 range ( 100 = full reduction / 0 = no reduction )
@@ -342,8 +342,8 @@ pidoutput[2] = -pidoutput[2];
 #define MIX_THROTTLE_REDUCTION_MAX 0.5
 #endif
 
-#ifndef LOWERMIX_MOTOR_MAX
-#define LOWERMIX_MOTOR_MAX 1.0f
+#ifndef MIX_MOTOR_MAX
+#define MIX_MOTOR_MAX 1.0f
 #endif
 
 
@@ -358,7 +358,7 @@ pidoutput[2] = -pidoutput[2];
 						underthrottle = mix[i];
 		    }
 
-		  overthrottle -= LOWERMIX_MOTOR_MAX ;
+		  overthrottle -= MIX_MOTOR_MAX ;
 
 		  if (overthrottle > (float)MIX_THROTTLE_REDUCTION_MAX)
 			  overthrottle = (float)MIX_THROTTLE_REDUCTION_MAX;
@@ -375,7 +375,7 @@ pidoutput[2] = -pidoutput[2];
 			  overthrottlefilt -= 0.01f;
 #endif
 			
-#ifdef INCRESE_THROTTLE_MIX
+#ifdef MIX_INCREASE_THROTTLE
 // under			
 			
 		  if (underthrottle < -(float)MIX_THROTTLE_REDUCTION_MAX)
