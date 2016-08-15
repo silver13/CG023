@@ -37,6 +37,11 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+####15.08.16
+* added less flicker lights when dimmed
+* MIX_LOWER_THROTTLE added from h8 gd32
+* //#define MIX_INCREASE_THROTTLE spenning fix
+
 ####03.08.16
 * added bluetooth beacon functionality
 
