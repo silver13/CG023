@@ -17,7 +17,7 @@ MCU = cortex-m0
 MCFLAGS = -mcpu=$(MCU) -g -ggdb -mthumb -fdata-sections -ffunction-sections -fsingle-precision-constant -ffast-math -nostartfiles   --specs=nano.specs
 
 
-INCLUDES = -I$(topdir)/H8mini-test/src/ \
+INCLUDES = -I$(topdir)/OpenMicro/src/ \
 	-I$(topdir)/Libraries/CMSIS/Device/ST/STM32F0xx/Include/ \
 	-I$(topdir)/Libraries/CMSIS/Include/ \
 	-I$(topdir)/Utilities/ \
@@ -30,12 +30,15 @@ CFLAGS = $(MCFLAGS)  $(OPTIMIZE)  $(DEFS) -I. -I./ $(INCLUDES)  -Wl,-T,flash.ld,
 AFLAGS = $(MCFLAGS)
 
 SRC = $(wildcard $(topdir)/OpenMicro/src/*.c) \
+	$(wildcard $(topdir)/OpenMicro/src/*.h) \
 	$(topdir)/Libraries/STM32F0xx_StdPeriph_Driver/src/*.c  \
 	$(topdir)/Utilities/system_stm32f0xx.c \
 	methods.c
 
 OBJDIR = .
-OBJ = $(SRC:%.c=$(OBJDIR)/%.o)
+OBJ = $(patsubst %.c,$(OBJDIR)/%.o,$(filter %.c,$(SRC)))
+OBJ += $(patsubst %.cpp,$(OBJDIR)/%.o,$(filter %.cpp,$(SRC)))
+OBJ += Startup.o
 
 
 all: $(TARGET)
