@@ -51,7 +51,7 @@ float pidki[PIDNUMBER] = { 8e-1  , 8e-1 , 5e-1 };
 float pidkd[PIDNUMBER] = { 8.8e-1 , 8.8e-1  , 5.0e-1 };	
 
 // "setpoint weighting" 0.0 - 1.0 where 0.0 = normal pid
-float b[3] = { 0.3 , 0.3 , 0.0};
+float b[3] = { 0.0 , 0.0 , 0.0};
 
 
 // output limit			
