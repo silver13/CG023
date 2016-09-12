@@ -65,8 +65,8 @@
 // i2c driver to use ( dummy - disables i2c )
 // hardware i2c used PB6 and 7 by default ( can also use PA9 and 10)
 
-//#define USE_HARDWARE_I2C
-#define USE_SOFTWARE_I2C
+#define USE_HARDWARE_I2C
+//#define USE_SOFTWARE_I2C
 //#define USE_DUMMY_I2C
 
 // I2C speed: fast = no delays 

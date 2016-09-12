@@ -31,6 +31,7 @@ AFLAGS = $(MCFLAGS)
 
 SRC = $(wildcard $(topdir)/OpenMicro/src/*.c) \
 	$(wildcard $(topdir)/OpenMicro/src/*.h) \
+	$(wildcard $(topdir)/OpenMicro/src/*.cpp) \
 	$(topdir)/Libraries/STM32F0xx_StdPeriph_Driver/src/*.c  \
 	$(topdir)/Utilities/system_stm32f0xx.c \
 	methods.c
