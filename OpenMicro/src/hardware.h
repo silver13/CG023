@@ -29,6 +29,15 @@
 #define VREG_PORT_1 GPIOA
 
 
+// BUZZER pin settings - buzzer active "high"
+// SWDAT and SWCLK pins OK here
+// GPIO_Pin_13 // SWDAT - GPIO_Pin_14 // SWCLK 
+#define BUZZER_PIN       GPIO_Pin_x 
+#define BUZZER_PIN_PORT  GPIOA
+// x (micro)seconds after loss of tx or low bat before buzzer starts
+#define BUZZER_DELAY     30e6 
+
+
 // set zero to disable (0 - 4)
 #define LED_NUMBER 4
 

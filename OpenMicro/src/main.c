@@ -45,10 +45,9 @@ THE SOFTWARE.
 #include "control.h"
 #include "defines.h"
 #include "drv_i2c.h"
-
 #include "drv_softi2c.h"
-
 #include "drv_serial.h"
+#include "buzzer.h"
 
 #include "binary.h"
 
@@ -379,6 +378,10 @@ else
 		}
 #endif
 
+#ifdef BUZZER_ENABLE	
+	buzzer();
+#endif
+		
 checkrx();
 	
 extern void osdcycle();	

@@ -179,8 +179,7 @@
 // 0- 15 range
 #define LED_BRIGHTNESS 8
 
-
-
+//#define BUZZER_ENABLE
 
 
 

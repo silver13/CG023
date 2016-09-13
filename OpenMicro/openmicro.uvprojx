@@ -528,6 +528,11 @@
               <FilePath>.\src\filter.cpp</FilePath>
             </File>
             <File>
+              <FileName>buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\buzzer.c</FilePath>
+            </File>
+            <File>
               <FileName>angle_pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\angle_pid.c</FilePath>
