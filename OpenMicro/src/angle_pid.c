@@ -14,7 +14,7 @@
 float apidkp[APIDNUMBER] = { 9.4e-2, 9.4e-2 };
 
 // Ki                        ROLL     PITCH  
-float apidki[APIDNUMBER] = { 6.2e-2, 6.2e-2 };   
+float apidki[APIDNUMBER] = { 0.0e-2, 0.0e-2 };   
 
 // code variables below
 

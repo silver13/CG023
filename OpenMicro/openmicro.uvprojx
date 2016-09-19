@@ -458,6 +458,11 @@
               <FilePath>.\src\main.c</FilePath>
             </File>
             <File>
+              <FileName>stickvector.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\stickvector.c</FilePath>
+            </File>
+            <File>
               <FileName>rx_cg023_protocol.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\rx_cg023_protocol.c</FilePath>

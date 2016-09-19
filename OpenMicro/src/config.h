@@ -222,7 +222,7 @@
 #define FAILSAFETIME 1000000  // one second
 
 // max rate used by level pid ( limit )
-#define LEVEL_MAX_RATE 2000
+#define LEVEL_MAX_RATE 360
 
 // invert yaw pid for hubsan motors
 //#define INVERT_YAW_PID
