@@ -37,6 +37,9 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+### .10.16
+* High angle update (level mode works up to 90 degrees)
+
 ####15.08.16
 * added less flicker lights when dimmed
 * MIX_LOWER_THROTTLE added from h8 gd32
