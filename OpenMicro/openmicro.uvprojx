@@ -503,6 +503,11 @@
               <FilePath>.\src\led.c</FilePath>
             </File>
             <File>
+              <FileName>rgb_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rgb_led.c</FilePath>
+            </File>
+            <File>
               <FileName>sixaxis.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\sixaxis.c</FilePath>
@@ -636,6 +641,11 @@
               <FileName>drv_xn297.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\drv_xn297.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_rgb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\drv_rgb.c</FilePath>
             </File>
           </Files>
         </Group>

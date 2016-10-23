@@ -1,6 +1,7 @@
 
 // defines for things that do not normally need changing
 
+#define FILTERCALC( sampleperiod, filtertime) (1.0f - ((float)sampleperiod) / ((float)filtertime))
 
 #define MOTOR_BL 0
 #define MOTOR_FL 1

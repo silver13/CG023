@@ -194,6 +194,9 @@ if ( vbattfilt < (float) STOP_LOWBATTERY_TRESH) failloop(2);
 
 	gyro_cal();
 
+extern void rgb_init( void);
+rgb_init();
+
 #ifdef SERIAL_ENABLE
 serial_init();
 #endif
@@ -377,6 +380,13 @@ else
 			else auxledoff( 255);
 		}
 #endif
+
+
+#if ( RGB_LED_NUMBER > 0)
+extern	void rgb_led_lvc( void);
+rgb_led_lvc( );
+#endif
+
 
 #ifdef BUZZER_ENABLE	
 	buzzer();
