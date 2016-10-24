@@ -117,17 +117,15 @@ int main(void)
 clk_init();
 #endif
 	
-  gpio_init();
-
-
-	i2c_init();	
-	
+  gpio_init();	
 	
 	spi_init();
 	
   time_init();
 
 	delay(100000);
+		
+	i2c_init();	
 	
 	pwm_init();
 
