@@ -5,13 +5,6 @@
 #include <string.h>
 
 
-void vector_cross(float vout[3], float v1[3],float v2[3])
-{
-  vout[0]= (v1[1]*v2[2]) - (v1[2]*v2[1]);
-  vout[1]= (v1[2]*v2[0]) - (v1[0]*v2[2]);
-  vout[2]= (v1[0]*v2[1]) - (v1[1]*v2[0]);
-}
-
 extern float rx[];
 extern float GEstG[3];
 extern float Q_rsqrt( float number );
@@ -23,11 +16,6 @@ void stick_vector( float maxangle)
 {
 	
 float stickvector[3];	
-	
-	// start with a down vector
-	stickvector[0] = 0;
-	stickvector[1] = 0;
-	stickvector[2] = 1;
 
 float pitch, roll;
 
@@ -39,7 +27,15 @@ stickvector[0] = fastsin( roll );
 stickvector[1] = fastsin( pitch );
 stickvector[2] = fastcos( roll ) * fastcos( pitch );
 
-float mag2 = Q_rsqrt( (stickvector[0] * stickvector[0] + stickvector[1] * stickvector[1]) / (1 - stickvector[2] * stickvector[2]));
+	
+float	mag2 = (stickvector[0] * stickvector[0] + stickvector[1] * stickvector[1]);
+
+if ( mag2 > 0.001f ) 
+{
+mag2 = Q_rsqrt( mag2 / (1 - stickvector[2] * stickvector[2]) );
+}
+else mag2 = 0.707f;
+
 stickvector[0] *=mag2;
 stickvector[1] *=mag2;	
 
