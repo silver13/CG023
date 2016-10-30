@@ -14,7 +14,7 @@ void rgb_init(void)
 {    
 	// spi port inits
 
-	if ( 0&&(RGB_PIN == GPIO_Pin_13 || RGB_PIN == GPIO_Pin_14) && RGB_PORT == GPIOA ) 
+	if ( (RGB_PIN == GPIO_Pin_13 || RGB_PIN == GPIO_Pin_14) && RGB_PORT == GPIOA ) 
 	{
 		// programming port used
 		
