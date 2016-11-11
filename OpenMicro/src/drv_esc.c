@@ -13,6 +13,9 @@
 // esc throttle off setting (microseconds)
 #define ESC_OFF 900
 
+// zero = no signal ( microseconds)
+#define ESC_FAILSAFE 0
+
 // invert = signal after fets (may need 1k pullup resistor)
 // commented = signal straight from CPU pins
 #define ESC_INVERT_SIGNAL
