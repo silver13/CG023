@@ -1,7 +1,6 @@
 
 // defines for things that do not normally need changing
 
-#define FILTERCALC( sampleperiod, filtertime) (1.0f - ((float)sampleperiod) / ((float)filtertime))
 
 #define MOTOR_BL 0
 #define MOTOR_FL 1
@@ -18,6 +17,10 @@
 #define ROLL 0
 #define PITCH 1
 #define YAW 2
+
+
+#define FILTERCALC( sampleperiod, filtertime) (1.0f - ((float)sampleperiod) / ((float)filtertime))
+
 
 #define RXMODE_BIND 0
 #define RXMODE_NORMAL (!RXMODE_BIND)

@@ -161,16 +161,7 @@ int decode_cg023( void)
 // throttle		 
 		rx[3] = 0.00390625f * rxdata[5]; 
 		 
-#ifndef RX_CG023_SWAP_YAWROLL		 
-// normal yaw - roll
-		if ( rxdata[6] >= 0x80 )
-		{
-			rx[2] = -rxdata[6] * 0.0166666f + 2.1166582f; // yaw
-		}
-		else if ( rxdata[6] <= 0x3C ) rx[2] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
-		else rx[2] = 0.0;
-		rx[0] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
-#else
+
 		// swapped yaw - roll (mode 3)
 			if ( rxdata[6] >= 0x80 )
 		{
@@ -179,7 +170,6 @@ int decode_cg023( void)
 		else if ( rxdata[6] <= 0x3C ) rx[0] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
 		else rx[0] = 0.0;
 		rx[2] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
-#endif
 		
 		rx[1] = - rxdata[7] * 0.0166666f + 2.1166582f; 
 		

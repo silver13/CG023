@@ -43,6 +43,8 @@
 // in volts
 #define VDROP_FACTOR 0.9
 
+#define AUTO_VDROP_FACTOR
+
 // voltage hysteresys
 // in volts
 #define HYST 0.10
@@ -149,7 +151,7 @@
 
 // throttle angle compensation in level mode
 // comment out to disable
-#define AUTO_THROTTLE
+//#define AUTO_THROTTLE
 
 // enable auto lower throttle near max throttle to keep control
 // comment out to disable
@@ -163,13 +165,15 @@
 // select only one
 //#define RX_CG023_PROTOCOL
 //#define RX_H7_PROTOCOL
-#define RX_BAYANG_PROTOCOL
+//#define RX_BAYANG_PROTOCOL
+#define RX_BAYANG_PROTOCOL_TELEMETRY
 //#define RX_BAYANG_PROTOCOL_BLE_BEACON
 //#define RX_CX10BLUE_PROTOCOL
 
-// mode 1 to mode 3 conversion
-// cg023 protocol
-//#define RX_CG023_SWAP_YAWROLL
+
+// 0 - 3 - power for telemetry
+#define TX_POWER 1
+
 
 // Flash saving features - some auto enabled at the end if this file
 //#define DISABLE_HEADLESS
@@ -219,7 +223,7 @@
 #define LOOPTIME 1000
 
 // failsafe time in uS
-#define FAILSAFETIME 1000000  // one second
+#define FAILSAFETIME 1000000    // one second
 
 // max rate used by level pid ( limit )
 #define LEVEL_MAX_RATE 360
@@ -266,21 +270,22 @@
 // define logic - do not change
 ///////////////
 
-
+// used for pwm calculations
 #ifdef ENABLE_OVERCLOCK
 #define SYS_CLOCK_FREQ_HZ 64000000
 #else
 #define SYS_CLOCK_FREQ_HZ 48000000
 #endif
 
+// not needed / functional without level mode
 #ifdef ACRO_ONLY
-	#define DISABLE_FLIP_SEQUENCER
-	#undef AUTO_THROTTLE
+#define DISABLE_FLIP_SEQUENCER
+#undef AUTO_THROTTLE
 #endif
 
 #ifdef MOTOR_BEEPS
- #ifdef USE_ESC_DRIVER
- #warning "MOTOR BEEPS_WORKS WITH BRUSHED MOTORS ONLY"
+#ifdef USE_ESC_DRIVER
+#warning "MOTOR BEEPS_WORKS WITH BRUSHED MOTORS ONLY"
 #endif
 #endif
 
@@ -301,11 +306,3 @@
 #ifdef RX_BAYANG_PROTOCOL_BLE_BEACON
 #undef STOP_LOWBATTERY
 #endif
-
-
-
-
-
-
-
-
