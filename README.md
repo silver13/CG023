@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/silver13/CG023.svg?branch=master)](https://travis-ci.org/silver13/CG023)
+
 # CG023
 ##**Firmware for CG023**
 
