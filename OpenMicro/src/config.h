@@ -106,6 +106,8 @@
 // DEVO channels (bayang protocol)
 // DEVO_CHAN_5 - DEVO_CHAN_10
 
+// Multiprotocol can use MULTI_CHAN_5 - MULTI_CHAN_10  (bayang protocol)
+
 // CH_ON - on always ( all protocols)
 // CH_OFF - off always ( all protocols)
 
