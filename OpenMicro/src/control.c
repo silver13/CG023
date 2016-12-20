@@ -477,6 +477,11 @@ thrsum = 0;
 		mix[i] = clip_ff(mix[i], i);
 		#endif
 
+        #ifdef DT_LIMITER_ENABLE
+        float dtlimit( float in, int n );           
+		mix[i] = dtlimit(  mix[i] , i);
+        #endif
+            
 		#ifdef MOTORS_TO_THROTTLE
 		mix[i] = throttle;
 		// flash leds in valid throttle range
@@ -572,4 +577,34 @@ float clip_ff(float motorin, int number)
 	return motorin;
 }
 
+
+
+float lastdt[4];
+
+
+float dtlimit( float in, int n )
+{
+    
+  if ( onground)
+  {
+   lastdt[n] = in;
+   return in;
+  }
+    
+ if ( in < lastdt[n] - DT_LIMIT )
+ {
+   lastdt[n] = lastdt[n] - DT_LIMIT;
+   return  lastdt[n];    
+ } 
+
+ if ( in > lastdt[n] + DT_LIMIT )
+ {
+   lastdt[n] = lastdt[n] + DT_LIMIT;
+   return  lastdt[n];    
+ } 
+
+ lastdt[n] = in;
+ return in;
+    
+}
 

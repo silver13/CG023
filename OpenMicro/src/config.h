@@ -148,6 +148,11 @@
 //#define MOTOR_CURVE_85MM_8KHZ
 //#define MOTOR_CURVE_85MM_32KHZ
 
+// limits max rate of change of motors, step size per 1 ms
+//#define DT_LIMITER_ENABLE
+#define DT_LIMIT 0.05f
+
+
 // lost quad beeps using motors (30 sec timeout)
 //#define MOTOR_BEEPS
 
