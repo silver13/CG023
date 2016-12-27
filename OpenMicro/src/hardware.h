@@ -18,6 +18,16 @@
 // do not set PA13 , PA14 (stm32f031) as this will break the programming interface
 // to disable led pins set number to zero
 
+// the error codes indicate a failure that prevents normal operation
+// led flash codes - the quad will not fly / bind if flashing a code
+// 2 - low battery at powerup - if enabled by config.h "#define STOP_LOWBATTERY" 
+// 3 - radio chip not found
+// 4 - Gyro not found - maybe i2c speed
+// 5 - clock , intterrupts , systick - this should not come up
+// 6 - loop time issue - if loop time exceeds 20mS
+// 7 - i2c error  - triggered by hardware i2c driver only
+// 8 - i2c error main loop  - triggered by hardware i2c driver only
+
 
 
 // always on pin ( for vreg if present)
