@@ -7,10 +7,10 @@
 #ifdef USE_ESC_DRIVER
 
 // working motor range (microseconds)
-#define ESC_MIN 1000
-#define ESC_MAX 2000
+#define ESC_MIN 1180
+#define ESC_MAX 1860
 
-// esc throttle off setting (microseconds)
+// esc throttle off setting (microseconds
 #define ESC_OFF 900
 
 // zero = no signal ( microseconds)
@@ -25,12 +25,13 @@
 
 //#define ENABLE_ONESHOT
 
+#define ENABLE_ONESHOT42
 
-// signal repetition frequency (hertz) min 185
-#define ESC_FREQ_PPM 333
-//#define ESC_FREQ 490 // max with PPM out
+// signal repetition frequency (hertz) min 185 max 500
+#define ESC_FREQ_PPM 500
 
-// Oneshot default 1000 ( 1khz)
+
+// Oneshot default 1000Hz ( 1khz) 500 - 4000
 #define ESC_FREQ_ONESHOT 1000 
 
 // do not change below
@@ -50,7 +51,11 @@
 #define ESC_FREQ ESC_FREQ_ONESHOT
 #endif
 
-
+#ifdef  ENABLE_ONESHOT42
+#undef ENABLE_ONESHOT
+#undef ESC_FREQ
+#define ESC_FREQ ESC_FREQ_ONESHOT
+#endif
 
 #ifndef SYS_CLOCK_FREQ_HZ
 #define SYS_CLOCK_FREQ_HZ 48000000
@@ -666,6 +671,10 @@ if (onground) pwmf = (float)ESC_OFF / ESC_uS;
 	
 #ifdef ENABLE_ONESHOT
 pwmf = pwmf/8;
+#endif
+
+#ifdef ENABLE_ONESHOT42
+pwmf = pwmf/24;
 #endif
 	
 int pwm = pwmf * PWMTOP ;
