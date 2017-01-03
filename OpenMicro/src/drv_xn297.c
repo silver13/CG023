@@ -33,6 +33,15 @@ int xn_command( int command)
 	spi_csoff();
 	return status;
 }
+
+int xn_activate( int command)
+{
+	spi_cson();
+	int status = spi_sendrecvbyte(0x50);
+    spi_sendrecvbyte(command);
+	spi_csoff();
+	return status;
+}
 //
 void _spi_write_address( int reg, int val);
 

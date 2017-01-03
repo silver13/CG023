@@ -196,7 +196,7 @@
 //#define PWM_PA11
 //#define PWM_PB0
 //#define PWM_PB1
-
+//#define PWM_PB8
 
 // Assingment of pin to motor
 // Assign one pin to one motor
@@ -218,6 +218,7 @@
 //#define MOTOR0_PIN_PA11
 //#define MOTOR0_PIN_PB0
 //#define MOTOR0_PIN_PB1
+//#define MOTOR0_PIN_PB8
 
 // front-left motor
 // motor 1 pin
@@ -236,6 +237,7 @@
 //#define MOTOR1_PIN_PA11
 //#define MOTOR1_PIN_PB0
 //#define MOTOR1_PIN_PB1
+//#define MOTOR1_PIN_PB8
 
 // back-right motor
 // motor 2 pin
@@ -254,6 +256,7 @@
 //#define MOTOR2_PIN_PA11
 //#define MOTOR2_PIN_PB0
 //#define MOTOR2_PIN_PB1
+//#define MOTOR2_PIN_PB8
 
 // front-right motor
 // motor 3 pin
@@ -272,7 +275,7 @@
 //#define MOTOR3_PIN_PA11
 //#define MOTOR3_PIN_PB0
 //#define MOTOR3_PIN_PB1
-
+//#define MOTOR3_PIN_PB8
 
 // gyro orientation
 // the expected orientation is with the dot in the front-left corner
