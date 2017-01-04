@@ -29,28 +29,18 @@ int xn_readreg( int reg)
 int xn_command( int command)
 {
 	spi_cson();
-	int status = spi_sendrecvbyte(command);
+	spi_sendbyte(command);
 	spi_csoff();
-	return status;
+	return 0;
 }
 
 int xn_activate( int command)
 {
 	spi_cson();
-	int status = spi_sendrecvbyte(0x50);
-    spi_sendrecvbyte(command);
+	spi_sendbyte(0x50);
+    spi_sendbyte(command);
 	spi_csoff();
-	return status;
-}
-//
-void _spi_write_address( int reg, int val);
-
-void _spi_write_address( int reg, int val)
-{
-	spi_cson();
-	spi_sendbyte( reg);
-	spi_sendbyte( val);
-	spi_csoff();
+	return 0;
 }
 
 
@@ -59,9 +49,9 @@ void xn_readpayload( int *data , int size )
 	int index = 0;
 	spi_cson();
 	spi_sendrecvbyte( B01100001 ); // read rx payload
-	while(index<size)
+	while( index < size )
 	{
-	data[index]=	spi_sendzerorecvbyte();
+	data[index]= spi_sendzerorecvbyte();
 	index++;
 	}
 	spi_csoff();
@@ -71,29 +61,29 @@ void xn_readpayload( int *data , int size )
 
 void xn_writerxaddress(  int *addr )	
 {
- int index = 0;
-spi_cson();
-spi_sendbyte(0x2a);
+    int index = 0;
+    spi_cson();
+    spi_sendbyte(0x2a);
 	while(index<5)
-	{
-	spi_sendbyte( addr[index] );
-	index++;
-	}
-spi_csoff();
+        {
+        spi_sendbyte( addr[index] );
+        index++;
+        }
+    spi_csoff();
 }
 
 
 void xn_writetxaddress(  int *addr )	
 {
- int index = 0;
-spi_cson();
-spi_sendbyte(0x10|0x20);
+    int index = 0;
+    spi_cson();
+    spi_sendbyte(0x10|0x20);
 	while(index<5)
-	{
-	spi_sendbyte( addr[index] );
-	index++;
-	}
-spi_csoff();
+        {
+        spi_sendbyte( addr[index] );
+        index++;
+        }
+    spi_csoff();
 }
 
 
@@ -103,10 +93,10 @@ void xn_writepayload( int data[] , int size )
 	spi_cson();
 	spi_sendrecvbyte( 0xA0 ); // write tx payload
 	while(index<size)
-	{
-	spi_sendrecvbyte( data[index] );
-	index++;
-	}
+        {
+        spi_sendrecvbyte( data[index] );
+        index++;
+        }
 	spi_csoff();
 }
 
