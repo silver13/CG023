@@ -79,8 +79,6 @@ spi_csoff();
 delay(1000);
 }
 
-extern int xn_activate( int command);
-
 int bkfound = 0;
 
 void rx_init()
