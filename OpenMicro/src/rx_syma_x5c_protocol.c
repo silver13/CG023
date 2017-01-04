@@ -101,7 +101,7 @@ xn_writerxaddress( rxaddress);
 	xn_writereg( RF_SETUP , B00000000);  // 
 	xn_writereg( RX_PW_P0 , 16 ); // payload size
 	xn_writereg( SETUP_RETR , 0 ); // no retransmissions ( redundant?)
-	xn_writereg( SETUP_AW , 3 ); // address size (5 bits)
+	xn_writereg( SETUP_AW , 3 ); // address size (5 bytes)
 	xn_command( FLUSH_RX);
     xn_writereg( RF_CH , 0x08 );  // bind  channel
 
@@ -114,7 +114,7 @@ xn_writerxaddress( rxaddress);
     
     xn_activate(0x53); // switch bank back
 
-  xn_writereg( 0 , B00001111 ); // power up, crc off
+  xn_writereg( 0 , B00001111 ); // power up, crc on
 
 
 #ifdef RADIO_CHECK

@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include "binary.h"
 #include "drv_spi.h"
 #include "project.h"
-//#include "gd32f1x0.h"
 #include "xn297.h"
 #include "drv_time.h"
 #include <stdio.h>
@@ -166,7 +165,7 @@ writeregs( demodcal , sizeof(demodcal) );
     xn_writereg(RF_SETUP, XN_POWER);    // lna high current on ( better performance )
     xn_writereg(RX_PW_P0, 15);  // payload size
     xn_writereg(SETUP_RETR, 0); // no retransmissions ( redundant?)
-    xn_writereg(SETUP_AW, 3);   // address size (5 bits)
+    xn_writereg(SETUP_AW, 3);   // address size (5 bytes)
     xn_command(FLUSH_RX);
     xn_writereg(RF_CH, 0);      // bind on channel 0
 
