@@ -493,6 +493,11 @@
               <FilePath>.\src\rx_cx10blue_protocol.c</FilePath>
             </File>
             <File>
+              <FileName>rx_syma_x5c_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rx_syma_x5c_protocol.c</FilePath>
+            </File>
+            <File>
               <FileName>gestures.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\gestures.c</FilePath>
