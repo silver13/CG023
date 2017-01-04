@@ -39,6 +39,16 @@ http://sirdomsen.diskstation.me/dokuwiki/doku.php?id=start
 
 ###History:
 
+### 02.01.17
+* features for syma x5hw boards ( pb8 pwm etc)
+* bk2453 radio support
+* syma protocol ( x5c ) - tested with devo only
+* oneshot42 for esc driver
+
+### 02.12.16
+* devo telemetry suport for bayang protocol ( default)
+* auto vdrop calculation added
+
 ### .10.16
 * High angle update (level mode works up to 90 degrees)
 
