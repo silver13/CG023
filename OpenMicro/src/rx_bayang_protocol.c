@@ -87,7 +87,6 @@ for ( uint8_t i = 0 ; i < size ; i++)
 	spi_sendbyte( data[i]);
 }
 spi_csoff();
-delay(1000);
 }
 
 
@@ -105,8 +104,8 @@ static uint8_t demodcal[6] = { 0x39 , 0x0b , 0xdf , 0xc4 , 0xa7 , 0x03};
 writeregs( demodcal , sizeof(demodcal) );
 #endif
 
-static int rxaddress[5] = { 0 , 0 , 0 , 0 , 0  };
-xn_writerxaddress( rxaddress);
+   static uint8_t rxaddr[6] = { 0x2a , 0 , 0 , 0 , 0 , 0  };
+   writeregs( rxaddr , sizeof(rxaddr) );
 
 	xn_writereg( EN_AA , 0 );	// aa disabled
 	xn_writereg( EN_RXADDR , 1 ); // pipe 0 only
@@ -126,19 +125,14 @@ xn_writerxaddress( rxaddress);
 #endif
 
 #ifdef RADIO_CHECK
-void check_radio(void);
- check_radio();
+    int temp = xn_readreg( 0x0f); // rx address pipe 5	
+    // should be 0xc6
+    extern void failloop( int);
+    if ( temp != 0xc6) failloop(3);
 #endif	
 }
 
 
-void check_radio()
-{	
-	int temp = xn_readreg( 0x0f); // rx address pipe 5	
-	// should be 0xc6
-	extern void failloop( int);
-	if ( temp != 0xc6) failloop(3);
-}
 
 
 static char checkpacket()
@@ -253,8 +247,8 @@ return 0; // first byte different
 void nextchannel()
 {
 	chan++;
-	if (chan > 3 ) chan = 0;
-	xn_writereg(0x25, rfchannel[chan] );
+	chan&=3; // %4
+	xn_writereg( RF_CH, rfchannel[chan] );
 }
 
 
@@ -290,20 +284,20 @@ void checkrx(void)
 				      rfchannel[2] = rxdata[8];
 				      rfchannel[3] = rxdata[9];
 							
-							int rxaddress[5];
-				      rxaddress[0] = rxdata[1];
-				      rxaddress[1] = rxdata[2];
-				      rxaddress[2] = rxdata[3];
-				      rxaddress[3] = rxdata[4];
-				      rxaddress[4] = rxdata[5];
-				      
-				      xn_writerxaddress(rxaddress);
-				      xn_writereg(0x25, rfchannel[chan]);	// Set channel frequency 
-							rxmode = RXMODE_NORMAL;
+				      nextchannel(); // change to a data channel
+                      
+                      uint8_t rxaddr[6] = { 0x2a ,  };
+                      
+                      for ( int i = 1 ; i < 6; i++)
+                      {
+                        rxaddr[i] = rxdata[i];
+                      }
+                      
+                      // write new rx address
+                      writeregs( rxaddr , sizeof(rxaddr) );
+    
+                      rxmode = RXMODE_NORMAL;
 
-#ifdef SERIAL
-				      printf(" BIND \n");
-#endif
 			      }
 		    }
 		  else

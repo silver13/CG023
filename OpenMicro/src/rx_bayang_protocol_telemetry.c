@@ -91,7 +91,6 @@ void writeregs(uint8_t data[], uint8_t size)
           spi_sendbyte(data[i]);
       }
     spi_csoff();
-    delay(1000);
 }
 
 
