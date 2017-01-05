@@ -67,17 +67,6 @@ spi_csoff();
 delay(1000);
 }
 
-void writeregs2 ( uint8_t *data , uint8_t size )
-{
-	
-spi_cson();
-for ( uint8_t i = 0 ; i < size ; i++)
-{
-	spi_sendbyte( data[i]);
-}
-spi_csoff();
-delay(1000);
-}
 
 int bkfound = 0;
 
