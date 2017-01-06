@@ -176,7 +176,9 @@
 #define RX_BAYANG_PROTOCOL_TELEMETRY
 //#define RX_BAYANG_PROTOCOL_BLE_BEACON
 //#define RX_CX10BLUE_PROTOCOL
+//#define RX_Q282_PROTOCOL
 //#define RX_SYMA_X5C_PROTOCOL
+
 
 // 0 - 3 - power for telemetry
 #define TX_POWER 1

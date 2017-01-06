@@ -51,7 +51,7 @@
           <OutputName>openfly2</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -491,6 +491,11 @@
               <FileName>rx_cx10blue_protocol.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\rx_cx10blue_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>rx_q282_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\rx_q282_protocol.c</FilePath>
             </File>
             <File>
               <FileName>rx_syma_x5c_protocol.c</FileName>
