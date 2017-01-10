@@ -28,6 +28,8 @@
 // 7 - i2c error  - triggered by hardware i2c driver only
 // 8 - i2c error main loop  - triggered by hardware i2c driver only
 
+// SYMA X5S-R board config
+//
 
 
 // always on pin ( for vreg if present)
@@ -35,8 +37,8 @@
 // comment out to disable
 //#define ENABLE_VREG_PIN
 
-#define VREG_PIN_1 GPIO_Pin_5
-#define VREG_PORT_1 GPIOA
+#define VREG_PIN_1 GPIO_Pin_8
+#define VREG_PORT_1 GPIOB
 
 
 // BUZZER pin settings - buzzer active "high"
@@ -49,10 +51,10 @@
 
 
 // set zero to disable (0 - 4)
-#define LED_NUMBER 4
+#define LED_NUMBER 1
 
-#define LED1PIN GPIO_Pin_4
-#define LED1PORT GPIOA
+#define LED1PIN GPIO_Pin_1
+#define LED1PORT GPIOF
 
 #define LED2PIN GPIO_Pin_2
 #define LED2PORT GPIOA
@@ -130,16 +132,16 @@
 
 // Analog battery input pin and adc channel
 
-#define BATTERYPIN GPIO_Pin_7
+#define BATTERYPIN GPIO_Pin_0
 #define BATTERYPORT GPIOA
-#define BATTERY_ADC_CHANNEL ADC_Channel_7
+#define BATTERY_ADC_CHANNEL ADC_Channel_0
 
 // divider setting for adc uses 2 measurements
 // the adc readout can be found in debug mode , debug.adcfilt
 // #enable DEBUG should be in config.h
 // default for 1/2 divider
-#define ADC_BATT_VOLTAGE 3.77
-#define ADC_READOUT 2727.0
+#define ADC_BATT_VOLTAGE 4.05
+#define ADC_READOUT 1038.0
 
 
 // SPI PINS DEFINITONS ( for radio ic )
@@ -148,24 +150,25 @@
 //disable pins so they don't interfere with other pins 
 //#define DISABLE_SPI_PINS
 
-#define SPI_MOSI_PIN GPIO_Pin_3
-#define SPI_MOSI_PORT GPIOB
+#define SPI_MOSI_PIN GPIO_Pin_7
+#define SPI_MOSI_PORT GPIOA
 
-#define SPI_MISO_PIN GPIO_Pin_15
+#define SPI_MISO_PIN GPIO_Pin_6
 #define SPI_MISO_PORT GPIOA
 
-#define SPI_CLK_PIN GPIO_Pin_4
-#define SPI_CLK_PORT GPIOB
+#define SPI_CLK_PIN GPIO_Pin_5
+#define SPI_CLK_PORT GPIOA
 
-#define SPI_SS_PIN GPIO_Pin_5
-#define SPI_SS_PORT GPIOB
+#define SPI_SS_PIN GPIO_Pin_4
+#define SPI_SS_PORT GPIOA
 
 // check for radio chip ( 3 times flash = not found)
 #define RADIO_CHECK
 
 // radio type
-#define RADIO_XN297
+//#define RADIO_XN297
 //#define RADIO_XN297L
+#define RADIO_BK2453
 
 // PWM PINS DEFINITIONS 
 // currently pins PA0 to PA3 , PA5 , PA8 to PA11 supported
@@ -182,21 +185,21 @@
 
 // pwm pin initialization
 // enable the pwm pins to be used here ( multiple pins ok)
-#define PWM_PA0
-#define PWM_PA1
+//#define PWM_PA0
+#define PWM_PA1  // M1
 //#define PWM_PA2
 //#define PWM_PA3
-//#define PWM_PA4
-//#define PWM_PA5
-//#define PWM_PA6
-//#define PWM_PA7
-#define PWM_PA8
-#define PWM_PA9
+//#define PWM_PA4 xx
+//#define PWM_PA5 xx
+//#define PWM_PA6 xx
+//#define PWM_PA7 xx
+#define PWM_PA8     //m4
+//#define PWM_PA9
 //#define PWM_PA10
-//#define PWM_PA11
+#define PWM_PA11  //m3?
 //#define PWM_PB0
 //#define PWM_PB1
-//#define PWM_PB8
+#define PWM_PB8
 
 // Assingment of pin to motor
 // Assign one pin to one motor
@@ -204,7 +207,7 @@
 // back-left motor
 // motor 0 pin
 
-#define MOTOR0_PIN_PA0
+//#define MOTOR0_PIN_PA0
 //#define MOTOR0_PIN_PA1
 //#define MOTOR0_PIN_PA2
 //#define MOTOR0_PIN_PA3
@@ -215,7 +218,7 @@
 //#define MOTOR0_PIN_PA8
 //#define MOTOR0_PIN_PA9
 //#define MOTOR0_PIN_PA10
-//#define MOTOR0_PIN_PA11
+#define MOTOR0_PIN_PA11
 //#define MOTOR0_PIN_PB0
 //#define MOTOR0_PIN_PB1
 //#define MOTOR0_PIN_PB8
@@ -224,20 +227,19 @@
 // motor 1 pin
 
 //#define MOTOR1_PIN_PA0
-#define MOTOR1_PIN_PA1
+//#define MOTOR1_PIN_PA1
 //#define MOTOR1_PIN_PA2
 //#define MOTOR1_PIN_PA3
 //#define MOTOR1_PIN_PA4
 //#define MOTOR1_PIN_PA5
 //#define MOTOR1_PIN_PA6
 //#define MOTOR1_PIN_PA7
-//#define MOTOR1_PIN_PA8
+#define MOTOR1_PIN_PA8
 //#define MOTOR1_PIN_PA9
 //#define MOTOR1_PIN_PA10
 //#define MOTOR1_PIN_PA11
 //#define MOTOR1_PIN_PB0
 //#define MOTOR1_PIN_PB1
-//#define MOTOR1_PIN_PB8
 
 // back-right motor
 // motor 2 pin
@@ -250,19 +252,19 @@
 //#define MOTOR2_PIN_PA5
 //#define MOTOR2_PIN_PA6
 //#define MOTOR2_PIN_PA7
-#define MOTOR2_PIN_PA8
+//#define MOTOR2_PIN_PA8
 //#define MOTOR2_PIN_PA9
 //#define MOTOR2_PIN_PA10
 //#define MOTOR2_PIN_PA11
 //#define MOTOR2_PIN_PB0
 //#define MOTOR2_PIN_PB1
-//#define MOTOR2_PIN_PB8
+#define MOTOR2_PIN_PB8
 
 // front-right motor
 // motor 3 pin
 
 //#define MOTOR3_PIN_PA0
-//#define MOTOR3_PIN_PA1
+#define MOTOR3_PIN_PA1
 //#define MOTOR3_PIN_PA2
 //#define MOTOR3_PIN_PA3
 //#define MOTOR3_PIN_PA4
@@ -270,7 +272,7 @@
 //#define MOTOR3_PIN_PA6
 //#define MOTOR3_PIN_PA7
 //#define MOTOR3_PIN_PA8
-#define MOTOR3_PIN_PA9
+//#define MOTOR3_PIN_PA9
 //#define MOTOR3_PIN_PA10
 //#define MOTOR3_PIN_PA11
 //#define MOTOR3_PIN_PB0
