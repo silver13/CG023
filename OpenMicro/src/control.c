@@ -384,8 +384,10 @@ pidoutput[2] = -pidoutput[2];
 		    {
 			    if (mix[i] > overthrottle)
 				    overthrottle = mix[i];
+                #ifdef MIX_INCREASE_THROTTLE
 					if (mix[i] < underthrottle)
 						underthrottle = mix[i];
+                #endif
 		    }
 
 		  overthrottle -= MIX_MOTOR_MAX ;
@@ -456,8 +458,9 @@ pidoutput[2] = -pidoutput[2];
 			
 			
 		  if (overthrottle > 0 || underthrottle < 0 )
-		    {		// exceeding max motor thrust
-					float temp = overthrottle + underthrottle;
+		    {	
+                // exceeding max motor thrust
+				float temp = overthrottle + underthrottle;
 			    for (int i = 0; i < 4; i++)
 			      {
 				      mix[i] -= temp;
