@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.org/silver13/CG023.svg?branch=master)](https://travis-ci.org/silver13/CG023)
 
+Branches:
+* branch master - for cg023 quad - also starting point for other boards
+* branch syma x5s-r - for syma x5hw board , pids not tuned
+
 # CG023
 ##**Firmware for CG023**
 
