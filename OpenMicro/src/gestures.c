@@ -8,7 +8,7 @@
 
 
 #define GMACRO_LEFT (rx[0] < - STICKMAX || rx[2] < - STICKMAX)
-#define GMACRO_RIGHT (rx[0] >  STICKMAX || rx[2] <  STICKMAX)
+#define GMACRO_RIGHT (rx[0] >  STICKMAX || rx[2] >  STICKMAX)
 #define GMACRO_XCENTER (fabsf(rx[0]) < STICKCENTER && fabsf(rx[2]) < STICKCENTER  )
 
 
@@ -47,29 +47,24 @@ int gestures2()
 {
 	if (onground)
 	  {
-          
-          int pitchcenter = (GMACRO_PITCHCENTER);
-          int rollcenter = ( GMACRO_XCENTER);
-          int allcenter = ( pitchcenter && rollcenter );
-          
-		  if ( allcenter )
+	  
+          if (GMACRO_XCENTER && GMACRO_PITCHCENTER)
 		    {
 			    gesture_start = GESTURE_CENTER;
 		    }
-            
-		  else if (GMACRO_LEFT && pitchcenter)
+		  else if (GMACRO_LEFT && GMACRO_PITCHCENTER)
 		    {
 			    gesture_start = GESTURE_LEFT;
 		    }
-		  else if (GMACRO_RIGHT && pitchcenter)
+		  else if (GMACRO_RIGHT && GMACRO_PITCHCENTER)
 		    {
 			    gesture_start = GESTURE_RIGHT;
 		    }
-		  else if (GMACRO_DOWN && rollcenter)
+		  else if (GMACRO_DOWN && GMACRO_XCENTER)
 		    {
 			    gesture_start = GESTURE_DOWN;
 		    }
-		  else if (GMACRO_UP && rollcenter)
+		  else if (GMACRO_UP && GMACRO_XCENTER)
 		    {
 			    gesture_start = GESTURE_UP;
 		    }
@@ -77,6 +72,7 @@ int gestures2()
 		    {
 			    //      gesture_start = GESTURE_OTHER;  
 		    }
+
 
 		  unsigned long time = gettime();
 
