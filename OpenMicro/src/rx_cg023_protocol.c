@@ -139,7 +139,7 @@ static char checkpacket()
 
 int rxdata[15];
 
-int txid[2];
+int txid[4];
 int rxmode = 0;
 
 #define CG023_FLIP_MASK  0x01 // right shoulder (3D flip switch), resets after aileron or elevator has moved and came back to neutral
@@ -155,7 +155,7 @@ int decode_cg023( void)
 	 if ( rxdata[0] == 0x55 )
 	 {
 		// maybe corrupt packet
-		if ( rxdata[3] != 0 || rxdata[4] != 0  ) return 0;
+		if ( rxdata[3] != txid[2] || rxdata[4] != txid[3]  ) return 0;
 		if ( rxdata[1] != txid[0] || rxdata[2] != txid[1] ) return 0;
 		 
 // throttle		 
@@ -165,11 +165,11 @@ int decode_cg023( void)
 		// swapped yaw - roll (mode 3)
 			if ( rxdata[6] >= 0x80 )
 		{
-			rx[0] = -rxdata[6] * 0.0166666f + 2.1166582f; // yaw
+			rx[2] = -rxdata[6] * 0.0166666f + 2.1166582f; // yaw
 		}
-		else if ( rxdata[6] <= 0x3C ) rx[0] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
-		else rx[0] = 0.0;
-		rx[2] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
+		else if ( rxdata[6] <= 0x3C ) rx[2] = (1.0f + ( rxdata[6] - 60) * 0.0166666f) ; // yaw
+		else rx[2] = 0.0;
+		rx[0] = - rxdata[8] * 0.0166666f + 2.1166582f; // roll
 		
 		rx[1] = - rxdata[7] * 0.0166666f + 2.1166582f; 
 		
@@ -241,7 +241,9 @@ unsigned long lastrxtime;
 unsigned long secondtimer;
 #warning "RX debug enabled"
 #endif
-
+int channel_search = 0;
+int searching = 1;
+unsigned int searchtimer;
 
 void checkrx( void)
 {
@@ -255,11 +257,18 @@ void checkrx( void)
 		
 					txid[0] = rxdata[1];
 					txid[1] = rxdata[2];
-					
-					rxmode = RXMODE_NORMAL;				
-
-				  xn_writereg(0x25, (uint8_t)(rxdata[1] - 0x7D) ); // Set channel frequency	
-				
+					txid[2] = rxdata[3];
+                    txid[3] = rxdata[4];
+                    
+					rxmode = RXMODE_NORMAL;	
+                    
+                    // turn off search for correct txid's
+                   if ( txid[2] == 0 && txid[3] == 0  ) searching = 0;
+                    
+                  channel_search = (uint8_t)(rxdata[1] - 0x7D);
+				  xn_writereg(0x25, channel_search ); // Set channel frequency	
+				  searchtimer = gettime();
+                    
 					#ifdef SERIAL_INFO	
 					printf( " BIND \n");
 					#endif
@@ -278,7 +287,7 @@ void checkrx( void)
 				{ 	
 					failsafetime = gettime(); 
 					failsafe = 0;
-					
+					searching = 0;
 				}	
 				else
 				{
@@ -301,6 +310,12 @@ void checkrx( void)
 			rx[2] = 0;
 			rx[3] = 0;
 		}
+        if ( searching && rxmode == RXMODE_NORMAL && time - searchtimer > 25000 )
+        {
+         searchtimer = time;
+         xn_writereg(0x25, channel_search++ ); // Set channel frequency	
+         if (channel_search>127) channel_search = 0;
+        }
 #ifdef RXDEBUG	
 		// packets per second counter
 			if ( time - secondtimer  > 1000000)

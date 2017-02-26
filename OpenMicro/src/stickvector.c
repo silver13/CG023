@@ -8,7 +8,7 @@
 extern float rx[];
 extern float GEstG[3];
 extern float Q_rsqrt( float number );
-
+extern float rxcopy[];
 
 float errorvect[3];
 
@@ -20,8 +20,8 @@ float stickvector[3];
 float pitch, roll;
 
 	// rotate down vector to match stick position
-pitch = rx[1] * MAX_ANGLE_HI * DEGTORAD + (float) TRIM_PITCH  * DEGTORAD;
-roll = rx[0] * MAX_ANGLE_HI * DEGTORAD + (float) TRIM_ROLL  * DEGTORAD;
+pitch = rxcopy[1] * MAX_ANGLE_HI * DEGTORAD + (float) TRIM_PITCH  * DEGTORAD;
+roll = rxcopy[0] * MAX_ANGLE_HI * DEGTORAD + (float) TRIM_ROLL  * DEGTORAD;
 
 stickvector[0] = fastsin( roll );
 stickvector[1] = fastsin( pitch );

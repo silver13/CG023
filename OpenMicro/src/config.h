@@ -15,6 +15,9 @@
 // max angle for level mode
 #define MAX_ANGLE_HI 55.0f
 
+#define LOW_RATES_MULTI 0.5
+#define LOW_RATES_MULTI_YAW 0.5
+
 // disable inbuilt expo functions
 #define DISABLE_EXPO
 
@@ -117,6 +120,8 @@
 #define HEADLESSMODE CH_OFF
 
 #define LEVELMODE CH_AUX1
+
+#define RATES CH_ON
 
 #define STARTFLIP CH_OFF
 
