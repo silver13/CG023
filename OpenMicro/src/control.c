@@ -80,17 +80,32 @@ extern int acro_override;
 float overthrottlefilt = 0;
 float underthrottlefilt = 0;
 
+float rxcopy[3];
+
 void control( void)
 {	
-
-	// make local copy
-	float rxcopy[4];	
-	for ( int i = 0 ; i < 4 ; i++)
-	{
-		rxcopy[i] = rx[i];
+    
+    // rates / expert mode
+    float rate_multiplier = 1.0;
+    float rate_multiplier_yaw = 1.0;	
+    
+	if ( aux[RATES]  )
+	{		
+		
 	}
-
-
+	else
+	{
+		rate_multiplier = LOW_RATES_MULTI;
+        rate_multiplier_yaw = LOW_RATES_MULTI_YAW;
+	}
+    
+    
+    // make copy and apply rates
+    rxcopy[0] = rx[0]*rate_multiplier;
+    rxcopy[1] = rx[1]*rate_multiplier;   
+    rxcopy[2] = rx[2]*rate_multiplier_yaw;   
+    
+    
 #ifndef DISABLE_FLIP_SEQUENCER	
   flip_sequencer();
 	
