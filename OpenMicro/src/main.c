@@ -141,8 +141,37 @@ clk_init();
 	pwm_set( MOTOR_FR , 0); 
 	pwm_set( MOTOR_BR , 0); 
 
+// 1 - new gyro init with retries
+// 0 - old gyro init (once only)
+    if (1)
+    {
+        #define RETRIES 10
+        int tries = 0;
+        while (tries < RETRIES )
+        {
+            tries++;
+            sixaxis_init();
 
-	sixaxis_init();
+            if ( sixaxis_check() )
+            {
+                #ifdef SERIAL_INFO
+                printf( " MPU found \n" );
+                #endif
+
+                break;
+            }
+            else
+            {
+                #ifdef SERIAL_INFO
+                printf( "ERROR: MPU NOT FOUND \n" );
+                #endif    
+            }
+        }
+        if ( tries == RETRIES ) failloop(4); 
+    }   
+    else
+    {
+    sixaxis_init();
 	
 	if ( sixaxis_check() ) 
 	{
@@ -157,6 +186,7 @@ clk_init();
 		#endif
 		failloop(4);
 	}
+    }
 	
 	adc_init();
 //set always on channel to on
