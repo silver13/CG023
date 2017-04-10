@@ -112,6 +112,10 @@ extern int failsafe;
 int ledcommand = 0;
 unsigned long ledcommandtime = 0;
 
+// i2c error indicator
+extern unsigned int liberror;
+
+
 void failloop( int val);
 
 int main(void)
@@ -150,6 +154,8 @@ clk_init();
         while (tries < RETRIES )
         {
             tries++;
+            liberror = 0;
+            
             sixaxis_init();
 
             if ( sixaxis_check() )
@@ -255,8 +261,6 @@ extern int readdata( int datanumber);
  accelcal[1] = readdata( OB->DATA1 ) - 127;
 #endif
 
-
-extern unsigned int liberror;
 if ( liberror ) 
 {
 	  #ifdef SERIAL_INFO	
