@@ -7,8 +7,8 @@
 int fmc_write( int data1 , int data2)
 {
 	
-	FLASH_Unlock();
-  FLASH_OB_Unlock();
+    FLASH_Unlock();
+    FLASH_OB_Unlock();
 
 	
   FLASH_OB_Erase();
@@ -21,7 +21,7 @@ int fmc_write( int data1 , int data2)
 	
 	FLASH_OB_ProgramData( 0x1FFFF804, data1 );
 
-	
+
 	FLASH_OB_ProgramData( 0x1FFFF806, data2 );
 
 	

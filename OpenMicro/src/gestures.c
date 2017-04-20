@@ -47,8 +47,7 @@ int gestures2()
 {
 	if (onground)
 	  {
-	  
-          if (GMACRO_XCENTER && GMACRO_PITCHCENTER)
+		  if (GMACRO_XCENTER && GMACRO_PITCHCENTER)
 		    {
 			    gesture_start = GESTURE_CENTER;
 		    }
@@ -72,7 +71,6 @@ int gestures2()
 		    {
 			    //      gesture_start = GESTURE_OTHER;  
 		    }
-
 
 		  unsigned long time = gettime();
 

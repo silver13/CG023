@@ -138,9 +138,10 @@
 // the adc readout can be found in debug mode , debug.adcfilt
 // #enable DEBUG should be in config.h
 // default for 1/2 divider
-#define ADC_BATT_VOLTAGE 3.77
+#define ADC_BATT_VOLTAGE 3.80
 #define ADC_READOUT 2727.0
 
+#define ADC_VREF_SCALE
 
 // SPI PINS DEFINITONS ( for radio ic )
 // MOSI , CLK , SS - outputs , MISO input
