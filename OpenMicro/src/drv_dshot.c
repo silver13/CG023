@@ -95,13 +95,13 @@ void make_packet( uint8_t number, uint16_t value );
 //Motor 0 - BL Default
 #define DSHOT_PIN_1 GPIO_Pin_9
 #define DSHOT_PORT_1 GPIOA
-//Motor  2 - BR Default
+//Motor 1 - FL Default
 #define DSHOT_PIN_2 GPIO_Pin_10
 #define DSHOT_PORT_2 GPIOA
-//Motor  3 - FR Default
+//Motor 2 - BR Default
 #define DSHOT_PIN_3 GPIO_Pin_11
 #define DSHOT_PORT_3 GPIOA
-//Motor  1 - FL Default
+//Motor 3 - FR Default
 #define DSHOT_PIN_4 GPIO_Pin_8
 #define DSHOT_PORT_4 GPIOA
 
@@ -303,7 +303,7 @@ void bitbang_data2()
 {
 	for ( uint8_t i = 0; i < 48; ++i ) {
       
-		if (  motor_data[ i ] & 0x04 ) {
+		if (  motor_data[ i ] & 0x02 ) {
 			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 );  // BL
 		} else {
 			 __asm{NOP}
@@ -320,7 +320,7 @@ void bitbang_data3()
 {
 	for ( uint8_t i = 0; i < 48; ++i ) {
    
-		if ( motor_data[ i ] & 0x08 ) {
+		if ( motor_data[ i ] & 0x04 ) {
 			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // FR
 		} else {
 			__asm{NOP}
@@ -337,7 +337,7 @@ void bitbang_data4()
 {
 	for ( uint8_t i = 0; i < 48; ++i ) {
    
-        if ( motor_data[ i ] & 0x02 ) {
+        if ( motor_data[ i ] & 0x08 ) {
 
 			gpioset( DSHOT_PORT_4, DSHOT_PIN_4 ); // BR
 		} else {
@@ -363,21 +363,21 @@ void bitbang_data()
 			gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
 		}
         
-		if ( motor_data[ i ] & 0x04 ) {
+		if ( motor_data[ i ] & 0x02 ) {
 			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 );  // BL
 		} else {
             __asm{NOP}
 			gpioreset( DSHOT_PORT_2, DSHOT_PIN_2 );
 		}
 
-		if ( motor_data[ i ] & 0x08 ) {
+		if ( motor_data[ i ] & 0x04 ) {
 			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // FR
 		} else {
             __asm{NOP}
 			gpioreset( DSHOT_PORT_3, DSHOT_PIN_3 );
 		}
         
-        if ( motor_data[ i ] & 0x02 ) {
+        if ( motor_data[ i ] & 0x08 ) {
 			gpioset( DSHOT_PORT_4, DSHOT_PIN_4 ); // BR
 		} else {
             __asm{NOP}
