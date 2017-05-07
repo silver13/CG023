@@ -39,7 +39,10 @@
 // still spin at minimum throttle.
 #define IDLE_OFFSET 40
 
-//READ THIS:
+// if using 3 gpio A and 1 b enable "less delay" (for dshot300 only)
+//#define LESS_DELAY
+
+// READ THIS:
 
 // Test the whole throttle range before flight!
 // If motors don't stop, turn off TX and wait 2 seconds
@@ -60,6 +63,7 @@
 #include "drv_time.h"
 #include "hardware.h"
 #include "util.h"
+#include "drv_dshot.h"
 
 #ifdef USE_DSHOT_DRIVER_BETA
 
@@ -77,6 +81,7 @@
 #error "Overclock timing not implemented"
 #endif
 
+
 extern int failsafe;
 extern int onground;
 
@@ -89,21 +94,20 @@ void make_packet( uint8_t number, uint16_t value );
 
 //
 //
-// if using 3 gpio A and 1 b enable "less delay" (for dshot300 only)
-//#define LESS_DELAY
+
 
 //Motor 0 - BL Default
-#define DSHOT_PIN_1 GPIO_Pin_9
-#define DSHOT_PORT_1 GPIOA
+//#define DSHOT_PIN_0 GPIO_Pin_9
+//#define DSHOT_PORT_0 GPIOA
 //Motor 1 - FL Default
-#define DSHOT_PIN_2 GPIO_Pin_10
-#define DSHOT_PORT_2 GPIOA
+//#define DSHOT_PIN_1 GPIO_Pin_10
+//#define DSHOT_PORT_1 GPIOA
 //Motor 2 - BR Default
-#define DSHOT_PIN_3 GPIO_Pin_11
-#define DSHOT_PORT_3 GPIOA
+//#define DSHOT_PIN_2 GPIO_Pin_11
+//#define DSHOT_PORT_2 GPIOA
 //Motor 3 - FR Default
-#define DSHOT_PIN_4 GPIO_Pin_8
-#define DSHOT_PORT_4 GPIOA
+//#define DSHOT_PIN_3 GPIO_Pin_8
+//#define DSHOT_PORT_3 GPIOA
 
 
 #ifndef FORWARD
@@ -140,6 +144,9 @@ void pwm_init()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	
 
+	GPIO_InitStructure.GPIO_Pin = DSHOT_PIN_0 ;
+	GPIO_Init( DSHOT_PORT_0, &GPIO_InitStructure );
+	
 	GPIO_InitStructure.GPIO_Pin = DSHOT_PIN_1 ;
 	GPIO_Init( DSHOT_PORT_1, &GPIO_InitStructure );
 	
@@ -148,9 +155,6 @@ void pwm_init()
 	
 	GPIO_InitStructure.GPIO_Pin = DSHOT_PIN_3 ;
 	GPIO_Init( DSHOT_PORT_3, &GPIO_InitStructure );
-	
-	GPIO_InitStructure.GPIO_Pin = DSHOT_PIN_4 ;
-	GPIO_Init( DSHOT_PORT_4, &GPIO_InitStructure );
 
 	// set failsafetime so signal is off at start
 	pwm_failsafe_time = gettime() - 100000;
@@ -201,10 +205,10 @@ void pwm_set( uint8_t number, float pwm )
 			if ( gettime() - pwm_failsafe_time > 1000000 ) {
 				value = 0;
                 
+                gpioreset( DSHOT_PORT_0, DSHOT_PIN_0 );
                 gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
                 gpioreset( DSHOT_PORT_2, DSHOT_PIN_2 );
                 gpioreset( DSHOT_PORT_3, DSHOT_PIN_3 );
-                gpioreset( DSHOT_PORT_4, DSHOT_PIN_4 );
                 //////
                 return;
       
@@ -285,10 +289,10 @@ void bitbang_data1()
 
 		if ( motor_data[ i ] & 0x01 ) {
 
-			gpioset( DSHOT_PORT_1, DSHOT_PIN_1 ); // FL
+			gpioset( DSHOT_PORT_0, DSHOT_PIN_0 ); // FL
 		} else {
 			__asm{NOP}
-			gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
+			gpioreset( DSHOT_PORT_0, DSHOT_PIN_0 );
 		}
  
 
@@ -304,10 +308,10 @@ void bitbang_data2()
 	for ( uint8_t i = 0; i < 48; ++i ) {
       
 		if (  motor_data[ i ] & 0x02 ) {
-			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 );  // BL
+			gpioset( DSHOT_PORT_1, DSHOT_PIN_1 );  // BL
 		} else {
 			 __asm{NOP}
-			gpioreset( DSHOT_PORT_2, DSHOT_PIN_2 );
+			gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
 		}
 
   D600_DELAY;
@@ -321,10 +325,10 @@ void bitbang_data3()
 	for ( uint8_t i = 0; i < 48; ++i ) {
    
 		if ( motor_data[ i ] & 0x04 ) {
-			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // FR
+			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 ); // FR
 		} else {
 			__asm{NOP}
-			gpioreset( DSHOT_PORT_3, DSHOT_PIN_3 );
+			gpioreset( DSHOT_PORT_2, DSHOT_PIN_2 );
 		}
 
   D600_DELAY; 
@@ -339,10 +343,10 @@ void bitbang_data4()
    
         if ( motor_data[ i ] & 0x08 ) {
 
-			gpioset( DSHOT_PORT_4, DSHOT_PIN_4 ); // BR
+			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // BR
 		} else {
 			 __asm{NOP}
-			gpioreset( DSHOT_PORT_4, DSHOT_PIN_4 );
+			gpioreset( DSHOT_PORT_3, DSHOT_PIN_3 );
 
 		}
 
@@ -357,31 +361,31 @@ void bitbang_data()
 	for ( uint8_t i = 0; i < 48; ++i ) {
 
 		if ( motor_data[ i ] & 0x01 ) {
-			gpioset( DSHOT_PORT_1, DSHOT_PIN_1 ); // FL
+			gpioset( DSHOT_PORT_0, DSHOT_PIN_0 ); // FL
 		} else {
 			__asm{NOP}
-			gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
+			gpioreset( DSHOT_PORT_0, DSHOT_PIN_0 );
 		}
         
 		if ( motor_data[ i ] & 0x02 ) {
-			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 );  // BL
+			gpioset( DSHOT_PORT_1, DSHOT_PIN_1 );  // BL
+		} else {
+            __asm{NOP}
+			gpioreset( DSHOT_PORT_1, DSHOT_PIN_1 );
+		}
+
+		if ( motor_data[ i ] & 0x04 ) {
+			gpioset( DSHOT_PORT_2, DSHOT_PIN_2 ); // FR
 		} else {
             __asm{NOP}
 			gpioreset( DSHOT_PORT_2, DSHOT_PIN_2 );
 		}
-
-		if ( motor_data[ i ] & 0x04 ) {
-			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // FR
+        
+        if ( motor_data[ i ] & 0x08 ) {
+			gpioset( DSHOT_PORT_3, DSHOT_PIN_3 ); // BR
 		} else {
             __asm{NOP}
 			gpioreset( DSHOT_PORT_3, DSHOT_PIN_3 );
-		}
-        
-        if ( motor_data[ i ] & 0x08 ) {
-			gpioset( DSHOT_PORT_4, DSHOT_PIN_4 ); // BR
-		} else {
-            __asm{NOP}
-			gpioreset( DSHOT_PORT_4, DSHOT_PIN_4 );
 
 
 		}
